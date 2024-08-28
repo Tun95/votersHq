@@ -157,6 +157,7 @@ function PollLeaderBoard({
                     </div>
                   )}
                 </div>
+                
               </div>
             )}
             {leaderboardTop5 && (
