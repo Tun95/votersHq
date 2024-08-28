@@ -1,0 +1,292 @@
+.candidate_banner_details {
+  margin-top: 30px;
+  padding: 0px 30px;
+  .content {
+    .banner {
+      width: 100%;
+      img {
+        width: 100%;
+        height: 100%;
+        max-height: 490px;
+        object-fit: cover;
+        border-radius: 15px;
+      }
+    }
+    .candidate_running_mate {
+      position: relative;
+      padding-left: 50px;
+
+      color: var(--color-dark-gray);
+      gap: 10%;
+      text-wrap: nowrap;
+      h3 {
+        font-weight: 500;
+      }
+      small {
+        color: var(--color-light-gray);
+      }
+      .candidate_left {
+        gap: 20px;
+        .candidate_img {
+          position: relative;
+          margin-top: -115px;
+          width: 150px;
+          max-height: 170px;
+          top: 15px;
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+          }
+        }
+      }
+      .candidate_right {
+        gap: 15px;
+        .img {
+          box-shadow: var(--light-shadow);
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    padding: 0px 0px;
+    .content {
+      .candidate_running_mate {
+        padding-left: 20px;
+        gap: 25px;
+        flex-wrap: wrap;
+        .candidate_left {
+          .candidate_img {
+            max-width: 120px;
+            max-height: 120px;
+            top: 60px;
+            img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 450px) {
+    .content {
+      .candidate_running_mate {
+        text-wrap: wrap;
+        .name {
+          h3 {
+            font-size: 15px;
+          }
+        }
+        .status {
+          small {
+            font-size: 11px;
+          }
+        }
+        .candidate_left {
+          .candidate_img {
+            max-height: 100px;
+            max-width: 100px;
+            top: 80px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.candidate_view_details {
+  padding: 0px 80px;
+  margin-top: 60px;
+  color: var(--color-gray);
+  margin-bottom: 0;
+  small {
+    color: var(--color-light-gray);
+  }
+  .content {
+    gap: 10%;
+
+    .age,
+    .position,
+    .party {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .party {
+      .party_img_text {
+        gap: 5px;
+        .img {
+          img {
+            width: 30px;
+            height: 30px;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+        }
+        .text {
+          position: relative;
+          bottom: 4px;
+        }
+      }
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    padding: 0px 20px;
+    .content {
+      flex-wrap: wrap;
+      gap: 20px;
+      h3 {
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+.biography_manifesto {
+  .manifest_header {
+    color: var(--color-gray);
+    margin-bottom: 15px;
+  }
+  .content {
+    color: var(--color-gray);
+    .header {
+      margin-bottom: 10px;
+      h3 {
+        font-size: 15px;
+      }
+    }
+    .text_content {
+      margin-bottom: 30px;
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.political_timeline {
+  .main_header {
+    color: var(--color-dark-gray);
+    width: fit-content;
+    position: relative;
+    margin-bottom: 20px;
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 1px;
+      width: 50%;
+      height: 2px;
+      background-color: var(--color-yellow);
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      display: none;
+    }
+  }
+  .content {
+    .current,
+    .previous {
+      background-color: var(--color-light-light-gray);
+      border-radius: 10px;
+      padding: 20px;
+      .header {
+        color: var(--color-dark-gray);
+        h3 {
+          font-size: 16px;
+        }
+      }
+      .list {
+        ul {
+          list-style: none;
+          padding-left: 24px;
+          margin-bottom: 10px;
+          li {
+            position: relative;
+            margin-top: 10px;
+            &::before {
+              content: "\25CB";
+              font-size: 1.6em;
+              position: absolute;
+              left: -26px;
+              top: -8px;
+              color: var(--color-primary);
+            }
+            &::after {
+              content: "";
+              position: absolute;
+              left: -20px;
+              height: 93%;
+              top: 22px;
+              width: 2px;
+              background-color: var(--color-primary);
+              color: var(--color-primary);
+            }
+
+            &:last-child::after {
+              display: none;
+            }
+            .year_text_details {
+              color: var(--color-dark-gray);
+              .year {
+                h4 {
+                  font-size: 15px;
+                }
+              }
+              .text_header {
+                h4 {
+                  font-size: 14px;
+                }
+              }
+              .text_details {
+                small {
+                  font-size: 13px;
+                  color: var(--color-gray);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .current {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.candidate_view_tab {
+  margin-top: -20px;
+  padding-top: 0;
+  .mobile {
+    display: none;
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    .mobile {
+      display: block;
+    }
+  }
+}
+
+.tabPanel {
+  padding: 20px 35px;
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    padding: 20px 0px;
+  }
+}

@@ -1,0 +1,13 @@
+.user_profile_view_screen {
+  .user_profile_screen_content {
+    .details_activity {
+      padding: 0px 30px;
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      .details_activity {
+        padding: 0px 0px;
+      }
+    }
+  }
+}

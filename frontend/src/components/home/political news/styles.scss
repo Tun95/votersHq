@@ -1,0 +1,47 @@
+.political_news {
+  .news_list {
+    margin-top: 30px;
+    .political_cards {
+      margin: 20px;
+      .img {
+        img {
+          width: 100%;
+          border-radius: 10px;
+        }
+      }
+      .details {
+        margin-top: 15px;
+        padding: 20px;
+        background-color: var(--color-bg-card);
+        border-radius: 10px;
+        .date {
+          color: var(--color-yellow);
+          font-size: 15px;
+          small {
+            gap: 6px;
+            .icon {
+              font-size: 17px;
+            }
+          }
+        }
+        .title {
+          padding: 10px 0px;
+        }
+        .description {
+          margin-bottom: 15px;
+          p {
+            font-size: 15px;
+          }
+        }
+        .read_more {
+          width: fit-content;
+
+          border-bottom: 2px solid var(--color-primary);
+          a {
+            color: var(--color-green);
+          }
+        }
+      }
+    }
+  }
+}

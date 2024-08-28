@@ -1,0 +1,28 @@
+.bill_detail_screen {
+  .bill_screen_content {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: 65% 30%;
+    gap: 5%;
+    .tab_panel_box {
+      display: none;
+      width: 100%;
+      padding: 0px;
+    }
+    .side_content {
+      margin-top: 150px;
+    }
+
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      grid-template-columns: 100%;
+      .tab_panel_box {
+        display: block;
+        margin-bottom: 50px;
+      }
+      .side_content {
+        display: none;
+      }
+    }
+  }
+}

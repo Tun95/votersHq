@@ -1,0 +1,36 @@
+.user_profile_view_screen {
+  .back_home {
+    padding: 10px 30px;
+    padding-top: 30px;
+    a {
+      gap: 6px;
+      width: fit-content;
+      font-weight: 600;
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      padding: 10px 0px;
+      margin-top: 10px;
+      .side_content {
+        display: block;
+      }
+    }
+  }
+  .user_profile_screen_content {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    .side_content {
+      margin-top: 0px;
+      position: relative;
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      gap: 1%;
+      .side_content {
+        display: block;
+        margin-bottom: 40px;
+        position: relative;
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+.main_nav {
+  .content {
+    .main_sidebar {
+      display: none;
+    }
+    .btn {
+      gap: 30px;
+      .login {
+        .onClick_span {
+          transition: var(--transition);
+          font-weight: 500;
+          &:hover {
+            color: var(--color-primary);
+          }
+        }
+      }
+      .register {
+        .main_btn {
+          .icon {
+            top: 2px;
+          }
+        }
+      }
+    }
+    .user_info {
+      column-gap: 15px;
+      .icon {
+        position: relative;
+        top: 3px;
+        color: var(--color-gray);
+        cursor: pointer;
+      }
+      .user_img_icon {
+        cursor: pointer;
+        .img {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      .btn {
+        display: none;
+      }
+      .main_sidebar {
+        display: block;
+      }
+      .user_info {
+        display: none;
+      }
+    }
+  }
+}
