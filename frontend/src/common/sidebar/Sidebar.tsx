@@ -3,8 +3,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Divider } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 import logo from "../../assets/logo/logo.png";
 import { useAppContext } from "../../utilities/utils/Utils";
@@ -32,7 +35,12 @@ function Sidebar() {
     };
 
   //ANTD DRAWER
-  const { state: cState, showDrawer, setMenu } = useAppContext();
+  const {
+    state: cState,
+    dispatch: ctxDispatch,
+    showDrawer,
+    setMenu,
+  } = useAppContext();
   const { userInfo } = cState;
 
   //Login Menu
@@ -47,6 +55,15 @@ function Sidebar() {
     setMenu("register");
     showDrawer();
     setState({ ...state, left: false, right: false });
+  };
+
+  //========
+  //SIGN OUT
+  //========
+  const signoutHandler = () => {
+    ctxDispatch({ type: "USER_SIGNOUT" });
+    localStorage.removeItem("userInfo");
+    window.location.href = "/";
   };
 
   return (
@@ -123,6 +140,31 @@ function Sidebar() {
                     >
                       News
                     </Link>
+                  </li>
+                </ul>
+                <Divider className="white" />
+                <Divider className="white" />
+                <ul className="list user_list">
+                  <li>
+                    <Link
+                      to={`/profile-dashboard/${userInfo?._id}`}
+                      className="a_flex btn"
+                    >
+                      {" "}
+                      <AccountCircleOutlinedIcon className="icon" />
+                      <span> Profile</span>
+                    </Link>
+                  </li>{" "}
+                  <Divider />
+                  <li>
+                    <span
+                      onClick={signoutHandler}
+                      className="a_flex btn cursor"
+                    >
+                      {" "}
+                      <LogoutOutlinedIcon className="icon" />
+                      <span> Profile</span>
+                    </span>
                   </li>
                 </ul>
               </div>

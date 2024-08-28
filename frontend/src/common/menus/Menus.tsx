@@ -155,7 +155,7 @@ export function UserDropDownMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <div className="menu_content">
+        <div className="menu_content global_user_menu">
           <ul className="list">
             <li>
               <Link

@@ -272,6 +272,9 @@ button:disabled {
 .yellow {
   color: var(--color-yellow);
 }
+.white {
+  color: var(--color-white) !important;
+}
 
 .onClick_span {
   cursor: pointer !important;
