@@ -142,31 +142,35 @@ function Sidebar() {
                     </Link>
                   </li>
                 </ul>
-                <Divider className="white" />
-                <Divider className="white" />
-                <ul className="list user_list">
-                  <li>
-                    <Link
-                      to={`/profile-dashboard/${userInfo?._id}`}
-                      className="a_flex btn"
-                    >
-                      {" "}
-                      <AccountCircleOutlinedIcon className="icon" />
-                      <span> Profile</span>
-                    </Link>
-                  </li>{" "}
-                  <Divider />
-                  <li>
-                    <span
-                      onClick={signoutHandler}
-                      className="a_flex btn cursor"
-                    >
-                      {" "}
-                      <LogoutOutlinedIcon className="icon" />
-                      <span> Profile</span>
-                    </span>
-                  </li>
-                </ul>
+                {userInfo && (
+                  <span>
+                    <Divider className="white" />
+                    <Divider className="white" />
+                    <ul className="list user_list">
+                      <li>
+                        <Link
+                          to={`/profile-dashboard/${userInfo?._id}`}
+                          className="a_flex btn"
+                        >
+                          {" "}
+                          <AccountCircleOutlinedIcon className="icon" />
+                          <span> Profile</span>
+                        </Link>
+                      </li>{" "}
+                      <Divider />
+                      <li>
+                        <span
+                          onClick={signoutHandler}
+                          className="a_flex btn cursor"
+                        >
+                          {" "}
+                          <LogoutOutlinedIcon className="icon" />
+                          <span> Log out</span>
+                        </span>
+                      </li>
+                    </ul>
+                  </span>
+                )}
               </div>
               {!userInfo && (
                 <div className="login_register f_flex">

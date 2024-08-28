@@ -172,7 +172,7 @@ export function UserDropDownMenu() {
               <span onClick={signoutHandler} className="a_flex btn">
                 {" "}
                 <LogoutOutlinedIcon className="icon" />
-                <span> Profile</span>
+                <span> Log out</span>
               </span>
             </li>
           </ul>
