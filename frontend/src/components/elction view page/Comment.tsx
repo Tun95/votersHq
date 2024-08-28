@@ -487,11 +487,12 @@ const Comment: React.FC<ElectionResponse> = ({ election, fetchElection }) => {
                       </div>
                     </div>
                     {userInfo && (
-                      <div className="right a_flex">
+                      <div
+                        className="right a_flex"
+                        onClick={() => setEditingReplyId(comment._id)}
+                      >
                         <IosShareIcon className="icon" />
-                        <small onClick={() => setEditingReplyId(comment._id)}>
-                          Reply
-                        </small>
+                        <small>Reply</small>
                       </div>
                     )}
                   </div>

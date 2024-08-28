@@ -287,7 +287,7 @@ billsRouter.get(
 );
 
 //===============================
-// Fetch Related Bills
+// Fetch Related Bills with Aggregation
 //===============================
 billsRouter.get(
   "/:id/related",
@@ -298,13 +298,125 @@ billsRouter.get(
         return res.status(404).send({ message: "Bill Not Found" });
       }
 
-      const relatedBills = await Bills.find({
-        _id: { $ne: bill._id }, // Exclude the current bill
-        $or: [
-          { sortCategory: { $in: bill.sortCategory } },
-          { sortState: { $in: bill.sortState } },
-        ],
-      }).populate("user");
+      const relatedBills = await Bills.aggregate([
+        {
+          $match: {
+            _id: { $ne: bill._id }, // Exclude the current bill
+            $or: [
+              { sortCategory: { $in: bill.sortCategory } },
+              { sortState: { $in: bill.sortState } },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            totalYeaVotes: { $size: "$yeaVotes" },
+            totalNayVotes: { $size: "$nayVotes" },
+            totalComments: { $size: "$comments" },
+            yeaPercentage: {
+              $cond: {
+                if: {
+                  $eq: [
+                    { $add: [{ $size: "$yeaVotes" }, { $size: "$nayVotes" }] },
+                    0,
+                  ],
+                },
+                then: 0,
+                else: {
+                  $multiply: [
+                    {
+                      $divide: [
+                        { $size: "$yeaVotes" },
+                        {
+                          $add: [
+                            { $size: "$yeaVotes" },
+                            { $size: "$nayVotes" },
+                          ],
+                        },
+                      ],
+                    },
+                    100,
+                  ],
+                },
+              },
+            },
+            nayPercentage: {
+              $cond: {
+                if: {
+                  $eq: [
+                    { $add: [{ $size: "$yeaVotes" }, { $size: "$nayVotes" }] },
+                    0,
+                  ],
+                },
+                then: 0,
+                else: {
+                  $multiply: [
+                    {
+                      $divide: [
+                        { $size: "$nayVotes" },
+                        {
+                          $add: [
+                            { $size: "$yeaVotes" },
+                            { $size: "$nayVotes" },
+                          ],
+                        },
+                      ],
+                    },
+                    100,
+                  ],
+                },
+              },
+            },
+          },
+        },
+        { $sort: { createdAt: -1 } }, // Sort by creation date (latest first)
+        { $limit: 4 }, // Limit to 4 items
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        { $unwind: "$user" },
+        {
+          $project: {
+            title: 1,
+            slug: 1,
+            image: 1,
+            banner: 1,
+            description: 1,
+            sortType: 1,
+            sortStatus: 1,
+            sortCategory: 1,
+            sortState: 1,
+            views: 1,
+            expirationDate: 1,
+            totalYeaVotes: 1,
+            totalNayVotes: 1,
+            totalComments: 1,
+            yeaPercentage: 1,
+            nayPercentage: 1,
+            comments: 1,
+            yeaVotes: 1,
+            nayVotes: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            user: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              email: 1,
+              image: 1,
+              role: 1,
+              stateOfOrigin: 1,
+              stateOfResidence: 1,
+              region: 1,
+            },
+          },
+        },
+      ]);
 
       res.send(relatedBills);
     } catch (error) {

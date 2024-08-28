@@ -113,6 +113,7 @@ function PolesVotes({
       dispatch({ type: "VOTE_SUCCESS", payload: candidateId });
       toast.success("Vote cast successfully");
       fetchElection();
+      handleCloseElectionModal();
     } catch (err) {
       toast.error(getError(err as ErrorResponse));
       dispatch({
