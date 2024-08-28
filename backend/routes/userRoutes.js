@@ -754,6 +754,40 @@ userRouter.put(
   })
 );
 
+//==========================
+// Upgrade user to politician
+//==========================
+userRouter.put(
+  "/upgrade/:userId",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if the user is already a politician
+      if (user.role === "politician") {
+        return res
+          .status(400)
+          .json({ message: "User is already a politician" });
+      }
+
+      // Update user role to politician
+      user.role = "politician";
+      await user.save();
+
+      res
+        .status(200)
+        .json({ message: "User successfully upgraded to politician", user });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  })
+);
+
 //========================
 // ADD NEW TIMELINE ENTRY
 //========================

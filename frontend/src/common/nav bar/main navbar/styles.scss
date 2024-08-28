@@ -33,12 +33,10 @@
       .user_img_icon {
         cursor: pointer;
         .img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
           img {
-            width: 100%;
-            height: 100%;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
             object-fit: cover;
           }
         }

@@ -2,11 +2,10 @@ import "./styles.scss";
 import logo from "../../../assets/logo/logo.png";
 import { Link } from "react-router-dom";
 import Sidebar from "../../sidebar/Sidebar";
-import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
-import p1 from "../../../assets/nav/p.png";
 import EastIcon from "@mui/icons-material/East";
 import { useAppContext } from "../../../utilities/utils/Utils";
+import { UserDropDownMenu } from "../../menus/Menus";
 
 function MainNavBar() {
   const { state, showDrawer, setMenu } = useAppContext();
@@ -83,17 +82,9 @@ function MainNavBar() {
               <div className="alarm_icon">
                 <NotificationsActiveOutlinedIcon className="icon" />
               </div>
-              <Link
-                to={`/profile-dashboard/${userInfo._id}`}
-                className="user_img_icon a_flex"
-              >
-                <div className="img">
-                  <img src={p1} alt="user image" />
-                </div>
-                <div className="down_icon">
-                  <KeyboardArrowDownOutlinedIcon className="icon" />
-                </div>
-              </Link>
+              <span>
+                <UserDropDownMenu />
+              </span>
             </div>
           )}
           <div className="main_sidebar">
