@@ -378,7 +378,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                   <div className="details_icon a_flex">
                     {!isEditingPersonalInfo && (
                       <div className="icon_s l_flex">
-                        <img src={b4} alt="icon" />
+                        <img src={b1} alt="icon" />
                       </div>
                     )}
                     <div className="input_label">
@@ -417,7 +417,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                   <div className="details_icon a_flex">
                     {!isEditingPersonalInfo && (
                       <div className="icon_s l_flex">
-                        <img src={b5} alt="icon" />
+                        <img src={b1} alt="icon" />
                       </div>
                     )}
                     <div className="input_label">
