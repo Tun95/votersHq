@@ -178,7 +178,7 @@ export function BillsModal({
             <div className="btn confirm_cancel a_flex">
               <div className="reg_confirm_btn">
                 <button
-                  className="main_btn"
+                  className="main_btn l_flex"
                   onClick={handleVote} // Use handleVote for both yea and nay
                   disabled={loading} // Disable button while loading
                 >
@@ -328,7 +328,7 @@ export function ElectionModal({
             <div className="btn confirm_cancel a_flex">
               <div className="reg_confirm_btn">
                 <button
-                  className="main_btn"
+                  className="main_btn l_flex"
                   onClick={() => handleVote(item._id)}
                   disabled={state.loading[item._id]} // Disable if voting is in progress
                 >

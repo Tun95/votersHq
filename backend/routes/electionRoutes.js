@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import http from "http";
 import Election from "../models/electionModels.js";
 import UserActivity from "../models/userActivitiesModels.js";
+import User from "../models/userModels.js";
 
 const electionRouter = express.Router();
 
@@ -52,7 +53,6 @@ electionRouter.post(
     }
   })
 );
-
 
 //======================
 // Fetch all elections sorted by latest
@@ -332,49 +332,22 @@ electionRouter.get(
         },
       ]);
 
-      // Aggregation pipeline to calculate voter age range percentages
       const ageRangeAggregation = await Election.aggregate([
         { $match: { slug: req.params.slug } },
         { $unwind: "$votes" },
         {
-          $lookup: {
-            from: "users",
-            localField: "votes.voterId",
-            foreignField: "_id",
-            as: "voterDetails",
-          },
-        },
-        { $unwind: "$voterDetails" }, // Ensure we don't have an array but individual voter details
-        {
           $group: {
             _id: {
               $cond: [
-                {
-                  $lt: [
-                    { $subtract: [new Date(), "$voterDetails.dob"] },
-                    26 * 365 * 24 * 60 * 60 * 1000,
-                  ],
-                },
+                { $lt: [{ $toInt: "$votes.age" }, 26] },
                 "18-25",
                 {
                   $cond: [
-                    {
-                      $lt: [
-                        { $subtract: [new Date(), "$voterDetails.dob"] },
-                        41 * 365 * 24 * 60 * 60 * 1000,
-                      ],
-                    },
+                    { $lt: [{ $toInt: "$votes.age" }, 41] },
                     "26-40",
                     {
                       $cond: [
-                        {
-                          $lt: [
-                            {
-                              $subtract: [new Date(), "$voterDetails.dob"],
-                            },
-                            61 * 365 * 24 * 60 * 60 * 1000,
-                          ],
-                        },
+                        { $lt: [{ $toInt: "$votes.age" }, 61] },
                         "41-60",
                         "60+",
                       ],
@@ -419,6 +392,7 @@ electionRouter.get(
         leaderboardTop3: leaderboardAggregationTop3,
         ageRangeDistribution,
       });
+
     } catch (error) {
       console.error("Error fetching election by slug:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -495,6 +469,15 @@ electionRouter.post(
     try {
       const election = await Election.findById(req.params.id);
       if (election) {
+        // Check if the user's gender and age are set
+        const user = await User.findById(req.user._id);
+        if (!user.gender || !user.age) {
+          return res.status(400).send({
+            message:
+              "Please update your profile with your gender and age before voting.",
+          });
+        }
+
         // Check if the user has already voted in this election
         const existingVote = election.votes.find(
           (vote) => vote.voterId.toString() === req.user._id.toString()
@@ -511,10 +494,11 @@ electionRouter.post(
         );
 
         if (candidate) {
-          // Add the vote to the election's votes array
+          // Add the vote to the election's votes array with the user's age
           election.votes.push({
             voterId: req.user._id,
             candidateId: candidate._id,
+            age: user.age, // Include the user's age
           });
           await election.save();
 
@@ -543,6 +527,7 @@ electionRouter.post(
     }
   })
 );
+
 
 //======================
 // Like an election

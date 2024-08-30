@@ -102,6 +102,7 @@ const electionSchema = new mongoose.Schema(
       {
         voterId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         candidateId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        age: { type: String },
         createdAt: { type: Date, default: Date.now },
       },
     ],

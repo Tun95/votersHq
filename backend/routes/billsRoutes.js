@@ -687,6 +687,11 @@ billsRouter.post(
 
     const bill = await Bills.findById(billId);
     const user = await User.findById(userId); // Fetch the user to get their region
+    if (!user.gender || !user.age || !user.region) {
+      return res.status(400).send({
+        message: "Please update your profile before voting.",
+      });
+    }
 
     if (!bill) {
       return res.status(404).send({ message: "Bill not found" });
