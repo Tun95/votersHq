@@ -14,6 +14,12 @@ interface GlobalState {
   phone: string;
   setPhone: React.Dispatch<React.SetStateAction<string>>;
 
+  age: number; // Changed to number
+  setAge: React.Dispatch<React.SetStateAction<number>>;
+
+  gender: string;
+  setGender: React.Dispatch<React.SetStateAction<string>>;
+
   image: string;
   setImage: React.Dispatch<React.SetStateAction<string>>;
 
@@ -41,8 +47,8 @@ interface GlobalState {
   achievement: string;
   setAchievement: React.Dispatch<React.SetStateAction<string>>;
 
-  ninNumber: string;
-  setNinNumber: React.Dispatch<React.SetStateAction<string>>;
+  ninNumber: number; // Changed to number
+  setNinNumber: React.Dispatch<React.SetStateAction<number>>;
 
   emailNotification: boolean;
   setEmailNotification: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,6 +71,9 @@ const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
+ const [age, setAge] = useState<number>(0);
+  const [gender, setGender] = useState("");
+
   const [image, setImage] = useState("");
   const [partyImg, setPartyImg] = useState("");
   const [partyName, setPartyName] = useState("");
@@ -74,7 +83,7 @@ const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [about, setAbout] = useState("");
   const [education, setEducation] = useState("");
   const [achievement, setAchievement] = useState("");
-  const [ninNumber, setNinNumber] = useState("");
+  const [ninNumber, setNinNumber] = useState<number>(0);
   const [emailNotification, setEmailNotification] = useState(false);
   const [smsNotification, setSmsNotification] = useState(false);
   const [password, setPassword] = useState("");
@@ -96,6 +105,10 @@ const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setEmail,
         phone,
         setPhone,
+        age,
+        setAge,
+        gender,
+        setGender,
 
         image,
         setImage,

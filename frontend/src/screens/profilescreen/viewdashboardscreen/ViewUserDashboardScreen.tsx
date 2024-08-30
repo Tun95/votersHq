@@ -73,7 +73,7 @@ function ViewUserDashboardScreen() {
       <MainNavBar />
       <div className="container">
         <div className="back_home">
-          <Link to="/home" className="a_flex green">
+          <Link to="/" className="a_flex green">
             <ArrowCircleLeftOutlinedIcon className="icon" />
             <span>Back to Homepage</span>
           </Link>
@@ -81,10 +81,10 @@ function ViewUserDashboardScreen() {
         {user && (
           <div className="bill_screen_content user_profile_screen_content">
             <div className="tab_panel_box_">
-              <Details user={user} />
+              <Details user={user} fetchData={fetchData} />
               <div className="details_activity">
-                <About user={user} />
-                <Activities user={user} />
+                <About user={user} fetchData={fetchData} />
+                <Activities user={user} fetchData={fetchData} />
               </div>
             </div>
           </div>

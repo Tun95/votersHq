@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 
 export interface DetailsProps {
   user: User;
+  fetchData: () => Promise<void>;
 }
 
 // Reducer
@@ -44,11 +45,13 @@ function followReducer(state: FollowState, action: ActionType): FollowState {
   }
 }
 
-function Details({ user }: DetailsProps) {
+function Details({ user, fetchData }: DetailsProps) {
   const initialFollowUnfollowState: FollowState = {
     following: user.following,
+    user: user,
     error: null,
     loading: false,
+    loadingUpgrade: false, // Initialize upgrade loading state
   };
 
   const { state: appState } = useAppContext();
@@ -74,6 +77,7 @@ function Details({ user }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "FOLLOW_SUCCESS", payload: userId });
+        fetchData();
       }
     } catch (error) {
       dispatch({
@@ -98,6 +102,7 @@ function Details({ user }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "UNFOLLOW_SUCCESS", payload: userId });
+        fetchData();
       }
     } catch (error) {
       dispatch({

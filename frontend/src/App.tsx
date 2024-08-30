@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import NotFoundScreen from "./utilities/404 error/PageNotFound";
-import LadingPageScreen from "./screens/landingpagescreen/LadingPageScreen";
+//import LadingPageScreen from "./screens/landingpagescreen/LadingPageScreen";
 import HomeScreen from "./screens/homescreen/HomeScreen";
 import BillScreen from "./screens/billscreen/BillScreen";
 import ElectionScreen from "./screens/electionscreen/ElectionScreen";
@@ -23,13 +23,14 @@ function App() {
   return (
     <>
       <div className="app">
-        <ToastContainer position="bottom-center" limit={1}/>
+       
+        <ToastContainer position="bottom-center" limit={1} />
         <GradientDefs />
         <AuthFlowMenu />
         <Routes>
           <Route path="*" element={<NotFoundScreen />} />
-          <Route path="/" element={<LadingPageScreen />} />
-          <Route path="/home" element={<HomeScreen />} />
+          {/* <Route path="/" element={<LadingPageScreen />} /> */}
+          <Route path="/" element={<HomeScreen />} />
           <Route path="/bills" element={<BillScreen />} />
           <Route path="/bills/:slug" element={<BillsDetailScreen />} />
           <Route path="/elections" element={<ElectionScreen />} />

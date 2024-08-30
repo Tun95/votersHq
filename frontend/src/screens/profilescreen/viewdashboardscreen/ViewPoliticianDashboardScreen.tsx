@@ -70,7 +70,7 @@ function ViewPoliticianDashboardScreen() {
       <MainNavBar />
       <div className="container">
         <div className="back_home">
-          <Link to="/home" className="a_flex green">
+          <Link to="/" className="a_flex green">
             <ArrowCircleLeftOutlinedIcon className="icon" />
             <span>Back to Homepage</span>
           </Link>
@@ -79,13 +79,13 @@ function ViewPoliticianDashboardScreen() {
         {user && (
           <div className="bill_screen_content user_profile_screen_content">
             <div className="tab_panel_box_">
-              <Details user={user} />
+              <Details user={user} fetchData={fetchData} />
               <div className="details_activity">
-                <Profile user={user} />
+                <Profile user={user} fetchData={fetchData} />
               </div>
             </div>
             <div className="side_content">
-              <Activities user={user} />
+              <Activities user={user} fetchData={fetchData} />
             </div>
           </div>
         )}

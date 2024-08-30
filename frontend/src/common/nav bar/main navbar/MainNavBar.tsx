@@ -39,7 +39,7 @@ function MainNavBar() {
           <div className="list">
             <ul className="a_flex">
               <li>
-                <Link to="/home">Home</Link>
+                <Link to="/">Home</Link>
               </li>
               <li>
                 <Link to="/bills">Bills</Link>

@@ -15,7 +15,7 @@ function PendingAccountDropDownMenu({
   const navigate = useNavigate();
 
   const handlePendingSubmit = () => {
-    navigate("/home");
+    navigate("/");
     onClose();
   };
   return (

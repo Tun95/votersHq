@@ -34,7 +34,7 @@ function MainFooter() {
                     <div className="list">
                       <ul>
                         <li>
-                          <Link to="/home">Home</Link>
+                          <Link to="/">Home</Link>
                         </li>
                         <li>
                           <Link to="/bills">Bills & Issues</Link>

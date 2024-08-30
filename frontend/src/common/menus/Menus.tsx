@@ -104,7 +104,10 @@ export function UserDropDownMenu() {
               className="user_img_icon a_flex"
             >
               <div className="img">
-                <img src={userInfo ? userInfo?.image : p1} alt="user image" />
+                <img
+                  src={userInfo?.image ? userInfo?.image : p1}
+                  alt="user image"
+                />
               </div>
               <div className="down_icon">
                 <KeyboardArrowDownOutlinedIcon className="icon" />

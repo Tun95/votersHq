@@ -96,7 +96,7 @@ function Post() {
     const filterSortState = encodeURIComponent(filter.sortState || "all");
     const filterSortOrder = encodeURIComponent(filter.sortOrder || "all");
 
-    return `/home?searchQuery=${filterSearchQuery}&sortType=${filterSortType}&sortStatus=${filterSortStatus}&sortCategory=${filterSortCategory}&sortState=${filterSortState}&sortOrder=${filterSortOrder}`;
+    return `/?searchQuery=${filterSearchQuery}&sortType=${filterSortType}&sortStatus=${filterSortStatus}&sortCategory=${filterSortCategory}&sortState=${filterSortState}&sortOrder=${filterSortOrder}`;
   };
   return (
     <div className="home_post">

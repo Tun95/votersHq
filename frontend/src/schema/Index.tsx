@@ -41,7 +41,7 @@ export const registerSchema = yup.object().shape({
     .required("Email is required"),
   phone: yup
     .string()
-    .matches(/^[0-9]{11}$/, "Phone number must be exactly 10 digits")
+    .matches(/^(\+234|0)[789]\d{9}$/, "Phone number must be in a valid format")
     .required("Phone number is required"),
   identificationType: yup.string().required("Identification type is required"),
   ninNumber: yup
@@ -63,6 +63,7 @@ export const registerSchema = yup.object().shape({
     .oneOf([yup.ref("password"), undefined], "Passwords must match")
     .required("Confirm Password is required"),
 });
+
 
 export const otpSchema = yup.object().shape({
   otp: yup

@@ -11,6 +11,7 @@ import { CommentType, Reply } from "../../types/election/types";
 import { formatDateAgo, useAppContext } from "../../utilities/utils/Utils";
 import axios from "axios";
 import { request } from "../../base url/BaseUrl";
+import { toast } from "react-toastify";
 
 type ActionType =
   | { type: "SET_COMMENTS"; payload: CommentType[] }
@@ -182,6 +183,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
   const commentsRef = useRef<HTMLDivElement | null>(null);
 
   const addComment = async () => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     if (newComment.trim()) {
       try {
         const response = await axios.post(
@@ -700,7 +704,7 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
               <button
                 className="comment"
                 onClick={addComment}
-                disabled={!userInfo || !newComment.trim()}
+                disabled={!newComment.trim()}
               >
                 Comment
               </button>

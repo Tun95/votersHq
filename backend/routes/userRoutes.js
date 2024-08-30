@@ -6,6 +6,7 @@ import { generateToken, isAdmin, isAuth } from "../utils.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import UserActivity from "../models/userActivitiesModels.js";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
 const userRouter = express.Router();
 
@@ -97,6 +98,7 @@ userRouter.post(
       lastName: user.lastName,
       image: user.image,
       email: user.email,
+      phone: user.phone,
       isAdmin: user.isAdmin,
       isBlocked: user.isBlocked,
       region: user.region,
@@ -115,10 +117,12 @@ userRouter.post(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
+    // Extract environment variables
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;
 
+    // Destructure request body
     const {
       firstName,
       lastName,
@@ -137,7 +141,6 @@ userRouter.post(
       achievement,
       partyImage, // Updated field name
       partyName, // Updated field name
-
       title, // New field
       contestingFor, // New field
       runningMateName, // New field
@@ -197,7 +200,7 @@ userRouter.post(
     // Save the user to the database
     const createdUser = await newUser.save();
 
-    // Send verification email
+    // Prepare the email content
     const emailMessage = `
       <html>
       <head>
@@ -232,6 +235,7 @@ userRouter.post(
         <p>Hello ${newUser.firstName},</p>
         <p>You have received this email because you have been requested to verify your account.</p>
         <p>Your verification code is: <strong>${otp}</strong></p>
+        <p>Your password is: <strong>${password}</strong></p>
         <p>If you did not request this verification, you can safely ignore this email.</p>
         <p>This verification code is valid for the next 10 minutes.</p>
         <p><a href="${process.env.SUB_DOMAIN}/politician-profile-view/${newUser._id}" class="anchor">Claim Your Account</a></p>
@@ -257,38 +261,37 @@ userRouter.post(
       </html>
     `;
 
-    // Create a nodemailer transport
-    const smtpTransport = nodemailer.createTransport({
-      service: process.env.MAIL_SERVICE,
-      auth: {
-        user: process.env.EMAIL_ADDRESS,
-        pass: process.env.GMAIL_PASS,
-      },
-    });
+    // Configure Sendinblue
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
 
-    // Setup email data
-    const mailOptions = {
-      from: `${process.env.WEB_NAME} <${process.env.EMAIL_ADDRESS}>`,
-      to: `${createdUser.email}`,
-      subject: "Account Verification",
-      html: emailMessage,
-    };
+    try {
+      // Send email using Sendinblue
+      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-    // Send the email
-    smtpTransport.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Failed to send email" });
-      } else {
-        console.log("Email sent: " + info.response);
-        res.status(201).send({
-          message: "User created. Verification email sent.",
-          userId: createdUser._id,
-        });
-      }
-    });
+      sendSmtpEmail.to = [{ email: createdUser.email }];
+      sendSmtpEmail.sender = {
+        email: process.env.EMAIL_ADDRESS,
+        name: process.env.WEB_NAME,
+      };
+      sendSmtpEmail.subject = "Account Verification";
+      sendSmtpEmail.htmlContent = emailMessage;
+
+      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+
+      res.status(201).send({
+        message: "User created. Verification email sent.",
+        userId: createdUser._id,
+      });
+    } catch (error) {
+      console.error("Failed to send email", error);
+      res.status(500).json({ message: "Failed to send email" });
+    }
   })
 );
+
 
 //=================================
 // Route to handle OTP generation and email verification for user registration and login
@@ -296,13 +299,18 @@ userRouter.post(
 userRouter.post(
   "/otp-verification",
   expressAsyncHandler(async (req, res) => {
+    // Configure Sendinblue
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
+
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;
 
     try {
       // Get user information from the registration request
-      const { email } = req.body; // Adjust this based on your registration request structure
+      const { email, phone } = req.body; // Adjust this based on your registration request structure
 
       // Find the user by email in the database
       const user = await User.findOne({ email });
@@ -415,35 +423,21 @@ userRouter.post(
         </html>
       `;
 
-      // Create a nodemailer transport
-      const smtpTransport = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICE,
-        auth: {
-          user: process.env.EMAIL_ADDRESS,
-          pass: process.env.GMAIL_PASS,
-        },
-      });
+      // Send email using Sendinblue
+      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-      // Setup email data
-      const mailOptions = {
-        from: `${process.env.WEB_NAME} ${process.env.EMAIL_ADDRESS}`,
-        to: `${user.email}`,
-        subject: "Verify your email address",
-        html: emailMessage,
+      sendSmtpEmail.to = [{ email: user.email }];
+      sendSmtpEmail.sender = {
+        email: process.env.EMAIL_ADDRESS,
+        name: process.env.WEB_NAME,
       };
+      sendSmtpEmail.subject = "Verify your email address";
+      sendSmtpEmail.htmlContent = emailMessage;
 
-      // Send the email
-      smtpTransport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          res.status(500).json({ message: "Failed to send email" });
-        } else {
-          console.log("Email sent: " + info.response);
-          res
-            .status(200)
-            .json({ message: "Verification email sent successfully" });
-        }
-      });
+      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+
+      res.status(200).json({ message: "Verification email sent successfully" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -659,6 +653,9 @@ userRouter.put(
         user.lastName = req.body.lastName || user.lastName;
         user.email = req.body.email || user.email;
         user.phone = req.body.phone || user.phone;
+
+        user.age = req.body.age || user.age;
+        user.gender = req.body.gender || user.gender;
 
         user.image = req.body.image || user.image;
         user.partyImage = req.body.partyImage || user.partyImage;

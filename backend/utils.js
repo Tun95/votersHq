@@ -8,6 +8,7 @@ export const generateToken = (user) => {
       lastName: user.lastName,
       image: user.image,
       email: user.email,
+      phone: user.phone,
       isAdmin: user.isAdmin,
       isBlocked: user.isBlocked,
       isAccountVerified: user.isAccountVerified,

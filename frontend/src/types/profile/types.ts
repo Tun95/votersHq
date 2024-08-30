@@ -80,8 +80,10 @@ export interface SubmitHandlerParams {
     lastName?: string;
     email?: string;
     phone?: string;
+    age?: number;
+    gender?: string;
     image?: string;
-    ninNumber?: string;
+    ninNumber?: number;
     stateOfOrigin?: string;
     stateOfResidence?: string;
   };
@@ -132,16 +134,19 @@ export const activityInitialState: ActivityState = {
 //FOLLOW AND UNFOLLOW
 // Action Types
 export type ActionType =
-  | { type: "FOLLOW"; payload: string } // payload is the followed user's ID
-  | { type: "UNFOLLOW"; payload: string } // payload is the unfollowed user's ID
+  | { type: "FOLLOW"; payload: string }
+  | { type: "UNFOLLOW"; payload: string }
   | { type: "FOLLOW_SUCCESS"; payload: string }
   | { type: "UNFOLLOW_SUCCESS"; payload: string }
+  | { type: "UPGRADE"; payload: string } // payload is the user ID to be upgraded
+  | { type: "UPGRADE_SUCCESS"; payload: User } // payload is the upgraded user object
   | { type: "ERROR"; payload: string };
 
 // Initial State
 export interface FollowState {
-  following: string[]; // Array of user IDs that the current user is following
+  following: string[];
+  user: User | null;
   error: string | null;
   loading: boolean;
+  loadingUpgrade: boolean; // Separate loading state for upgrading account
 }
-

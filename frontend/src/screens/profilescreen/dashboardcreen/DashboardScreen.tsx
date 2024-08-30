@@ -130,6 +130,11 @@ function DashboardScreen() {
     phone,
     setPhone,
 
+    age,
+    setAge,
+    gender,
+    setGender,
+
     image,
     about,
     setAbout,
@@ -160,6 +165,8 @@ function DashboardScreen() {
       setLastName(data.lastName);
       setEmail(data.email);
       setPhone(data.phone);
+      setAge(data.age);
+      setGender(data.gender);
       setImage(data.image);
       setAbout(data.about);
       setEducation(data.education);
@@ -197,6 +204,8 @@ function DashboardScreen() {
     const lastNameToUpdate = updatedPersonalInfo?.lastName || lastName;
     const emailToUpdate = updatedPersonalInfo?.email || email;
     const phoneToUpdate = updatedPersonalInfo?.phone || phone;
+    const ageToUpdate = updatedPersonalInfo?.age || age;
+    const genderToUpdate = updatedPersonalInfo?.gender || gender;
     const ninNumberToUpdate = updatedPersonalInfo?.ninNumber || ninNumber;
     const stateOfOriginToUpdate =
       updatedPersonalInfo?.stateOfOrigin || stateOfOrigin;
@@ -225,6 +234,8 @@ function DashboardScreen() {
           lastName: lastNameToUpdate,
           email: emailToUpdate,
           phone: phoneToUpdate,
+          age: ageToUpdate,
+          gender: genderToUpdate,
           image: imageToUpdate,
           about: aboutToUpdate,
           education: educationToUpdate,
@@ -303,7 +314,7 @@ function DashboardScreen() {
       <MainNavBar />
       <div className="container">
         <div className="back_home">
-          <Link to="/home" className="a_flex green">
+          <Link to="/" className="a_flex green">
             <ArrowCircleLeftOutlinedIcon className="icon" />
             <span>Back to Homepage</span>
           </Link>
@@ -316,6 +327,7 @@ function DashboardScreen() {
                 user={user}
                 uploadFileHandler={uploadFileHandler}
                 loadingUpload={loadingUpload || false}
+                fetchData={fetchData}
               />
             )}
             {user && (

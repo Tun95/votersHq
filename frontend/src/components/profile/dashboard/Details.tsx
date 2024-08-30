@@ -27,6 +27,7 @@ export interface DetailsProps {
   user: User;
   loadingUpload: boolean;
   uploadFileHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fetchData: () => Promise<void>;
 }
 
 // Reducer
@@ -35,30 +36,56 @@ function followReducer(state: FollowState, action: ActionType): FollowState {
     case "FOLLOW":
     case "UNFOLLOW":
       return { ...state, loading: true, error: null };
+
+    case "UPGRADE":
+      return { ...state, loadingUpgrade: true, error: null }; // Start upgrade loading
+
     case "FOLLOW_SUCCESS":
       return {
         ...state,
         following: [...state.following, action.payload],
         loading: false,
       };
+
     case "UNFOLLOW_SUCCESS":
       return {
         ...state,
         following: state.following.filter((id) => id !== action.payload),
         loading: false,
       };
+
+    case "UPGRADE_SUCCESS":
+      return {
+        ...state,
+        user: action.payload,
+        loadingUpgrade: false, // Stop upgrade loading
+      };
+
     case "ERROR":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        loadingUpgrade: false, // Stop any loading
+        error: action.payload,
+      };
+
     default:
       return state;
   }
 }
 
-function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
+function Details({
+  user,
+  fetchData,
+  loadingUpload,
+  uploadFileHandler,
+}: DetailsProps) {
   const initialFollowUnfollowState: FollowState = {
     following: user.following,
+    user: user,
     error: null,
     loading: false,
+    loadingUpgrade: false, // Initialize upgrade loading state
   };
 
   const { state: appState, showDrawer, setMenu } = useAppContext();
@@ -97,7 +124,44 @@ function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
     initialFollowUnfollowState
   );
 
+  //==========================
+  // Function to upgrade the user to politician
+  //==========================
+  const upgradeUserToPolitician = async (userId: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
+    dispatch({ type: "UPGRADE", payload: userId });
+    try {
+      const response = await axios.put(
+        `${request}/api/users/upgrade/${userId}`,
+        {},
+        { headers: { Authorization: `Bearer ${userInfo?.token}` } }
+      );
+      if (response.status === 200) {
+        dispatch({ type: "UPGRADE_SUCCESS", payload: response.data.user });
+        toast.success("User upgraded to politician successfully");
+        fetchData();
+      }
+    } catch (error) {
+      dispatch({
+        type: "ERROR",
+        payload: getError(error as ErrorResponse),
+      });
+      toast.error(getError(error as ErrorResponse));
+    }
+  };
+
+  //==========================
+  // Example usage within the component
+  //==========================
+  const handleUpgradeClick = () => {
+    upgradeUserToPolitician(user._id);
+  };
+
+  //==========================
   // Function to follow a user
+  //==========================
   const followUser = async (userId: string) => {
     if (!userInfo) {
       return toast.error("You need to login to perform this operation");
@@ -111,6 +175,7 @@ function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "FOLLOW_SUCCESS", payload: userId });
+        fetchData();
       }
     } catch (error) {
       dispatch({
@@ -121,11 +186,13 @@ function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
     }
   };
 
+  //==========================
   // Function to unfollow a user
+  //==========================
   const unfollowUser = async (userId: string) => {
-     if (!userInfo) {
-       return toast.error("You need to login to perform this operation");
-     }
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     dispatch({ type: "UNFOLLOW", payload: userId });
     try {
       const response = await axios.post(
@@ -135,6 +202,7 @@ function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "UNFOLLOW_SUCCESS", payload: userId });
+        fetchData();
       }
     } catch (error) {
       dispatch({
@@ -252,9 +320,22 @@ function Details({ user, loadingUpload, uploadFileHandler }: DetailsProps) {
               </button>
             )}
             {user.role === "user" ? (
-              <button className="main_btn a_flex">
+              <button
+                className="main_btn l_flex"
+                onClick={handleUpgradeClick}
+                disabled={state.loadingUpgrade}
+              >
                 <BoltIcon className="icon" />
-                <small>Upgrade account</small>
+                <small>
+                  {state.loadingUpgrade ? (
+                    <span className="a_flex">
+                      <i className="fa fa-spinner fa-spin"></i>
+                      Upgrading...
+                    </span>
+                  ) : (
+                    "Upgrade account"
+                  )}
+                </small>
               </button>
             ) : null}
             {user.role === "politician" && !user.isAccountVerified ? (

@@ -94,6 +94,7 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
         `${request}/api/users/otp-verification`,
         {
           email: values.email,
+          phone: values.phone,
         }
       );
 

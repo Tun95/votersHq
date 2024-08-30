@@ -21,6 +21,8 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
     lastName,
     email,
     phone,
+    age,
+    gender,
     ninNumber,
     stateOfOrigin,
     stateOfResidence,
@@ -38,6 +40,8 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
     lastName: lastName,
     email: email,
     phone: phone,
+    age: age,
+    gender: gender,
     ninNumber: ninNumber,
     stateOfOrigin: stateOfOrigin,
     stateOfResidence: stateOfResidence,
@@ -68,7 +72,9 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
     setIsEditingPersonalInfo(false);
   };
   const handleCancelPersonalInfoClick = () => setIsEditingPersonalInfo(false);
-  const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePersonalInfoChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setPersonalInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
   };
@@ -320,7 +326,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                           <input
                             className="value"
                             name="ninNumber"
-                            type="text"
+                            type="number"
                             maxLength={11}
                             value={personalInfo.ninNumber}
                             onChange={handlePersonalInfoChange}
@@ -360,6 +366,89 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                             value={personalInfo.stateOfOrigin}
                             onChange={handlePersonalInfoChange}
                           />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Age and Gender */}
+              <div className="split_form c_flex">
+                <div className="form_group">
+                  <div className="details_icon a_flex">
+                    {!isEditingPersonalInfo && (
+                      <div className="icon_s l_flex">
+                        <img src={b4} alt="icon" />
+                      </div>
+                    )}
+                    <div className="input_label">
+                      {!isEditingPersonalInfo ? (
+                        <>
+                          <div className="input">
+                            <h4 className="value">{personalInfo.age}</h4>
+                          </div>
+                          <label>
+                            <small>Age</small>
+                          </label>
+                        </>
+                      ) : (
+                        <>
+                          <label>
+                            <small>Age</small>
+                          </label>
+                          <input
+                            className="value"
+                            name="age"
+                            type="number"
+                            value={personalInfo.age}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 3) {
+                                handlePersonalInfoChange(e);
+                              }
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="form_group">
+                  <div className="details_icon a_flex">
+                    {!isEditingPersonalInfo && (
+                      <div className="icon_s l_flex">
+                        <img src={b5} alt="icon" />
+                      </div>
+                    )}
+                    <div className="input_label">
+                      {!isEditingPersonalInfo ? (
+                        <>
+                          <div className="input">
+                            <h4 className="value">{personalInfo.gender}</h4>
+                          </div>
+                          <label>
+                            <small>Gender</small>
+                          </label>
+                        </>
+                      ) : (
+                        <>
+                          <div className="label_select f_flex">
+                            <label>
+                              <small>Gender</small>
+                            </label>
+                            <select
+                              className="select"
+                              name="gender"
+                              value={personalInfo.gender || ""}
+                              onChange={handlePersonalInfoChange}
+                            >
+                              <option value="" disabled>
+                                Select gender
+                              </option>
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                            </select>
+                          </div>
                         </>
                       )}
                     </div>

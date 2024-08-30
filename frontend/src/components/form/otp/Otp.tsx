@@ -164,6 +164,7 @@ function OtpVerificationDropDownMenu({
         // Your logic to resend OTP
         await axios.post(`${request}/api/users/otp-verification`, {
           email: temporaryUserInfo.email,
+          phone: temporaryUserInfo.phone,
         });
 
         toast.success("Verification email resent successfully", {
