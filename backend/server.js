@@ -98,6 +98,8 @@ electionsNamespace.on("connection", (socket) => {
 const handleExpiredElections = async () => {
   try {
     const now = new Date();
+
+    // Find and update elections that have expired
     const expiredElections = await Election.find({
       expirationDate: { $lte: now },
       status: "ongoing",
@@ -120,8 +122,39 @@ const handleExpiredElections = async () => {
   }
 };
 
-// Check for expired elections every minute
-setInterval(handleExpiredElections, 60000);
+// Handle Start Date in Real-time
+const handleUpcomingElections = async () => {
+  try {
+    const now = new Date();
+
+    // Find and update elections that should start now
+    const upcomingElections = await Election.find({
+      startDate: { $lte: now },
+      status: "upcoming",
+    });
+
+    for (const election of upcomingElections) {
+      try {
+        election.status = "ongoing";
+        await election.save();
+
+        electionsNamespace.emit("electionUpdate", { election });
+      } catch (saveError) {
+        console.error("Error saving election:", saveError);
+        // Optionally, implement a retry mechanism here
+      }
+    }
+  } catch (error) {
+    console.error("Error handling upcoming elections:", error);
+    // Optionally, implement a retry mechanism here
+  }
+};
+
+// Check for expired elections and upcoming elections every minute
+setInterval(() => {
+  handleExpiredElections();
+  handleUpcomingElections();
+}, 60000);
 
 const port = process.env.PORT || 5000;
 server.listen(port, () => {

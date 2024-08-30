@@ -74,12 +74,14 @@ const Upcoming: React.FC<UpcomingProps> = ({ upcoming, toggleBox, isOpen }) => {
                                   <small>Not started</small>
                                 </div>
                               </div>
-                              <div className="date a_flex">
-                                <CalendarMonthIcon className="icon" />
-                                <small>
-                                  {formatDateOrdinal(item?.startDate ?? "")}
-                                </small>
-                              </div>
+                              {item?.startDate && (
+                                <div className="date a_flex">
+                                  <CalendarMonthIcon className="icon" />
+                                  <small>
+                                    {formatDateOrdinal(item?.startDate ?? "")}
+                                  </small>
+                                </div>
+                              )}
                             </span>
                             <div className="comments_share a_flex">
                               <Link
