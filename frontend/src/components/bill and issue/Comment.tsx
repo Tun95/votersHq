@@ -378,6 +378,11 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
           </div>
         </div>
         <div className="comment_list" ref={commentsRef}>
+          {state?.comments?.length === 0 && (
+            <div className="no_review l_flex">
+              <p>No Comments Found</p>
+            </div>
+          )}
           {state?.comments.map((comment) => (
             <div className="parent_child" key={comment._id}>
               <div className="parent">
@@ -385,7 +390,7 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
                   <div className="img_name a_flex">
                     <div className="img">
                       <img
-                        src={comment ? comment.image : icon}
+                        src={comment.image ? comment.image : icon}
                         alt={comment.firstName}
                       />
                     </div>
@@ -505,7 +510,7 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
                         <div className="img_name a_flex">
                           <div className="img">
                             <img
-                              src={reply ? reply.image : icon}
+                              src={reply?.image ? reply.image : icon}
                               alt={reply.firstName}
                             />
                           </div>

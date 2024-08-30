@@ -126,21 +126,6 @@ const electionSchema = new mongoose.Schema(
   }
 );
 
-// Middleware to validate candidates
-electionSchema.pre("save", async function (next) {
-  if (this.isModified("candidates")) {
-    const users = await mongoose.model("User").find({
-      _id: { $in: this.candidates },
-      role: "politician",
-    });
-
-    if (users.length !== this.candidates.length) {
-      return next(new Error("All candidates must have the role 'politician'."));
-    }
-  }
-  next();
-});
-
 // Pre-save middleware to generate slug from title
 electionSchema.pre("save", async function (next) {
   if (this.isModified("title") || !this.slug) {

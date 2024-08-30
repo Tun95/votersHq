@@ -75,25 +75,20 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                   </div>
                   <div className="candidate a_flex">
                     <div className="img">
-                      <img src={item.user?.image} alt={item.user?.firstName} />
+                      <img
+                        src={item.candidates[0]?.image}
+                        alt={item.candidates[0]?.firstName}
+                      />
                     </div>
                     <div className="name_location">
                       <div className="name">
                         <TruncateMarkup lines={1}>
                           <h5>
-                            {item?.user?.role === "user" ? (
-                              <Link to={`/user-profile-view/${item.user?._id}`}>
-                                {item.user?.lastName} {item.user?.firstName}
-                              </Link>
-                            ) : (
-                              item?.user?.role === "politician" && (
-                                <Link
-                                  to={`/politician-profile-view/${item.user?._id}`}
-                                >
-                                  {item.user?.lastName} {item.user?.firstName}
-                                </Link>
-                              )
-                            )}
+                            <Link
+                              to={`/politician-profile-view/${item.candidates[0]?._id}`}
+                            >
+                              {item.candidates[0]?.lastName} {item.candidates[0]?.firstName}
+                            </Link>
                           </h5>
                         </TruncateMarkup>
                       </div>
@@ -101,7 +96,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                         <TruncateMarkup lines={1}>
                           <p>
                             {" "}
-                            {item.user?.region}, {item.user?.stateOfOrigin}
+                            {item.candidates[0]?.region}, {item.candidates[0]?.stateOfOrigin}
                           </p>
                         </TruncateMarkup>
                       </div>

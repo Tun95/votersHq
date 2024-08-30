@@ -32,14 +32,18 @@ billsRouter.post(
 );
 
 //===============================
-// Fetch all bills
+// Fetch all bills (including candidate details)
 //===============================
 billsRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
       const bills = await Bills.find({})
-        .populate("user")
+        .populate("user") // Populates the user who created the bill
+        .populate({
+          path: "candidates", // Populates the candidates field
+          model: "User", // Specifies the model to populate from
+        })
         .sort({ createdAt: -1 }); // Sort by latest (most recent first)
       res.send(bills);
     } catch (error) {
@@ -191,6 +195,14 @@ billsRouter.get(
         },
         { $unwind: "$user" },
         {
+          $lookup: {
+            from: "users", // Collection to join with
+            localField: "candidates", // Field from the `Bills` collection
+            foreignField: "_id", // Field from the `users` collection
+            as: "candidateDetails", // Alias for the joined data
+          },
+        },
+        {
           $project: {
             title: 1,
             slug: 1,
@@ -217,6 +229,18 @@ billsRouter.get(
               _id: 1,
               firstName: 1,
               lastName: 1,
+              email: 1,
+              image: 1,
+              role: 1,
+              stateOfOrigin: 1,
+              stateOfResidence: 1,
+              region: 1,
+            },
+            candidateDetails: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              slug: 1,
               email: 1,
               image: 1,
               role: 1,
@@ -381,6 +405,14 @@ billsRouter.get(
         },
         { $unwind: "$user" },
         {
+          $lookup: {
+            from: "users",
+            localField: "candidates",
+            foreignField: "_id",
+            as: "candidates",
+          },
+        },
+        {
           $project: {
             title: 1,
             slug: 1,
@@ -414,6 +446,18 @@ billsRouter.get(
               stateOfResidence: 1,
               region: 1,
             },
+            candidates: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              slug: 1,
+              email: 1,
+              image: 1,
+              role: 1,
+              stateOfOrigin: 1,
+              stateOfResidence: 1,
+              region: 1,
+            },
           },
         },
       ]);
@@ -436,7 +480,9 @@ billsRouter.get(
         { slug: req.params.slug },
         { $inc: { views: 1 } }, // Increment the view count
         { new: true } // Return the updated document
-      ).populate("user");
+      )
+        .populate("user")
+        .populate("candidates"); // Populate the candidates field
 
       if (!bill) {
         return res.status(404).send({ message: "Bill Not Found" });

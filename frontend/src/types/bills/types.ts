@@ -11,6 +11,19 @@ export interface ShortedUser {
   region: string;
 }
 
+export interface ShortedCandidate {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  stateOfOrigin: string;
+  stateOfResidence: string;
+  role: string;
+  image: string;
+  region: string;
+  slug: string;
+}
+
 // Types for comments on a bill
 export interface Comment {
   _id: string;
@@ -40,6 +53,7 @@ export interface Bill {
   views: number;
   expirationDate: string;
   user: ShortedUser;
+  candidateDetails: ShortedCandidate[];
   comments: Comment[];
   yeaVotes: Vote[];
   nayVotes: Vote[];

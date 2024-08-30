@@ -87,6 +87,14 @@ generalRouter.get(
         },
         { $unwind: "$user" },
         {
+          $lookup: {
+            from: "users",
+            localField: "candidates",
+            foreignField: "_id",
+            as: "candidates",
+          },
+        },
+        {
           $project: {
             title: 1,
             slug: 1,
@@ -113,6 +121,18 @@ generalRouter.get(
               _id: 1,
               firstName: 1,
               lastName: 1,
+              email: 1,
+              image: 1,
+              role: 1,
+              stateOfOrigin: 1,
+              stateOfResidence: 1,
+              region: 1,
+            },
+            candidates: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              slug: 1,
               email: 1,
               image: 1,
               role: 1,

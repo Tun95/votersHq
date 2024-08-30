@@ -72,8 +72,8 @@ const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
                         <div className="img">
                           <img
                             className="user_candidate_img"
-                            src={bill?.user?.image}
-                            alt={bill?.user?.firstName}
+                            src={bill?.candidates[0]?.image}
+                            alt={bill?.candidates[0]?.firstName}
                           />
                         </div>
                         <div className="name_location">

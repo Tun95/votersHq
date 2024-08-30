@@ -12,6 +12,7 @@ import {
 } from "../../utilities/utils/Utils";
 
 function BillsDetails({ fetchBill, bill }: BillsResponse) {
+  console.log("BILL:", bill);
   return (
     <div className="bill_details">
       <div className="bill_content">
@@ -35,29 +36,25 @@ function BillsDetails({ fetchBill, bill }: BillsResponse) {
             <div className="left a_flex">
               <div className="img">
                 <img
-                  src={bill ? bill.user.image : candidate}
-                  alt={bill?.user?.firstName}
+                  src={bill ? bill.candidates[0]?.image : candidate}
+                  alt={bill?.candidates[0]?.firstName}
                 />
               </div>
               <div className="name_location a_flex">
                 <div className="name">
                   <h4>
-                    {bill?.user?.role === "user" ? (
-                      <Link to={`/user-profile-view/${bill.user?._id}`}>
-                        {bill.user?.lastName} {bill.user?.firstName}
-                      </Link>
-                    ) : (
-                      bill?.user?.role === "politician" && (
-                        <Link to={`/politician-profile-view/${bill.user?._id}`}>
-                          {bill.user?.lastName} {bill.user?.firstName}
-                        </Link>
-                      )
-                    )}
+                    <Link
+                      to={`/politician-profile-view/${bill?.candidates[0]?._id}`}
+                    >
+                      {bill?.candidates[0]?.lastName}{" "}
+                      {bill?.candidates[0]?.firstName}
+                    </Link>
                   </h4>
                 </div>
                 <div className="location">
                   <small>
-                    {bill?.user?.region}, {bill?.user?.stateOfOrigin}
+                    {bill?.candidates[0]?.region},{" "}
+                    {bill?.candidates[0]?.stateOfOrigin}
                   </small>
                 </div>
               </div>

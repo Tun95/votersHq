@@ -74,6 +74,14 @@ const billsSchema = new mongoose.Schema(
     sortStatus: [String],
     sortCategory: [String],
     sortState: [String],
+    candidates: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
+
     views: { type: Number, default: 0 },
     comments: [commentSchema],
     yeaVotes: [

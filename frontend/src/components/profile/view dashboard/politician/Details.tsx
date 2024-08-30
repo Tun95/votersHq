@@ -91,6 +91,9 @@ function Details({ user }: DetailsProps) {
 
   // Function to follow a user
   const followUser = async (userId: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     dispatch({ type: "FOLLOW", payload: userId });
     try {
       const response = await axios.post(
@@ -112,6 +115,9 @@ function Details({ user }: DetailsProps) {
 
   // Function to unfollow a user
   const unfollowUser = async (userId: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     dispatch({ type: "UNFOLLOW", payload: userId });
     try {
       const response = await axios.post(

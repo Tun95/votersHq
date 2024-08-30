@@ -1,5 +1,18 @@
 import { CommentType } from "../../election/types";
 
+export interface ShortedCandidate {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  stateOfOrigin: string;
+  stateOfResidence: string;
+  role: string;
+  image: string;
+  region: string;
+  slug: string;
+}
+
 export type Bill = {
   _id: string;
   title: string;
@@ -14,6 +27,7 @@ export type Bill = {
   views: number;
   expirationDate: string;
   user: User;
+  candidates: ShortedCandidate[];
   comments: CommentType[];
   yeaVotes: Vote[];
   nayVotes: Vote[];

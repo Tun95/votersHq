@@ -1,3 +1,16 @@
+export interface ShortedCandidate {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  stateOfOrigin: string;
+  stateOfResidence: string;
+  role: string;
+  image: string;
+  region: string;
+  slug: string;
+}
+
 export interface CombinedItem {
   _id: string;
   title: string;
@@ -30,6 +43,9 @@ export interface CombinedItem {
     image: string;
     region: string;
   };
+
+  candidates: ShortedCandidate[];
+
   comments?: {
     _id: string;
     firstName: string;
@@ -75,12 +91,7 @@ export interface CombinedItem {
   nayPercentage?: number;
 
   // Specific to Election
-  candidates?: {
-    _id: string;
-    name: string;
-    party: string;
-    votes: number;
-  }[];
+
   status?: string;
   likes?: string[];
   dislikes?: string[];

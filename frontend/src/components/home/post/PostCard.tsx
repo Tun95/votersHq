@@ -57,34 +57,28 @@ const PostCard: FC<BillsCardProps> = ({ bill }) => {
                     <div className="img">
                       <img
                         className="user_candidate_img"
-                        src={bill.user?.image}
-                        alt={bill.user?.firstName}
+                        src={bill.candidateDetails[0]?.image}
+                        alt={bill.candidateDetails[0]?.firstName}
                       />
                     </div>
                     <div className="name_location">
                       <div className="name">
                         <TruncateMarkup lines={1}>
                           <h5>
-                            {bill?.user?.role === "user" ? (
-                              <Link to={`/user-profile-view/${bill.user?._id}`}>
-                                {bill.user?.lastName} {bill.user?.firstName}
-                              </Link>
-                            ) : (
-                              bill?.user?.role === "politician" && (
-                                <Link
-                                  to={`/politician-profile-view/${bill.user?._id}`}
-                                >
-                                  {bill.user?.lastName} {bill.user?.firstName}
-                                </Link>
-                              )
-                            )}
+                            <Link
+                              to={`/politician-profile-view/${bill.candidateDetails[0]?._id}`}
+                            >
+                              {bill.candidateDetails[0]?.lastName}{" "}
+                              {bill.candidateDetails[0]?.firstName}
+                            </Link>
                           </h5>
                         </TruncateMarkup>
                       </div>
                       <div className="location">
                         <TruncateMarkup lines={1}>
                           <p>
-                            {bill.user?.region}, {bill.user?.stateOfOrigin}
+                            {bill.candidateDetails[0]?.region},{" "}
+                            {bill.candidateDetails[0]?.stateOfOrigin}
                           </p>
                         </TruncateMarkup>
                       </div>
