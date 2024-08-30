@@ -40,7 +40,7 @@ function MainFooter() {
                           <Link to="/bills">Bills & Issues</Link>
                         </li>
                         <li>
-                          <Link to="/e-election">E-Election</Link>
+                          <Link to="/elections">E-Election</Link>
                         </li>
                         <li>
                           <Link to="/news">News</Link>

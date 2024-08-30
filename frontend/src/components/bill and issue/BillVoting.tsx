@@ -156,30 +156,32 @@ function BillVoting({ fetchBill, bill }: BillsResponse) {
               </div>
             </div>
           </div>
-          <div className="btn a_flex">
-            <div className="yea">
-              <button
-                onClick={() =>
-                  handleBillsOpenModal(userInfo ? "vote" : "auth", "yea")
-                }
-                className="yea_btn a_flex"
-              >
-                <i className="fa-solid yea_icon fa-thumbs-up"></i>
-                <p>Yea</p>
-              </button>
+          {bill?.expirationDate && (
+            <div className="btn a_flex">
+              <div className="yea">
+                <button
+                  onClick={() =>
+                    handleBillsOpenModal(userInfo ? "vote" : "auth", "yea")
+                  }
+                  className="yea_btn a_flex"
+                >
+                  <i className="fa-solid yea_icon fa-thumbs-up"></i>
+                  <p>Yea</p>
+                </button>
+              </div>
+              <div className="nay">
+                <button
+                  onClick={() =>
+                    handleBillsOpenModal(userInfo ? "vote" : "auth", "nay")
+                  }
+                  className="nay_btn a_flex"
+                >
+                  <i className="fa-solid nay_icon fa-thumbs-down"></i>
+                  <p>Nay</p>
+                </button>
+              </div>
             </div>
-            <div className="nay">
-              <button
-                onClick={() =>
-                  handleBillsOpenModal(userInfo ? "vote" : "auth", "nay")
-                }
-                className="nay_btn a_flex"
-              >
-                <i className="fa-solid nay_icon fa-thumbs-down"></i>
-                <p>Nay</p>
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
       <span>
