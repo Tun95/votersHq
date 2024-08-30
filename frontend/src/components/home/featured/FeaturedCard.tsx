@@ -87,7 +87,8 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                             <Link
                               to={`/politician-profile-view/${item.candidates[0]?._id}`}
                             >
-                              {item.candidates[0]?.lastName} {item.candidates[0]?.firstName}
+                              {item.candidates[0]?.lastName}{" "}
+                              {item.candidates[0]?.firstName}
                             </Link>
                           </h5>
                         </TruncateMarkup>
@@ -96,7 +97,8 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                         <TruncateMarkup lines={1}>
                           <p>
                             {" "}
-                            {item.candidates[0]?.region}, {item.candidates[0]?.stateOfOrigin}
+                            {item.candidates[0]?.region},{" "}
+                            {item.candidates[0]?.stateOfOrigin}
                           </p>
                         </TruncateMarkup>
                       </div>
@@ -116,7 +118,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                 ) : (
                   <Link to={`/bills/${item.slug}`}>
                     <TruncateMarkup lines={2}>
-                      <h4>{item.title}</h4>
+                      <h4 className="bills_title">{item.title}</h4>
                     </TruncateMarkup>
                   </Link>
                 )}

@@ -29,7 +29,17 @@
                 }
               }
               .details {
+                min-height: 160px;
+                .name {
+                  .bills_title {
+                    width: 100%;
+                    min-height: 50px !important;
+                  }
+                }
                 .past_card {
+                  .description {
+                    min-height: 95px;
+                  }
                   .tag_date {
                     margin-top: 5px;
                   }
@@ -281,7 +291,6 @@
     cursor: pointer;
   }
 }
-
 
 .featured {
   margin-top: 80px;
