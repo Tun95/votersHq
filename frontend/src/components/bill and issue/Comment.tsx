@@ -193,7 +193,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
           { commentContent: newComment },
           { headers: { Authorization: `Bearer ${userInfo?.token}` } }
         );
-        fetchBill();
+        const slug = bill?.slug ?? ""; // Make sure slug is defined
+        await fetchBill(slug, false); // Trigger loading when fetching bill
+
         dispatch({ type: "ADD_COMMENT", payload: response.data });
 
         setNewComment("");
@@ -224,7 +226,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
       });
       setEditingCommentId(null);
       setEditedCommentContent("");
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to update comment", error);
     }
@@ -236,7 +239,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         headers: { Authorization: `Bearer ${userInfo?.token}` },
       });
       dispatch({ type: "DELETE_COMMENT", payload: id });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to delete comment", error);
     }
@@ -256,7 +260,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         });
         setReplyContent("");
         setEditingReplyId(null);
-        fetchBill();
+        const slug = bill?.slug ?? ""; // Make sure slug is defined
+        await fetchBill(slug, false); // Trigger loading when fetching bill
       } catch (error) {
         console.error("Failed to add reply", error);
       }
@@ -281,7 +286,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
       });
       setEditingReplyId(null);
       setEditedReplyContent("");
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to update reply", error);
     }
@@ -294,7 +300,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         { headers: { Authorization: `Bearer ${userInfo?.token}` } }
       );
       dispatch({ type: "DELETE_REPLY", payload: { commentId, replyId } });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to delete reply", error);
     }
@@ -311,7 +318,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         type: "LIKE_COMMENT",
         payload: { id, likes: response.data.likes },
       });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to like comment", error);
     }
@@ -328,7 +336,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         type: "DISLIKE_COMMENT",
         payload: { id, dislikes: response.data.dislikes },
       });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to dislike comment", error);
     }
@@ -345,7 +354,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         type: "LIKE_REPLY",
         payload: { commentId, replyId, likes: response.data.likes },
       });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to like reply", error);
     }
@@ -362,7 +372,8 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
         type: "DISLIKE_REPLY",
         payload: { commentId, replyId, dislikes: response.data.dislikes },
       });
-      fetchBill();
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
     } catch (error) {
       console.error("Failed to dislike reply", error);
     }

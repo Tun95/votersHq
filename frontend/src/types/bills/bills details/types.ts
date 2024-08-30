@@ -86,5 +86,6 @@ export const billsDetailsInitialState: BillsDetailsState = {
 
 export interface BillsResponse {
   bill: Bill | null;
-  fetchBill: () => Promise<void>;
+  fetchBill: (slug: string, triggerLoading?: boolean) => Promise<void>;
 }
+

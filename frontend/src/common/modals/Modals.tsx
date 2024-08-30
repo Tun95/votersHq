@@ -55,7 +55,7 @@ interface BillsModalsProps {
   handleBillsOpenModal: (modal: "auth" | "vote") => void;
   handleCloseBillsModal: () => void;
   bill: Bill | null;
-  fetchBill: () => Promise<void>;
+  fetchBill: (slug: string, triggerLoading?: boolean) => Promise<void>;
   voteType: "yea" | "nay" | null;
 }
 
@@ -89,7 +89,9 @@ export function BillsModal({
       );
       dispatch({ type: "VOTE_SUCCESS", message: response.data.message });
       toast.success(response.data.message); // Notify user of success
-      await fetchBill(); // Refresh the bill data after voting
+      const slug = bill?.slug ?? ""; // Make sure slug is defined
+      await fetchBill(slug, false); // Trigger loading when fetching bill
+
       handleCloseBillsModal(); // Close the modal after voting
     } catch (error) {
       dispatch({

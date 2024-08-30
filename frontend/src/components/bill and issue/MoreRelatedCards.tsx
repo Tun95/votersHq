@@ -16,11 +16,11 @@ import parse from "html-react-parser";
 const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
   const navigate = useNavigate();
 
-  const handleLinkClick = (slug: string) => {
-    fetchBill();
-    navigate(`/bills/${slug}`);
-    window.scrollTo(0, 0);
-  };
+    const handleLinkClick = (slug: string) => {
+      fetchBill(slug, true); // Trigger loading and pass the slug
+      navigate(`/bills/${slug}`);
+      window.scrollTo(0, 0);
+    };
 
   return (
     <div className="more_related_cards">
