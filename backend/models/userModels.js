@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema(
     smsNotification: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false, required: true },
+    
     password: { type: String, required: true },
     passwordChangeAt: Date,
     passwordResetToken: String,

@@ -765,6 +765,13 @@ userRouter.put(
         return res.status(404).json({ message: "User not found" });
       }
 
+      // Check if the user's account is verified
+      if (!user.isAccountVerified) {
+        return res
+          .status(400)
+          .json({ message: "Account not verified. Please verify your account first." });
+      }
+
       // Check if the user is already a politician
       if (user.role === "politician") {
         return res
@@ -784,6 +791,7 @@ userRouter.put(
     }
   })
 );
+
 
 //========================
 // ADD NEW TIMELINE ENTRY
