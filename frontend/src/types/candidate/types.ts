@@ -14,6 +14,9 @@ export interface Candidate {
   runningMateImage: string;
   banner: string;
   biography: string;
+  about: string;
+  education: string;
+  achievement: string;
   manifesto: string;
   timeline: {
     timelineYear: number;

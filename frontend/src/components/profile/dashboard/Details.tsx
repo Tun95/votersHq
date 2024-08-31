@@ -21,7 +21,6 @@ import { GlobalContext } from "../../../context/UserContext";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { toast } from "react-toastify";
-import PersonRemoveOutlinedIcon from "@mui/icons-material/PersonRemoveOutlined";
 
 export interface DetailsProps {
   user: User;
@@ -33,26 +32,8 @@ export interface DetailsProps {
 // Reducer
 function followReducer(state: FollowState, action: ActionType): FollowState {
   switch (action.type) {
-    case "FOLLOW":
-    case "UNFOLLOW":
-      return { ...state, loading: true, error: null };
-
     case "UPGRADE":
       return { ...state, loadingUpgrade: true, error: null }; // Start upgrade loading
-
-    case "FOLLOW_SUCCESS":
-      return {
-        ...state,
-        following: [...state.following, action.payload],
-        loading: false,
-      };
-
-    case "UNFOLLOW_SUCCESS":
-      return {
-        ...state,
-        following: state.following.filter((id) => id !== action.payload),
-        loading: false,
-      };
 
     case "UPGRADE_SUCCESS":
       return {
@@ -64,7 +45,6 @@ function followReducer(state: FollowState, action: ActionType): FollowState {
     case "ERROR":
       return {
         ...state,
-        loading: false,
         loadingUpgrade: false, // Stop any loading
         error: action.payload,
       };
@@ -158,63 +138,6 @@ function Details({
   const handleUpgradeClick = () => {
     upgradeUserToPolitician(user._id);
   };
-
-  //==========================
-  // Function to follow a user
-  //==========================
-  const followUser = async (userId: string) => {
-    if (!userInfo) {
-      return toast.error("You need to login to perform this operation");
-    }
-    dispatch({ type: "FOLLOW", payload: userId });
-    try {
-      const response = await axios.post(
-        `${request}/api/users/follow/${userId}`,
-        {},
-        { headers: { Authorization: `Bearer ${userInfo?.token}` } }
-      );
-      if (response.status === 200) {
-        dispatch({ type: "FOLLOW_SUCCESS", payload: userId });
-        fetchData();
-      }
-    } catch (error) {
-      dispatch({
-        type: "ERROR",
-        payload: getError(error as ErrorResponse),
-      });
-      toast.error(getError(error as ErrorResponse));
-    }
-  };
-
-  //==========================
-  // Function to unfollow a user
-  //==========================
-  const unfollowUser = async (userId: string) => {
-    if (!userInfo) {
-      return toast.error("You need to login to perform this operation");
-    }
-    dispatch({ type: "UNFOLLOW", payload: userId });
-    try {
-      const response = await axios.post(
-        `${request}/api/users/unfollow/${userId}`,
-        {},
-        { headers: { Authorization: `Bearer ${userInfo?.token}` } }
-      );
-      if (response.status === 200) {
-        dispatch({ type: "UNFOLLOW_SUCCESS", payload: userId });
-        fetchData();
-      }
-    } catch (error) {
-      dispatch({
-        type: "ERROR",
-        payload: getError(error as ErrorResponse),
-      });
-      toast.error(getError(error as ErrorResponse));
-    }
-  };
-
-  // Check if the current user is already following the displayed user
-  const isFollowing = state.following.includes(user._id);
 
   const context = useContext(GlobalContext);
 
@@ -344,32 +267,6 @@ function Details({
                 <small>Claim account</small>
               </button>
             ) : null}
-            <button
-              className="main_btn verify a_flex"
-              onClick={() =>
-                isFollowing ? unfollowUser(user._id) : followUser(user._id)
-              }
-              disabled={state.loading}
-            >
-              {state.loading ? (
-                <i className="fa fa-spinner fa-spin"></i>
-              ) : (
-                <>
-                  {isFollowing ? (
-                    <PersonRemoveOutlinedIcon
-                      className={`icon ${isFollowing ? "red" : "green"}`}
-                    />
-                  ) : (
-                    <PersonAddAltOutlinedIcon
-                      className={`icon ${isFollowing ? "red" : "green"}`}
-                    />
-                  )}
-                </>
-              )}
-              <small className={isFollowing ? "red" : "green"}>
-                {isFollowing ? "Unfollow" : "Follow"}
-              </small>
-            </button>
           </div>
         </div>
       </div>
