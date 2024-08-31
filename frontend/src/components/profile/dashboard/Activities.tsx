@@ -147,7 +147,7 @@ function Activities({ user, fetchData }: DetailsProps) {
                     </div>
                   </div>
                   <div className="title_content_time">
-                    <div className="title_time c_flex">
+                    <div className="title_time ">
                       <div className="title">
                         <h4>{activity?.activityType}</h4>
                       </div>

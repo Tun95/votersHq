@@ -170,7 +170,7 @@
       gap: 10px;
       .icons {
         position: relative;
-        top: 4px;
+        top: 2px;
         .l_flex {
           width: 30px;
           height: 30px;
@@ -206,6 +206,10 @@
       .title_content_time {
         .title_time {
           flex-wrap: wrap;
+          display: flex !important;
+          justify-content: space-between !important;
+          column-gap: 10px;
+          width: 100%;
           .title {
             font-size: 15px;
           }
