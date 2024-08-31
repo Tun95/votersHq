@@ -53,17 +53,16 @@ export const registerSchema = yup.object().shape({
   password: yup
     .string()
     .min(8, "Password must be at least 8 characters")
-    .matches(/[A-Z]/, "Password must have at least one uppercase character")
-    .matches(/[a-z]/, "Password must have at least one lowercase character")
-    .matches(/[0-9]/, "Password must have at least one number")
-    .matches(/[@$!%*?&#]/, "Password must have at least one special character")
-    .required("Password is required"),
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(/[\W_]/, "Password must contain at least one special character")
+    .required("password is required"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), undefined], "Passwords must match")
     .required("Confirm Password is required"),
 });
-
 
 export const otpSchema = yup.object().shape({
   otp: yup
@@ -87,17 +86,13 @@ export const loginSchema = yup.object().shape({
     ),
   password: yup
     .string()
-    .required("Password is required")
     .min(8, "Password must be at least 8 characters")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(
-      /[!@#$%^&*]/,
-      "Password must contain at least one special character"
-    ),
+    .matches(/[\W_]/, "Password must contain at least one special character")
+    .required("password is required"),
 });
-
 
 export const timelineSchema = yup.object({
   timelineYear: yup
