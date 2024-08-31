@@ -308,6 +308,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
   };
 
   const likeComment = async (id: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     try {
       const response = await axios.post(
         `${request}/api/bills/${bill?._id}/comments/${id}/like`,
@@ -326,6 +329,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
   };
 
   const dislikeComment = async (id: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     try {
       const response = await axios.post(
         `${request}/api/bills/${bill?._id}/comments/${id}/dislike`,
@@ -344,6 +350,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
   };
 
   const likeReply = async (commentId: string, replyId: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     try {
       const response = await axios.post(
         `${request}/api/bills/${bill?._id}/comments/${commentId}/replies/${replyId}/like`,
@@ -362,6 +371,9 @@ const Comment: React.FC<BillsResponse> = ({ bill, fetchBill }) => {
   };
 
   const dislikeReply = async (commentId: string, replyId: string) => {
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
     try {
       const response = await axios.post(
         `${request}/api/bills/${bill?._id}/comments/${commentId}/replies/${replyId}/dislike`,

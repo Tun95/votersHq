@@ -174,7 +174,7 @@ export function BillsModal({
             </div>
             <div className="text">
               <small>
-                Note that you can only approve and disapprove.
+                Note that you can only approve or disapprove.
               </small>
             </div>
             <div className="btn confirm_cancel a_flex">

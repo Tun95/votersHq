@@ -75,8 +75,7 @@ function VoteStats({
   //============
   const handleLike = async () => {
     if (!userInfo) {
-      toast.error("You need to logged first");
-      return;
+      return toast.error("You need to login to perform this operation");
     }
     dispatch({ type: "LIKE_REQUEST" });
     try {
@@ -103,10 +102,9 @@ function VoteStats({
   // HANDLE DISLIKE
   //============
   const handleDislike = async () => {
-   if (!userInfo) {
-     toast.error("You need to log in first");
-     return;
-   }
+    if (!userInfo) {
+      return toast.error("You need to login to perform this operation");
+    }
 
     dispatch({ type: "DISLIKE_REQUEST" });
     try {
