@@ -630,6 +630,7 @@ billsRouter.get(
                   lastName: "$$comment.lastName",
                   email: "$$comment.email",
                   image: "$$comment.image",
+                  role: "$$comment.role",
                   commentContent: "$$comment.commentContent", // Correct field name
                   user: "$$comment.user",
                   likes: "$$comment.likes",
@@ -776,6 +777,7 @@ billsRouter.post(
         lastName: req.user.lastName,
         email: req.user.email,
         image: req.user.image,
+        role: req.user.role,
         commentContent: req.body.commentContent, // updated field name
         user: req.user._id,
       };
@@ -970,6 +972,7 @@ billsRouter.post(
         lastName: req.user.lastName,
         email: req.user.email,
         image: req.user.image,
+        role: req.user.role,
         replyContent: req.body.replyContent, // updated field name
         mentionedUser: req.body.mentionedUser,
         user: req.user._id,

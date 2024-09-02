@@ -6,6 +6,7 @@ const replySchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String },
     image: { type: String },
+    role: { type: String },
     replyContent: { type: String },
     mentionedUser: {
       type: mongoose.Schema.Types.ObjectId,
@@ -39,6 +40,7 @@ const commentSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String },
     image: { type: String },
+    role: { type: String },
     commentContent: { type: String },
     replies: [replySchema], // Array of replies
     user: {

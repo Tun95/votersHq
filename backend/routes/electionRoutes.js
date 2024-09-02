@@ -662,6 +662,7 @@ electionRouter.post(
         lastName: req.user.lastName,
         email: req.user.email,
         image: req.user.image,
+        role: req.user.role,
         commentContent: req.body.commentContent,
         user: req.user._id,
       };
@@ -786,6 +787,7 @@ electionRouter.post(
         lastName: req.user.lastName,
         email: req.user.email,
         image: req.user.image,
+        role: req.user.role,
         replyContent: req.body.replyContent,
         mentionedUser: req.body.mentionedUser,
         user: req.user._id,

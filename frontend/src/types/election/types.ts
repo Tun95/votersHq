@@ -37,6 +37,7 @@ export interface CommentType {
   lastName: string;
   email: string;
   image: string;
+  role: string;
   commentContent: string;
   user: string;
   likes: string[];
@@ -52,6 +53,7 @@ export interface Reply {
   lastName: string;
   email: string;
   image: string;
+  role: string;
   replyContent: string;
   user: string;
   likes: string[];

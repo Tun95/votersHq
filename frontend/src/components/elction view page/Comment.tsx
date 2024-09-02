@@ -13,6 +13,7 @@ import { request } from "../../base url/BaseUrl";
 import { CommentType, Reply } from "../../types/election/types";
 import { formatDateAgo, useAppContext } from "../../utilities/utils/Utils";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 type ActionType =
   | { type: "SET_COMMENTS"; payload: CommentType[] }
@@ -407,15 +408,42 @@ const Comment: React.FC<ElectionResponse> = ({ election, fetchElection }) => {
                 <div className="head c_flex">
                   <div className="img_name a_flex">
                     <div className="img">
-                      <img
-                        src={comment?.image ? comment.image : icon}
-                        alt={comment.firstName}
-                      />
+                      {comment?.role === "user" ? (
+                        <Link to={`/user-profile-view/${comment?.user}`}>
+                          <img
+                            src={comment.image ? comment.image : icon}
+                            alt={comment.firstName}
+                          />
+                        </Link>
+                      ) : (
+                        comment?.role === "politician" && (
+                          <Link
+                            to={`/politician-profile-view/${comment?.user}`}
+                          >
+                            <img
+                              src={comment.image ? comment.image : icon}
+                              alt={comment.firstName}
+                            />
+                          </Link>
+                        )
+                      )}
                     </div>
                     <div className="name_time f_flex">
                       <div className="name">
                         <h5>
-                          {comment.lastName} {comment.firstName}
+                          {comment?.role === "user" ? (
+                            <Link to={`/user-profile-view/${comment?.user}`}>
+                              {comment.lastName} {comment.firstName}
+                            </Link>
+                          ) : (
+                            comment?.role === "politician" && (
+                              <Link
+                                to={`/politician-profile-view/${comment?.user}`}
+                              >
+                                {comment.lastName} {comment.firstName}
+                              </Link>
+                            )
+                          )}
                         </h5>
                       </div>
                       <div className="time">
@@ -527,15 +555,44 @@ const Comment: React.FC<ElectionResponse> = ({ election, fetchElection }) => {
                       <div className="head c_flex">
                         <div className="img_name a_flex">
                           <div className="img">
-                            <img
-                              src={reply?.image ? reply.image : icon}
-                              alt={reply.firstName}
-                            />
+                            {reply?.role === "user" ? (
+                              <Link to={`/user-profile-view/${reply?.user}`}>
+                                <img
+                                  src={reply?.image ? reply.image : icon}
+                                  alt={reply.firstName}
+                                />
+                              </Link>
+                            ) : (
+                              reply?.role === "politician" && (
+                                <Link
+                                  to={`/politician-profile-view/${reply?.user}`}
+                                >
+                                  <img
+                                    src={reply?.image ? reply.image : icon}
+                                    alt={reply.firstName}
+                                  />
+                                </Link>
+                              )
+                            )}
                           </div>
                           <div className="name_time f_flex">
                             <div className="name">
                               <h5>
-                                {reply.lastName} {reply.firstName}
+                                {reply?.role === "user" ? (
+                                  <Link
+                                    to={`/user-profile-view/${reply?.user}`}
+                                  >
+                                    {reply.lastName} {reply.firstName}
+                                  </Link>
+                                ) : (
+                                  reply?.role === "politician" && (
+                                    <Link
+                                      to={`/politician-profile-view/${reply?.user}`}
+                                    >
+                                      {reply.lastName} {reply.firstName}
+                                    </Link>
+                                  )
+                                )}
                               </h5>
                             </div>
                             <div className="time">
