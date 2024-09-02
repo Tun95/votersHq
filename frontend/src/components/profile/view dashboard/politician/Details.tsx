@@ -143,7 +143,8 @@ function Details({ user, fetchData }: DetailsProps) {
   };
 
   // Check if the current user is already following the displayed user
-  const isFollowing = state.following.includes(user._id);
+  const isFollowing = userInfo ? state.following.includes(user._id) : false;
+
   return (
     <div className="profile_details politician_user">
       <div className="content d_flex">
@@ -176,10 +177,6 @@ function Details({ user, fetchData }: DetailsProps) {
                   <small>Unverified</small>
                 </div>
               )}
-              {/* <div className="status a_flex">
-                <VerifiedIcon className="icon gray" />
-                <small>Unverified</small>
-              </div> */}
             </div>
 
             <div className="available party a_flex">

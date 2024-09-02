@@ -204,12 +204,10 @@
         }
       }
       .title_content_time {
+        width: 100%;
         .title_time {
           flex-wrap: wrap;
-          display: flex !important;
-          justify-content: space-between !important;
-          column-gap: 10px;
-          width: 100%;
+          
           .title {
             font-size: 15px;
           }

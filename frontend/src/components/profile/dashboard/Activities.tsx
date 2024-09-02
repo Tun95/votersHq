@@ -126,6 +126,11 @@ function Activities({ user, fetchData }: DetailsProps) {
                           <PersonAddAltOutlinedIcon className="icon" />
                         </div>
                       )}
+                      {activity?.activityType === "Unfollowed a New User" && (
+                        <div className="un_follow l_flex">
+                          <PersonRemoveOutlinedIcon className="icon" />
+                        </div>
+                      )}
                       {(activity?.activityType === "Commented on a Bill" ||
                         activity?.activityType ===
                           "Commented on an Election") && (
@@ -139,15 +144,10 @@ function Activities({ user, fetchData }: DetailsProps) {
                           <i className="fa-regular fa-thumbs-up icon"></i>
                         </div>
                       )}
-                      {activity?.activityType === "Unfollowed a New User" && (
-                        <div className="un_follow l_flex">
-                          <PersonRemoveOutlinedIcon className="icon" />
-                        </div>
-                      )}
                     </div>
                   </div>
                   <div className="title_content_time">
-                    <div className="title_time ">
+                    <div className="title_time c_flex">
                       <div className="title">
                         <h4>{activity?.activityType}</h4>
                       </div>

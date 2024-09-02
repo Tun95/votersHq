@@ -113,8 +113,9 @@ function Details({ user, fetchData }: DetailsProps) {
     }
   };
 
-  // Check if the current user is already following the displayed user
-  const isFollowing = state.following.includes(user._id);
+  // Check if the current user (userInfo._id) is in the displayed user's following list
+  const isFollowing = userInfo ? state.following.includes(userInfo._id) : false;
+
   return (
     <div className="profile_details politician_user">
       <div className="content d_flex">
