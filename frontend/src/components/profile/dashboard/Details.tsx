@@ -61,7 +61,7 @@ function Details({
   uploadFileHandler,
 }: DetailsProps) {
   const initialFollowUnfollowState: FollowState = {
-    following: user.following,
+    followers: user.followers,
     user: user,
     error: null,
     loading: false,
