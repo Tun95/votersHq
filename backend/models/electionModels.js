@@ -72,6 +72,8 @@ const electionSchema = new mongoose.Schema(
     image: { type: String },
     banner: { type: String },
     pollOverview: { type: String },
+    featured: { type: Boolean, default: false },
+    location: { type: String },
     candidates: [
       {
         type: mongoose.Schema.Types.ObjectId,

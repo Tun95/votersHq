@@ -72,6 +72,8 @@ const billsSchema = new mongoose.Schema(
     image: { type: String },
     banner: { type: String },
     description: { type: String },
+    featured: { type: Boolean, default: false },
+    location: { type: String },
     sortType: [String],
     sortStatus: [String],
     sortCategory: [String],

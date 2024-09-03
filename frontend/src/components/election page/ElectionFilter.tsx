@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FilterParams } from "../../types/election/types";
 
 const sortType = [
-  { name: "All", value: "all" },
+  { name: "All types", value: "all" },
   { name: "Presidential", value: "presidential" },
   { name: "Gubernatorial", value: "gubernatorial" },
   { name: "National Assembly", value: "national" },

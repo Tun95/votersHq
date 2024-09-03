@@ -16,11 +16,11 @@ import parse from "html-react-parser";
 const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
   const navigate = useNavigate();
 
-    const handleLinkClick = (slug: string) => {
-      fetchBill(slug, true); // Trigger loading and pass the slug
-      navigate(`/bills/${slug}`);
-      window.scrollTo(0, 0);
-    };
+  const handleLinkClick = (slug: string) => {
+    fetchBill(slug, true); // Trigger loading and pass the slug
+    navigate(`/bills/${slug}`);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="more_related_cards">
@@ -70,33 +70,25 @@ const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
                       </div>
                       <div className="candidate a_flex">
                         <div className="img">
-                          <img
-                            className="user_candidate_img"
-                            src={bill?.candidates[0]?.image}
-                            alt={bill?.candidates[0]?.firstName}
-                          />
+                          <Link
+                            to={`/politician-profile-view/${bill?.user?._id}`}
+                          >
+                            <img
+                              className="user_candidate_img"
+                              src={bill?.candidates[0]?.image}
+                              alt={bill?.candidates[0]?.firstName}
+                            />
+                          </Link>
                         </div>
                         <div className="name_location">
                           <div className="name">
                             <TruncateMarkup lines={1}>
                               <h5>
-                                {bill?.user?.role === "user" ? (
-                                  <Link
-                                    to={`/user-profile-view/${bill.user?._id}`}
-                                  >
-                                    {bill?.user?.lastName}{" "}
-                                    {bill?.user?.firstName}
-                                  </Link>
-                                ) : (
-                                  bill?.user?.role === "politician" && (
-                                    <Link
-                                      to={`/politician-profile-view/${bill?.user?._id}`}
-                                    >
-                                      {bill?.user?.lastName}{" "}
-                                      {bill?.user?.firstName}
-                                    </Link>
-                                  )
-                                )}
+                                <Link
+                                  to={`/politician-profile-view/${bill?.user?._id}`}
+                                >
+                                  {bill?.user?.lastName} {bill?.user?.firstName}
+                                </Link>
                               </h5>
                             </TruncateMarkup>
                           </div>

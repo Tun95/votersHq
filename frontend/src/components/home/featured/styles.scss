@@ -18,6 +18,7 @@
       }
     }
     .card_list {
+      max-width: 675px;
       .slick_slider {
         .featured_card {
           .slider_content {
@@ -31,6 +32,7 @@
               .details {
                 min-height: 160px;
                 .name {
+                  width: 100%;
                   .bills_title {
                     width: 100%;
                     min-height: 50px !important;
@@ -38,12 +40,13 @@
                 }
                 .past_card {
                   .description {
-                    min-height: 95px;
+                    min-height: 90px;
                   }
                   .tag_date {
                     margin-top: 5px;
                   }
                   .candidate {
+                    width: 100%;
                     margin-top: 10px !important;
                     margin-bottom: 10px;
                     .img {

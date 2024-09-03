@@ -12,8 +12,13 @@ generalRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
-      // Fetch bills with a limit of 4, sorted by creation date
+      // Fetch featured bills, sorted by creation date
       const bills = await Bills.aggregate([
+        {
+          $match: {
+            featured: true,
+          },
+        },
         {
           $addFields: {
             totalYeaVotes: { $size: "$yeaVotes" },
@@ -76,7 +81,6 @@ generalRouter.get(
           },
         },
         { $sort: { createdAt: -1 } }, // Sort by creation date (latest first)
-        { $limit: 4 }, // Limit to 4 items
         {
           $lookup: {
             from: "users",
@@ -144,8 +148,13 @@ generalRouter.get(
         },
       ]);
 
-      // Fetch elections with a limit of 4, sorted by creation date
+      // Fetch featured elections, sorted by creation date
       const elections = await Election.aggregate([
+        {
+          $match: {
+            featured: true,
+          },
+        },
         {
           $addFields: {
             totalVotes: { $size: "$votes" },
@@ -163,13 +172,12 @@ generalRouter.get(
           },
         },
         { $sort: { createdAt: -1 } }, // Sort by creation date (latest first)
-        { $limit: 4 }, // Limit to 4 items
       ]);
 
       // Combine the results and sort again by createdAt to ensure overall order
-      const combined = [...bills, ...elections]
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .slice(0, 8);
+      const combined = [...bills, ...elections].sort(
+        (a, b) => b.createdAt - a.createdAt
+      );
 
       res.send({
         data: combined,
@@ -181,5 +189,6 @@ generalRouter.get(
     }
   })
 );
+
 
 export default generalRouter;

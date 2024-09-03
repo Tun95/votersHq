@@ -75,10 +75,14 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                   </div>
                   <div className="candidate a_flex">
                     <div className="img">
-                      <img
-                        src={item.candidates[0]?.image}
-                        alt={item.candidates[0]?.firstName}
-                      />
+                      <Link
+                        to={`/politician-profile-view/${item.candidates[0]?._id}`}
+                      >
+                        <img
+                          src={item.candidates[0]?.image}
+                          alt={item.candidates[0]?.firstName}
+                        />
+                      </Link>
                     </div>
                     <div className="name_location">
                       <div className="name">

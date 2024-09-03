@@ -55,11 +55,15 @@ const PostCard: FC<BillsCardProps> = ({ bill }) => {
                   </div>
                   <div className="candidate  a_flex">
                     <div className="img">
-                      <img
-                        className="user_candidate_img"
-                        src={bill.candidateDetails[0]?.image}
-                        alt={bill.candidateDetails[0]?.firstName}
-                      />
+                      <Link
+                        to={`/politician-profile-view/${bill.candidateDetails[0]?._id}`}
+                      >
+                        <img
+                          className="user_candidate_img"
+                          src={bill.candidateDetails[0]?.image}
+                          alt={bill.candidateDetails[0]?.firstName}
+                        />
+                      </Link>
                     </div>
                     <div className="name_location">
                       <div className="name">

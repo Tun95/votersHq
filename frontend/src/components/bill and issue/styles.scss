@@ -590,47 +590,50 @@
     margin-top: 80px;
   }
 
-  .more_related_cards {
-    .related_cards_content {
-      .post_cards {
-        .featured_card {
-          padding: 10px;
-          .img_pallet {
-            outline: none;
-            a {
+  .bill_list {
+    .more_related_cards {
+      max-width: 330px;
+      .related_cards_content {
+        .post_cards {
+          .featured_card {
+            padding: 10px;
+            .img_pallet {
               outline: none;
+              a {
+                outline: none;
+              }
             }
-          }
-          .details {
-            padding: 10px 8px;
-            .progress_bar {
-              position: relative;
-              bottom: 4px;
+            .details {
+              padding: 10px 8px;
+              .progress_bar {
+                position: relative;
+                bottom: 4px;
+              }
             }
           }
         }
       }
-    }
-    .comments_share {
-      background-color: var(--color-bg-card);
-      padding: 10px 20px;
-      position: relative;
-      margin: 10px;
-      border-radius: 8px;
-      gap: 10px;
-      // overflow: hidden;
-      .view_count {
-        font-size: 12px;
-        .icon {
-          font-size: 15px;
-          color: var(--color-gray);
-          position: relative;
-          top: 2px;
+      .comments_share {
+        background-color: var(--color-bg-card);
+        padding: 10px 20px;
+        position: relative;
+        margin: 10px;
+        border-radius: 8px;
+        gap: 10px;
+        // overflow: hidden;
+        .view_count {
+          font-size: 12px;
+          .icon {
+            font-size: 15px;
+            color: var(--color-gray);
+            position: relative;
+            top: 2px;
+          }
         }
-      }
-      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-      @media screen and (max-width: 545px) {
-        flex-wrap: wrap;
+        /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+        @media screen and (max-width: 545px) {
+          flex-wrap: wrap;
+        }
       }
     }
   }
