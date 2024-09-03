@@ -35,10 +35,18 @@ function BillsDetails({ fetchBill, bill }: BillsResponse) {
           <div className="candidate c_flex">
             <div className="left a_flex">
               <div className="img">
-                <img
-                  src={bill ? bill.candidates[0]?.image : candidate}
-                  alt={bill?.candidates[0]?.firstName}
-                />
+                <Link
+                  to={`/politician-profile-view/${bill?.candidates[0]?._id}`}
+                >
+                  <img
+                    src={
+                      bill?.candidates[0]?.image
+                        ? bill?.candidates[0]?.image
+                        : candidate
+                    }
+                    alt={bill?.candidates[0]?.firstName}
+                  />
+                </Link>
               </div>
               <div className="name_location a_flex">
                 <div className="name">

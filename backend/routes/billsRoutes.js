@@ -702,39 +702,21 @@ billsRouter.post(
       return res.status(400).send({ message: "Voting period has ended" });
     }
 
-    const alreadyVotedYea = bill.yeaVotes.some(
+    // Check if the user has already voted either "yea" or "nay"
+    const alreadyVoted = bill.yeaVotes.some(
+      (vote) => vote.voterId.toString() === userId.toString()
+    ) || bill.nayVotes.some(
       (vote) => vote.voterId.toString() === userId.toString()
     );
-    const alreadyVotedNay = bill.nayVotes.some(
-      (vote) => vote.voterId.toString() === userId.toString()
-    );
+
+    if (alreadyVoted) {
+      return res.status(400).send({ message: "You have already cast your vote" });
+    }
 
     if (voteType === "yea") {
-      if (alreadyVotedYea) {
-        return res.status(400).send({ message: "You have already voted yea" });
-      }
-
-      // Remove user from nayVotes if they have already voted nay
-      if (alreadyVotedNay) {
-        bill.nayVotes = bill.nayVotes.filter(
-          (vote) => vote.voterId.toString() !== userId.toString()
-        );
-      }
-
       // Add user to yeaVotes with their region
       bill.yeaVotes.push({ voterId: userId, region: user.region });
     } else if (voteType === "nay") {
-      if (alreadyVotedNay) {
-        return res.status(400).send({ message: "You have already voted nay" });
-      }
-
-      // Remove user from yeaVotes if they have already voted yea
-      if (alreadyVotedYea) {
-        bill.yeaVotes = bill.yeaVotes.filter(
-          (vote) => vote.voterId.toString() !== userId.toString()
-        );
-      }
-
       // Add user to nayVotes with their region
       bill.nayVotes.push({ voterId: userId, region: user.region });
     } else {
@@ -754,6 +736,7 @@ billsRouter.post(
     res.send({ message: `Successfully cast your ${voteType} vote` });
   })
 );
+
 
 //****************************************
 // Comment Routes for Bills
