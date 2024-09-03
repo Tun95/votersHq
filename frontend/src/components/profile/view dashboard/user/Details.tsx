@@ -29,13 +29,13 @@ function followReducer(state: FollowState, action: ActionType): FollowState {
     case "FOLLOW_SUCCESS":
       return {
         ...state,
-        following: [...state.following, action.payload],
+        followers: [...state.followers, action.payload],
         loading: false,
       };
     case "UNFOLLOW_SUCCESS":
       return {
         ...state,
-        following: state.following.filter((id) => id !== action.payload),
+        followers: state.followers.filter((id) => id !== action.payload),
         loading: false,
       };
     case "ERROR":
@@ -47,7 +47,7 @@ function followReducer(state: FollowState, action: ActionType): FollowState {
 
 function Details({ user, fetchData }: DetailsProps) {
   const initialFollowUnfollowState: FollowState = {
-    following: user.following,
+    followers: user.followers,
     user: user,
     error: null,
     loading: false,
@@ -77,7 +77,9 @@ function Details({ user, fetchData }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "FOLLOW_SUCCESS", payload: userId });
-        fetchData();
+        // Directly update the user object for immediate UI feedback
+        user.followers.push(userInfo._id);
+        fetchData(); // Refresh the data from server
       }
     } catch (error) {
       dispatch({
@@ -102,7 +104,9 @@ function Details({ user, fetchData }: DetailsProps) {
       );
       if (response.status === 200) {
         dispatch({ type: "UNFOLLOW_SUCCESS", payload: userId });
-        fetchData();
+        // Directly update the user object for immediate UI feedback
+        user.followers = user.followers.filter((id) => id !== userInfo._id);
+        fetchData(); // Refresh the data from server
       }
     } catch (error) {
       dispatch({
@@ -113,8 +117,8 @@ function Details({ user, fetchData }: DetailsProps) {
     }
   };
 
-  // Check if the current user is already following the displayed user
-  const isFollowing = state.following.includes(user._id);
+  // Compute isFollowing after updating user.followers
+  const isFollowing = userInfo ? user.followers.includes(userInfo._id) : false;
 
   return (
     <div className="profile_details politician_user">
@@ -162,7 +166,7 @@ function Details({ user, fetchData }: DetailsProps) {
                 <h4 className="count">
                   {formatNumberNoDecimalShort(user.following.length)}
                 </h4>
-                <small>Followers</small>
+                <small>Following</small>
               </div>
             </div>
           </div>

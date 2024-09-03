@@ -144,7 +144,7 @@ export type ActionType =
 
 // Initial State
 export interface FollowState {
-  following: string[];
+  followers: string[];
   user: User | null;
   error: string | null;
   loading: boolean;
