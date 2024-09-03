@@ -81,6 +81,16 @@
           }
         }
       }
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 450px) {
+        // margin: 0px 10px;
+        .slick_slider {
+          .featured_card {
+            max-width: 100%;
+            width: 100%;
+          }
+        }
+      }
     }
   }
 }
