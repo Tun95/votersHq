@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema(
     achievement: { type: String },
     role: { type: String, enum: ["user", "politician"], default: "user" },
 
+    // New fields for identity verification
+    selfieImage: { type: String }, // URL or path to stored selfie image
+    idImage: { type: String }, // URL or path to stored ID image
+    isIdentityVerified: { type: Boolean, default: false }, // Flag for verification status
+    faceMatchSimilarity: { type: Number }, // Similarity score returned from AWS Rekognition
+
     title: { type: String }, //NEW
     partyImage: { type: String }, //NEW
     partyName: { type: String }, //NEW
@@ -53,7 +59,7 @@ const userSchema = new mongoose.Schema(
     smsNotification: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false, required: true },
-    
+
     password: { type: String, required: true },
     passwordChangeAt: Date,
     passwordResetToken: String,

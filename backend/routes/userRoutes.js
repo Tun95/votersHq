@@ -7,8 +7,92 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import UserActivity from "../models/userActivitiesModels.js";
 import SibApiV3Sdk from "sib-api-v3-sdk";
+import {
+  RekognitionClient,
+  CompareFacesCommand,
+} from "@aws-sdk/client-rekognition"; // AWS SDK v3
+import multer from "multer";
 
 const userRouter = express.Router();
+
+// AWS Rekognition setup
+const rekognitionClient = new RekognitionClient({
+  region: process.env.AWS_REGION, // Example: "us-east-1"
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+// Set up multer for file uploads (both selfie and ID image)
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+//====================================
+// Route to handle selfie and ID image uploads and verification
+//====================================
+userRouter.post(
+  "/selfie-verification",
+  isAuth,
+  upload.fields([{ name: "selfieImage" }, { name: "idImage" }]),
+  expressAsyncHandler(async (req, res) => {
+    const { userId } = req.user; // Assuming userId is included in req.user from authentication
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!req.files.selfieImage || !req.files.idImage) {
+      res
+        .status(400)
+        .json({ message: "Both selfie and ID image are required" });
+      return;
+    }
+
+    const selfieImage = req.files.selfieImage[0].buffer; // Get selfie image buffer
+    const idImage = req.files.idImage[0].buffer; // Get ID image buffer
+
+    // Use AWS Rekognition to compare the two images
+    const params = {
+      SourceImage: { Bytes: idImage }, // ID image as source
+      TargetImage: { Bytes: selfieImage }, // Selfie image as target
+      SimilarityThreshold: 80, // Set a similarity threshold, e.g., 80%
+    };
+
+    const command = new CompareFacesCommand(params);
+
+    try {
+      const data = await rekognitionClient.send(command);
+      const similarity =
+        data.FaceMatches.length > 0 ? data.FaceMatches[0].Similarity : 0;
+
+      if (similarity >= 80) {
+        // If the face comparison is successful, update the user verification status
+        user.selfieImage = req.files.selfieImage[0].originalname; // Store the selfie image filename
+        user.idImage = req.files.idImage[0].originalname; // Store the ID image filename
+        user.isIdentityVerified = true;
+        user.faceMatchSimilarity = similarity;
+
+        await user.save();
+
+        res.status(200).json({
+          message: "Identity verified successfully",
+          similarity,
+        });
+      } else {
+        res.status(400).json({
+          message: "Face comparison failed. Similarity too low.",
+          similarity,
+        });
+      }
+    } catch (err) {
+      console.error("Error comparing faces", err);
+      res.status(500).json({ message: "Face comparison failed", error: err });
+    }
+  })
+);
 
 //============
 //USER SIGN IN
@@ -291,7 +375,6 @@ userRouter.post(
     }
   })
 );
-
 
 //=================================
 // Route to handle OTP generation and email verification for user registration and login
@@ -767,9 +850,9 @@ userRouter.put(
 
       // Check if the user's account is verified
       if (!user.isAccountVerified) {
-        return res
-          .status(400)
-          .json({ message: "Account not verified. Please verify your account first." });
+        return res.status(400).json({
+          message: "Account not verified. Please verify your account first.",
+        });
       }
 
       // Check if the user is already a politician
@@ -791,7 +874,6 @@ userRouter.put(
     }
   })
 );
-
 
 //========================
 // ADD NEW TIMELINE ENTRY

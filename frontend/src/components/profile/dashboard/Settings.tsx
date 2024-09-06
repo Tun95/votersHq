@@ -67,11 +67,12 @@ function Settings({ user }: TabMainPanelProps) {
 
   //MODAL TOGGLE
   const [currentDashboardModal, setCurrentDashboardModal] = useState<
-    "verification" | null
+    "verification" | "webcam" | null
   >(null);
 
-  const handleDashboardOpenModal = (modal: "verification") =>
-    setCurrentDashboardModal(modal);
+ const handleDashboardOpenModal = (modal: "verification" | "webcam") =>
+   setCurrentDashboardModal(modal);
+
 
   const handleCloseDashboardModal = () => setCurrentDashboardModal(null);
 
@@ -403,7 +404,7 @@ function Settings({ user }: TabMainPanelProps) {
                   </div>
                 )}
               </div>
-              <div className="2_step mb style_header c_flex">
+              {/* <div className="2_step mb style_header c_flex">
                 <div className="left">
                   <h4 className="small">2 - Step Verification</h4>
                   <small>
@@ -419,7 +420,7 @@ function Settings({ user }: TabMainPanelProps) {
                     <small>Activate</small>
                   </button>
                 </div>
-              </div>
+              </div> */}
               <div className="first_verification  mb c_flex">
                 <div className="left">
                   <h4 className="small">First Verification</h4>
@@ -451,7 +452,10 @@ function Settings({ user }: TabMainPanelProps) {
                   </small>
                 </div>
                 <div className="right">
-                  <button className="main_btn cancel_btn">
+                  <button
+                    onClick={() => handleDashboardOpenModal("verification")}
+                    className="main_btn cancel_btn"
+                  >
                     <small>Start</small>
                   </button>
                 </div>

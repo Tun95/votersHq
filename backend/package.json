@@ -12,6 +12,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.645.0",
+    "aws-sdk": "^2.1690.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.4.0",
     "cors": "^2.8.5",
@@ -19,6 +21,7 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
+    "geoip-lite": "^1.4.10",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongoose": "^8.5.1",
@@ -29,6 +32,8 @@
     "sharp": "^0.33.4",
     "sib-api-v3-sdk": "^8.5.0",
     "socket.io": "^4.7.5",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "termii-nodejs": "^1.1.4",
+    "zeptomail": "^6.0.0"
   }
 }

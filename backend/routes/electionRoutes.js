@@ -6,6 +6,7 @@ import http from "http";
 import Election from "../models/electionModels.js";
 import UserActivity from "../models/userActivitiesModels.js";
 import User from "../models/userModels.js";
+import geoip from "geoip-lite";
 
 const electionRouter = express.Router();
 
@@ -87,6 +88,14 @@ electionRouter.get(
     const sortCategory = query.sortCategory || "all";
     const order = query.sortOrder || "all";
 
+    // Get user's IP address and location
+    const userIP =
+      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    const geo = geoip.lookup(userIP); // Get user's location
+    const userLocation = geo ? geo.region || geo.city : null; // Use region or city as location
+
+    console.log("LOCATION:", userLocation);
+
     // Filters
     const queryFilter =
       searchQuery && searchQuery !== "all"
@@ -122,15 +131,24 @@ electionRouter.get(
           return { createdAt: -1 }; // General view can show the latest by default
         case "all":
         default:
-          return { createdAt: -1 }; // Default to showing the latest bills
+          if (userLocation) {
+            return { location: userLocation, createdAt: -1 }; // Sort by user's location and most recent
+          } else {
+            return { createdAt: -1 }; // Fallback to showing the latest if no location is available
+          }
       }
     })();
+
+    const locationFilter = userLocation
+      ? { location: { $regex: new RegExp(userLocation, "i") } } // Match location with user region (case-insensitive)
+      : {};
 
     const filters = {
       ...queryFilter,
       ...typeFilter,
       ...statusFilter,
       ...categoryFilter,
+      ...locationFilter,
     };
 
     try {
@@ -392,7 +410,6 @@ electionRouter.get(
         leaderboardTop3: leaderboardAggregationTop3,
         ageRangeDistribution,
       });
-
     } catch (error) {
       console.error("Error fetching election by slug:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -527,7 +544,6 @@ electionRouter.post(
     }
   })
 );
-
 
 //======================
 // Like an election

@@ -14,8 +14,16 @@ import {
 import { Bill } from "../../types/bills/bills details/types";
 import { request } from "../../base url/BaseUrl";
 import axios from "axios";
-import { useReducer } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
+import Webcam from "react-webcam";
+import * as faceapi from "face-api.js";
 
 // Define action types for the reducer
 type VoteAction =
@@ -360,14 +368,106 @@ export function ElectionModal({
 
 // Interface
 interface DashboardModalsProps {
-  currentDashboardModal: "verification" | null;
-  handleDashboardOpenModal: (modal: "verification") => void;
+  currentDashboardModal: "verification" | "webcam" | null;
+  handleDashboardOpenModal: (modal: "verification" | "webcam") => void; // Accept both "verification" and "webcam"
   handleCloseDashboardModal: () => void;
 }
+
 export function DashboardModal({
   currentDashboardModal,
   handleCloseDashboardModal,
+  handleDashboardOpenModal,
 }: DashboardModalsProps) {
+  const [image, setImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const webcamRef = useRef<Webcam>(null);
+
+  useEffect(() => {
+    // Load face-api.js models
+    const loadModels = async () => {
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+      setLoading(false);
+    };
+
+    loadModels();
+  }, []);
+
+  const capture = useCallback(async () => {
+    if (webcamRef.current && !loading) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      if (imageSrc) {
+        setImage(imageSrc);
+        await detectAndUploadFace(imageSrc);
+      }
+    }
+  }, [loading]);
+
+  const detectAndUploadFace = async (imageSrc: string) => {
+    // Create a new image element
+    const img = new Image();
+    img.src = imageSrc;
+
+    img.onload = async () => {
+      // Create a canvas element
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const detections = await faceapi
+          .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (detections) {
+          const { detection } = detections;
+          const { box } = detection;
+
+          // Get the face image data from the canvas
+          const faceImage = ctx.getImageData(
+            box.x,
+            box.y,
+            box.width,
+            box.height
+          );
+
+          if (faceImage) {
+            const faceBlob = new Blob([faceImage.data], { type: "image/jpeg" });
+            const formData = new FormData();
+            formData.append("selfieImage", faceBlob, "selfieImage.jpg");
+
+            setIsUploading(true);
+            try {
+              const response = await axios.post(
+                `${request}/api/users/selfie-verification`,
+                formData,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+
+              console.log(response.data);
+              // Handle successful verification
+            } catch (error) {
+              console.error("Error uploading face image", error);
+              // Handle upload error
+            } finally {
+              setIsUploading(false);
+            }
+          }
+        } else {
+          console.error("No face detected");
+        }
+      }
+    };
+  };
   return (
     <div>
       <Modal
@@ -442,10 +542,56 @@ export function DashboardModal({
             </div>
           </div>
           <div className="btn f_flex">
-            <button className="main_btn">
+            <button
+              onClick={() => handleDashboardOpenModal("webcam")}
+              className="main_btn"
+            >
               <small>Continue</small>
             </button>
           </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={currentDashboardModal === "webcam"}
+        onClose={handleCloseDashboardModal}
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+        className="dashboard_modal_drawer"
+      >
+        <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
+          <div className="top web_top c_flex">
+            <div className="drawer_close_icon">
+              <span
+                onClick={handleCloseDashboardModal}
+                className="span_icon l_flex"
+              >
+                <CloseIcon className="icon" />
+              </span>
+            </div>
+          </div>
+          <Box className="webcam_container l_flex">
+            <div className="webcam_box l_flex">
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                className="webcam"
+                videoConstraints={{ facingMode: "user" }}
+              />
+            </div>
+            <button onClick={capture} disabled={loading || isUploading}>
+              {loading
+                ? "Loading models..."
+                : isUploading
+                ? "Uploading..."
+                : "Capture and Upload"}
+            </button>
+            {image && (
+              <Box className="image_preview">
+                <img src={image} alt="Captured" />
+              </Box>
+            )}
+          </Box>
         </Box>
       </Modal>
     </div>
