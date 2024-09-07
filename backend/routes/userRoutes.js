@@ -36,13 +36,8 @@ userRouter.post(
       },
     });
 
-    console.log("User:", req.user);
-    console.log("Files:", req.files);
-    console.log("Body:", req.body);
-
     try {
       const { userId } = req.body;
-      console.log("Looking up user with ID:", userId);
 
       const user = await User.findById(userId);
 
@@ -58,10 +53,6 @@ userRouter.post(
 
       const selfieImage = req.files.selfieImage[0].buffer;
       const idImage = req.files.idImage[0].buffer;
-
-      // Log image buffer sizes to ensure they are being received
-      console.log("Selfie Image Buffer Size:", selfieImage.length);
-      console.log("ID Image Buffer Size:", idImage.length);
 
       const params = {
         SourceImage: { Bytes: idImage },
