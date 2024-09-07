@@ -15,15 +15,6 @@ import multer from "multer";
 
 const userRouter = express.Router();
 
-// AWS Rekognition setup
-const rekognitionClient = new RekognitionClient({
-  region: process.env.AWS_REGION, // Example: "us-east-1"
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
-
 // Set up multer for file uploads (both selfie and ID image)
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -36,60 +27,84 @@ userRouter.post(
   isAuth,
   upload.fields([{ name: "selfieImage" }, { name: "idImage" }]),
   expressAsyncHandler(async (req, res) => {
-    const { userId } = req.user; // Assuming userId is included in req.user from authentication
-    const user = await User.findById(userId);
+    // AWS Rekognition setup
+    const rekognitionClient = new RekognitionClient({
+      region: "us-east-1", // Default to a known working region
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
 
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    if (!req.files.selfieImage || !req.files.idImage) {
-      res
-        .status(400)
-        .json({ message: "Both selfie and ID image are required" });
-      return;
-    }
-
-    const selfieImage = req.files.selfieImage[0].buffer; // Get selfie image buffer
-    const idImage = req.files.idImage[0].buffer; // Get ID image buffer
-
-    // Use AWS Rekognition to compare the two images
-    const params = {
-      SourceImage: { Bytes: idImage }, // ID image as source
-      TargetImage: { Bytes: selfieImage }, // Selfie image as target
-      SimilarityThreshold: 80, // Set a similarity threshold, e.g., 80%
-    };
-
-    const command = new CompareFacesCommand(params);
+    console.log("User:", req.user);
+    console.log("Files:", req.files);
+    console.log("Body:", req.body);
 
     try {
+      const { userId } = req.body;
+      console.log("Looking up user with ID:", userId);
+
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (!req.files || !req.files.selfieImage || !req.files.idImage) {
+        return res
+          .status(400)
+          .json({ message: "Both selfie and ID image are required" });
+      }
+
+      const selfieImage = req.files.selfieImage[0].buffer;
+      const idImage = req.files.idImage[0].buffer;
+
+      // Log image buffer sizes to ensure they are being received
+      console.log("Selfie Image Buffer Size:", selfieImage.length);
+      console.log("ID Image Buffer Size:", idImage.length);
+
+      // Optional: Verify image formats and process them if needed
+      // const sharp = require('sharp');
+      // const processedSelfieImage = await sharp(selfieImage).toBuffer();
+      // const processedIdImage = await sharp(idImage).toBuffer();
+
+      const params = {
+        SourceImage: { Bytes: idImage },
+        TargetImage: { Bytes: selfieImage },
+        SimilarityThreshold: 80,
+      };
+
+      const command = new CompareFacesCommand(params);
       const data = await rekognitionClient.send(command);
       const similarity =
         data.FaceMatches.length > 0 ? data.FaceMatches[0].Similarity : 0;
 
       if (similarity >= 80) {
-        // If the face comparison is successful, update the user verification status
-        user.selfieImage = req.files.selfieImage[0].originalname; // Store the selfie image filename
-        user.idImage = req.files.idImage[0].originalname; // Store the ID image filename
+        user.selfieImage = req.files.selfieImage[0].originalname;
+        user.idImage = req.files.idImage[0].originalname;
         user.isIdentityVerified = true;
         user.faceMatchSimilarity = similarity;
-
         await user.save();
-
-        res.status(200).json({
-          message: "Identity verified successfully",
-          similarity,
-        });
+        return res
+          .status(200)
+          .json({ message: "Identity verified successfully", similarity });
       } else {
-        res.status(400).json({
+        return res.status(400).json({
           message: "Face comparison failed. Similarity too low.",
           similarity,
         });
       }
     } catch (err) {
-      console.error("Error comparing faces", err);
-      res.status(500).json({ message: "Face comparison failed", error: err });
+      console.error("Error comparing faces:", err);
+      return res.status(500).json({
+        message: "Face comparison failed",
+        error: {
+          message: err.message,
+          stack: err.stack,
+          code: err.code,
+          details: err.$metadata,
+        },
+      });
     }
   })
 );

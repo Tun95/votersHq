@@ -3,9 +3,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import "./styles.scss";
 import Modal from "@mui/material/Modal";
-import f1 from "../../assets/profile/f1.png";
-import f2 from "../../assets/profile/f2.png";
-import f3 from "../../assets/profile/f3.png";
+// import f1 from "../../assets/profile/f1.png";
+// import f2 from "../../assets/profile/f2.png";
+// import f3 from "../../assets/profile/f3.png";
 import {
   ErrorResponse,
   getError,
@@ -18,6 +18,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
+import { User } from "../../types/profile/types";
 
 // Define action types for the reducer
 type VoteAction =
@@ -362,50 +363,67 @@ export function ElectionModal({
 
 // Interface
 interface DashboardModalsProps {
+  user: User;
   currentDashboardModal: "verification" | "webcam" | null;
   handleDashboardOpenModal: (modal: "verification" | "webcam") => void; // Accept both "verification" and "webcam"
   handleCloseDashboardModal: () => void;
 }
 
 export function DashboardModal({
+  user,
   currentDashboardModal,
   handleCloseDashboardModal,
-  handleDashboardOpenModal,
-}: DashboardModalsProps) {
-  const [image, setImage] = useState<string | null>(null);
+}: // handleDashboardOpenModal,
+DashboardModalsProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const webcamRef = useRef<Webcam>(null);
 
+  // Load face-api models asynchronously
   useEffect(() => {
-    // Load face-api.js models
     const loadModels = async () => {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      setLoading(false);
+      try {
+        const apiUrl = `${request}/api/models`;
+
+        console.log("Loading models...");
+        await faceapi.nets.tinyFaceDetector.loadFromUri(apiUrl);
+        await faceapi.nets.faceLandmark68Net.loadFromUri(apiUrl);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(apiUrl);
+        console.log("Models loaded successfully");
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading models", error);
+        toast.error("Failed to load face detection models.");
+      }
     };
 
     loadModels();
   }, []);
 
+  // Capture images from webcam at regular intervals when models are loaded
+  useEffect(() => {
+    if (!loading) {
+      const interval = setInterval(() => {
+        capture();
+      }, 1000); // Capture every second
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   const capture = useCallback(async () => {
     if (webcamRef.current && !loading) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
-        setImage(imageSrc);
         await detectAndUploadFace(imageSrc);
       }
     }
   }, [loading]);
 
   const detectAndUploadFace = async (imageSrc: string) => {
-    // Create a new image element
     const img = new Image();
     img.src = imageSrc;
 
     img.onload = async () => {
-      // Create a canvas element
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       if (ctx) {
@@ -421,130 +439,70 @@ export function DashboardModal({
         if (detections) {
           const { detection } = detections;
           const { box } = detection;
-
-          // Get the face image data from the canvas
           const faceImage = ctx.getImageData(
             box.x,
             box.y,
             box.width,
             box.height
           );
-
           if (faceImage) {
-            const faceBlob = new Blob([faceImage.data], { type: "image/jpeg" });
-            const formData = new FormData();
-            formData.append("selfieImage", faceBlob, "selfieImage.jpg");
+            canvas.width = box.width;
+            canvas.height = box.height;
+            ctx.putImageData(faceImage, 0, 0);
 
-            setIsUploading(true);
-            try {
-              const response = await axios.post(
-                `${request}/api/users/selfie-verification`,
-                formData,
-                {
-                  headers: {
-                    "Content-Type": "multipart/form-data",
-                  },
+            canvas.toBlob(async (blob) => {
+              if (blob) {
+                const formData = new FormData();
+                formData.append("selfieImage", blob, "selfieImage.jpg");
+                // Placeholder for actual ID image
+                formData.append("idImage", blob, "idImage.jpg");
+                formData.append("userId", user._id);
+
+                setIsUploading(true);
+                try {
+                  const response = await axios.post(
+                    `${request}/api/users/selfie-verification`,
+                    formData,
+                    {
+                      headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${userInfo?.token}`,
+                      },
+                    }
+                  );
+
+                  if (response.status === 200) {
+                    toast.success("Selfie verification successful!");
+                  } else {
+                    toast.error(
+                      `Verification failed: ${response.data.message}`
+                    );
+                  }
+                } catch (error) {
+                  console.error("Error uploading face image", error);
+                  toast.error(getError(error as ErrorResponse));
+                } finally {
+                  setIsUploading(false);
                 }
-              );
-
-              console.log(response.data);
-              // Handle successful verification
-            } catch (error) {
-              console.error("Error uploading face image", error);
-              // Handle upload error
-            } finally {
-              setIsUploading(false);
-            }
+              } else {
+                toast.error("Error creating image blob.");
+              }
+            }, "image/jpeg");
+          } else {
+            toast.error("No face detected.");
           }
-        } else {
-          console.error("No face detected");
         }
       }
     };
+    img.onerror = () => {
+      toast.error("Error loading image.");
+    };
   };
+
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
   return (
     <div>
-      <Modal
-        open={currentDashboardModal === "verification"}
-        onClose={handleCloseDashboardModal}
-        aria-labelledby="auth-modal-title"
-        aria-describedby="auth-modal-description"
-        className="dashboard_modal_drawer"
-      >
-        <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
-          <div className="top c_flex">
-            <div className="header">
-              <h4>Face Verification</h4>
-            </div>
-            <div className="drawer_close_icon">
-              <span
-                onClick={handleCloseDashboardModal}
-                className="span_icon l_flex"
-              >
-                <CloseIcon className="icon" />
-              </span>
-            </div>
-          </div>
-          <div className="list">
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f1} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Ensure you are in a well-lit area</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Make sure you are in a well-lit environment and remove any
-                    headgear or glasses.
-                  </p>
-                </div>
-              </div>
-            </div>{" "}
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f2} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Position your Face well</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Please look directly at the camera and remain still while we
-                    capture your facial image.
-                  </p>
-                </div>
-              </div>
-            </div>{" "}
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f3} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Follow the on-screen prompts</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Hold your device steady and keep your head still until the
-                    instruction prompts you to perform some certain poses.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="btn f_flex">
-            <button
-              onClick={() => handleDashboardOpenModal("webcam")}
-              className="main_btn"
-            >
-              <small>Continue</small>
-            </button>
-          </div>
-        </Box>
-      </Modal>
       <Modal
         open={currentDashboardModal === "webcam"}
         onClose={handleCloseDashboardModal}
@@ -580,11 +538,6 @@ export function DashboardModal({
                 ? "Uploading..."
                 : "Capture and Upload"}
             </button>
-            {image && (
-              <Box className="image_preview">
-                <img src={image} alt="Captured" />
-              </Box>
-            )}
           </Box>
         </Box>
       </Modal>

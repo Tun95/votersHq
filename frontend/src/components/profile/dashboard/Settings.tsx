@@ -70,9 +70,8 @@ function Settings({ user }: TabMainPanelProps) {
     "verification" | "webcam" | null
   >(null);
 
- const handleDashboardOpenModal = (modal: "verification" | "webcam") =>
-   setCurrentDashboardModal(modal);
-
+  const handleDashboardOpenModal = (modal: "verification" | "webcam") =>
+    setCurrentDashboardModal(modal);
 
   const handleCloseDashboardModal = () => setCurrentDashboardModal(null);
 
@@ -453,7 +452,7 @@ function Settings({ user }: TabMainPanelProps) {
                 </div>
                 <div className="right">
                   <button
-                    onClick={() => handleDashboardOpenModal("verification")}
+                    onClick={() => handleDashboardOpenModal("webcam")}
                     className="main_btn cancel_btn"
                   >
                     <small>Start</small>
@@ -509,6 +508,7 @@ function Settings({ user }: TabMainPanelProps) {
       </div>
       <span>
         <DashboardModal
+          user={user}
           currentDashboardModal={currentDashboardModal}
           handleDashboardOpenModal={handleDashboardOpenModal}
           handleCloseDashboardModal={handleCloseDashboardModal}
