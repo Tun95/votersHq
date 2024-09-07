@@ -3,9 +3,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import "./styles.scss";
 import Modal from "@mui/material/Modal";
-// import f1 from "../../assets/profile/f1.png";
-// import f2 from "../../assets/profile/f2.png";
-// import f3 from "../../assets/profile/f3.png";
+import f1 from "../../assets/profile/f1.png";
+import f2 from "../../assets/profile/f2.png";
+import f3 from "../../assets/profile/f3.png";
 import {
   ErrorResponse,
   getError,
@@ -373,8 +373,8 @@ export function DashboardModal({
   user,
   currentDashboardModal,
   handleCloseDashboardModal,
-}: // handleDashboardOpenModal,
-DashboardModalsProps) {
+  handleDashboardOpenModal,
+}: DashboardModalsProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const webcamRef = useRef<Webcam>(null);
@@ -503,6 +503,87 @@ DashboardModalsProps) {
   const { userInfo } = appState;
   return (
     <div>
+      <Modal
+        open={currentDashboardModal === "verification"}
+        onClose={handleCloseDashboardModal}
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+        className="dashboard_modal_drawer"
+      >
+        <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
+          <div className="top c_flex">
+            <div className="header">
+              <h4>Face Verification</h4>
+            </div>
+            <div className="drawer_close_icon">
+              <span
+                onClick={handleCloseDashboardModal}
+                className="span_icon l_flex"
+              >
+                <CloseIcon className="icon" />
+              </span>
+            </div>
+          </div>
+          <div className="list">
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f1} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Ensure you are in a well-lit area</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Make sure you are in a well-lit environment and remove any
+                    headgear or glasses.
+                  </p>
+                </div>
+              </div>
+            </div>{" "}
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f2} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Position your Face well</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Please look directly at the camera and remain still while we
+                    capture your facial image.
+                  </p>
+                </div>
+              </div>
+            </div>{" "}
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f3} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Follow the on-screen prompts</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Hold your device steady and keep your head still until the
+                    instruction prompts you to perform some certain poses.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="btn f_flex">
+            <button
+              onClick={() => handleDashboardOpenModal("webcam")}
+              className="main_btn"
+            >
+              <small>Continue</small>
+            </button>
+          </div>
+        </Box>
+      </Modal>
       <Modal
         open={currentDashboardModal === "webcam"}
         onClose={handleCloseDashboardModal}

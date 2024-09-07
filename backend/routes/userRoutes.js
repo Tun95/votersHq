@@ -63,11 +63,6 @@ userRouter.post(
       console.log("Selfie Image Buffer Size:", selfieImage.length);
       console.log("ID Image Buffer Size:", idImage.length);
 
-      // Optional: Verify image formats and process them if needed
-      // const sharp = require('sharp');
-      // const processedSelfieImage = await sharp(selfieImage).toBuffer();
-      // const processedIdImage = await sharp(idImage).toBuffer();
-
       const params = {
         SourceImage: { Bytes: idImage },
         TargetImage: { Bytes: selfieImage },

@@ -452,7 +452,7 @@ function Settings({ user }: TabMainPanelProps) {
                 </div>
                 <div className="right">
                   <button
-                    onClick={() => handleDashboardOpenModal("webcam")}
+                    onClick={() => handleDashboardOpenModal("verification")}
                     className="main_btn cancel_btn"
                   >
                     <small>Start</small>
