@@ -65,9 +65,9 @@ export const formatNumberNoDecimalShort = (value: number): string => {
 };
 
 //FORMAT NUMBER NUMERIC with commas
-export const formatNumberWithCommas = (value: number): string => {
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+// export const formatNumberWithCommas = (value: number): string => {
+//   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+// };
 
 // FORMAT NUMBER WITH 2 DECIMAL PLACES WITHOUT SUFFIXES
 export const formatNumberWithTwoDecimalsNoSuffix = (
