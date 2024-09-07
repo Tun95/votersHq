@@ -14,13 +14,7 @@ import {
 import { Bill } from "../../types/bills/bills details/types";
 import { request } from "../../base url/BaseUrl";
 import axios from "axios";
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
