@@ -3,9 +3,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import "./styles.scss";
 import Modal from "@mui/material/Modal";
-import f1 from "../../assets/profile/f1.png";
-import f2 from "../../assets/profile/f2.png";
-import f3 from "../../assets/profile/f3.png";
+// import f1 from "../../assets/profile/f1.png";
+// import f2 from "../../assets/profile/f2.png";
+// import f3 from "../../assets/profile/f3.png";
 import {
   ErrorResponse,
   getError,
@@ -373,10 +373,11 @@ export function DashboardModal({
   user,
   currentDashboardModal,
   handleCloseDashboardModal,
-  handleDashboardOpenModal,
 }: DashboardModalsProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasCaptured, setHasCaptured] = useState(false); // Prevent multiple captures
   const webcamRef = useRef<Webcam>(null);
 
   // Load face-api models asynchronously
@@ -393,7 +394,7 @@ export function DashboardModal({
         setLoading(false);
       } catch (error) {
         console.error("Error loading models", error);
-        toast.error("Failed to load face detection models.");
+        setErrorMessage("Failed to load face detection models.");
       }
     };
 
@@ -402,22 +403,24 @@ export function DashboardModal({
 
   // Capture images from webcam at regular intervals when models are loaded
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !hasCaptured) {
       const interval = setInterval(() => {
-        capture();
+        if (!isUploading) {
+          capture();
+        }
       }, 1000); // Capture every second
       return () => clearInterval(interval);
     }
-  }, [loading]);
+  }, [loading, isUploading, hasCaptured]);
 
   const capture = useCallback(async () => {
-    if (webcamRef.current && !loading) {
+    if (webcamRef.current && !loading && !hasCaptured) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
         await detectAndUploadFace(imageSrc);
       }
     }
-  }, [loading]);
+  }, [loading, hasCaptured]);
 
   const detectAndUploadFace = async (imageSrc: string) => {
     const img = new Image();
@@ -445,6 +448,7 @@ export function DashboardModal({
             box.width,
             box.height
           );
+
           if (faceImage) {
             canvas.width = box.width;
             canvas.height = box.height;
@@ -454,11 +458,12 @@ export function DashboardModal({
               if (blob) {
                 const formData = new FormData();
                 formData.append("selfieImage", blob, "selfieImage.jpg");
-                // Placeholder for actual ID image
                 formData.append("idImage", blob, "idImage.jpg");
                 formData.append("userId", user._id);
 
                 setIsUploading(true);
+                setErrorMessage(null); // Clear previous error
+
                 try {
                   const response = await axios.post(
                     `${request}/api/users/selfie-verification`,
@@ -473,119 +478,42 @@ export function DashboardModal({
 
                   if (response.status === 200) {
                     toast.success("Selfie verification successful!");
+                    setHasCaptured(true); // Stop further captures
+                    handleCloseDashboardModal(); // Close modal on success
                   } else {
-                    toast.error(
+                    setErrorMessage(
                       `Verification failed: ${response.data.message}`
                     );
                   }
                 } catch (error) {
                   console.error("Error uploading face image", error);
-                  toast.error(getError(error as ErrorResponse));
+                  setErrorMessage(getError(error as ErrorResponse));
                 } finally {
                   setIsUploading(false);
                 }
               } else {
-                toast.error("Error creating image blob.");
+                setErrorMessage("Error creating image blob.");
               }
             }, "image/jpeg");
           } else {
-            toast.error("No face detected.");
+            setErrorMessage("No face detected.");
           }
         }
       }
     };
+
     img.onerror = () => {
-      toast.error("Error loading image.");
+      setErrorMessage("Error loading image.");
     };
   };
 
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
+
   return (
     <div>
       <Modal
         open={currentDashboardModal === "verification"}
-        onClose={handleCloseDashboardModal}
-        aria-labelledby="auth-modal-title"
-        aria-describedby="auth-modal-description"
-        className="dashboard_modal_drawer"
-      >
-        <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
-          <div className="top c_flex">
-            <div className="header">
-              <h4>Face Verification</h4>
-            </div>
-            <div className="drawer_close_icon">
-              <span
-                onClick={handleCloseDashboardModal}
-                className="span_icon l_flex"
-              >
-                <CloseIcon className="icon" />
-              </span>
-            </div>
-          </div>
-          <div className="list">
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f1} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Ensure you are in a well-lit area</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Make sure you are in a well-lit environment and remove any
-                    headgear or glasses.
-                  </p>
-                </div>
-              </div>
-            </div>{" "}
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f2} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Position your Face well</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Please look directly at the camera and remain still while we
-                    capture your facial image.
-                  </p>
-                </div>
-              </div>
-            </div>{" "}
-            <div className="list_item f_flex">
-              <div className="left">
-                <img src={f3} alt="icon" />
-              </div>
-              <div className="right">
-                <div className="list_head">
-                  <h5>Follow the on-screen prompts</h5>
-                </div>
-                <div className="text">
-                  <p>
-                    Hold your device steady and keep your head still until the
-                    instruction prompts you to perform some certain poses.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="btn f_flex">
-            <button
-              onClick={() => handleDashboardOpenModal("webcam")}
-              className="main_btn"
-            >
-              <small>Continue</small>
-            </button>
-          </div>
-        </Box>
-      </Modal>
-      <Modal
-        open={currentDashboardModal === "webcam"}
         onClose={handleCloseDashboardModal}
         aria-labelledby="auth-modal-title"
         aria-describedby="auth-modal-description"
@@ -603,7 +531,13 @@ export function DashboardModal({
             </div>
           </div>
           <Box className="webcam_container l_flex">
-            <div className="webcam_box l_flex">
+            <div
+              className={
+                isUploading
+                  ? "webcam_box face_match l_flex"
+                  : "webcam_box l_flex"
+              }
+            >
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -612,13 +546,28 @@ export function DashboardModal({
                 videoConstraints={{ facingMode: "user" }}
               />
             </div>
-            <button onClick={capture} disabled={loading || isUploading}>
-              {loading
-                ? "Loading models..."
-                : isUploading
-                ? "Uploading..."
-                : "Capture and Upload"}
-            </button>
+            {errorMessage ? (
+              <div className="error-message">{errorMessage}</div>
+            ) : (
+              <div className="btn">
+                <button
+                  className="capture_btn"
+                  onClick={capture}
+                  disabled={loading || isUploading}
+                >
+                  {loading ? (
+                    "Loading models..."
+                  ) : isUploading ? (
+                    <span className="a_flex">
+                      <i className="fa fa-spinner fa-spin"></i>
+                      Uploading...
+                    </span>
+                  ) : (
+                    <span className="red">No face detected</span>
+                  )}
+                </button>
+              </div>
+            )}
           </Box>
         </Box>
       </Modal>
