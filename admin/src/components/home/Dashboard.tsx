@@ -8,7 +8,7 @@ import Widget from "../../common/widget/Widget";
 import LoadingBox from "../../utilities/message loading/LoadingBox";
 import MessageBox from "../../utilities/message loading/MessageBox";
 import Chart from "../../common/chart/Chart";
-import { getError } from "../../utilities/utils/Utils";
+import { ErrorResponse, getError, useAppContext } from "../../utilities/utils/Utils";
 import { request } from "../../base url/BaseUrl";
 import TableData from "../../common/table/Table";
 
@@ -66,8 +66,8 @@ const reducer = (state, action) => {
 };
 
 function Dashboard() {
-  const { state } = useContext(Context);
-  const { userInfo } = state;
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
 
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
     loading: true,
@@ -86,12 +86,15 @@ function Dashboard() {
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const { data } = await axios.get(`${request}/api/orders/summary`, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
+          headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({ type: "FETCH_FAIL", payload: getError(err) });
-        console.log(err);
+      } catch (error) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: getError(error as ErrorResponse),
+        });
+        console.log(error);
       }
     };
     fetchData();
@@ -185,7 +188,7 @@ function Dashboard() {
             </div>
             <div className="charts">
               <Chart
-                title="Last 10 Days (Revenue)"
+                title="Last 10 Days (Vote)"
                 data={salesStats}
                 grid
                 CustomTooltip={CustomTooltip}
@@ -194,7 +197,7 @@ function Dashboard() {
               />
             </div>
             <div className="listContainer">
-              <div className="listTitle">Latest Transactions</div>
+              <div className="listTitle">Latest Registered Users</div>
               <TableData />
             </div>
           </>
