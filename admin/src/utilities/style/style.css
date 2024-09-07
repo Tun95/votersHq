@@ -1,0 +1,133 @@
+/* ALERT & LOADING */
+.alert {
+  padding: 0.5rem 0.8rem;
+  border: 0.1rem solid transparent;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+.alert-info {
+  color: #2020ae;
+  background-color: #e0e0ff;
+}
+.alert-danger {
+  color: #a02020;
+  background-color: #ffe0e0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 1px 2px 2px -2px;
+}
+
+.alert-success {
+  display: inline-block;
+  box-shadow: 1px 2px 2px -2px;
+
+  background-color: lightgreen;
+  color: green;
+}
+
+#load-err {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+._loading_overlay_content {
+  position: absolute;
+  top: 30%;
+  left: 47%;
+}
+
+/* ERROR 404 */
+.page_not_found {
+  width: 100%;
+  min-height: 500px;
+  justify-content: flex-start;
+  position: relative;
+  left: 5%;
+}
+.page_not_found .text {
+  gap: 120px;
+}
+.page_not_found .header {
+  text-align: center;
+  color: var(--color-red);
+  line-height: 70px;
+}
+.page_not_found .found_text p {
+  margin: 30px 0px;
+  color: var(--color-light-gray);
+  font-size: 14px;
+}
+.page_not_found .head_size {
+  font-size: 80px;
+}
+.page_not_found .found_text .link {
+  gap: 25px;
+}
+.page_not_found a {
+  color: var(--color-tab);
+  text-decoration: underline;
+  font-size: 13px;
+}
+.page_not_found a:hover {
+  transition: var(--transition);
+  color: var(--color-link-hover);
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 700px) {
+  ._loading_overlay_content {
+    left: 45%;
+  }
+}
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 545px) {
+  ._loading_overlay_content {
+    left: 44%;
+  }
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 480px) {
+  ._loading_overlay_content {
+    left: 40%;
+  }
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 380px) {
+  ._loading_overlay_content {
+    left: 37%;
+  }
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 320px) {
+  ._loading_overlay_content {
+    left: 33%;
+  }
+}
+
+/*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+@media screen and (max-width: 945px) {
+  .page_not_found {
+    left: auto;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }
+  .page_not_found .text {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  .page_not_found .link {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}
