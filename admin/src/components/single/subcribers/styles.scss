@@ -1,0 +1,97 @@
+.subscribers {
+  .light_shadow:nth-child(2),
+  .light_shadow:nth-child(3) {
+    margin-top: 20px;
+  }
+  .light_shadow {
+    padding: 20px;
+    margin: 0px;
+    h3 {
+      color: var(--color-gray);
+    }
+    .list {
+      .right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      label {
+        cursor: pointer !important;
+        background-color: var(--color-blue);
+        color: var(--color-white);
+        font-weight: 600;
+        padding: 5px 10px;
+        font-size: 17px;
+        border-radius: 4px;
+        .icon_btn {
+          font-size: 15px;
+          gap: 3px;
+          .icon {
+            font-size: 17px;
+          }
+          .text {
+            font-size: 15px;
+          }
+        }
+      }
+      .datagrid {
+        height: 500px;
+      }
+      .cellAction {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        gap: 15px;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        a {
+          text-decoration: none;
+        }
+
+        .blockButton,
+        .deleteButton,
+        .viewButton {
+          padding: 2px 5px;
+          border-radius: 5px;
+          cursor: pointer;
+          line-height: normal; // Ensures buttons don't expand in height
+        }
+
+        .deleteButton {
+          color: crimson !important;
+          border: 1px dotted rgba(220, 20, 60, 0.6) !important;
+        }
+      }
+    }
+
+    .input_box {
+      width: 100%;
+      border: 1px solid var(--color-text-gray);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .textarea {
+      min-height: 200px;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    .settings_btn {
+      display: flex;
+      justify-content: flex-end;
+      .sendButton {
+        margin-top: 20px;
+        padding: 8px 20px;
+      }
+    }
+  }
+
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 500px) {
+    .light_shadow {
+      box-shadow: none;
+    }
+  }
+}

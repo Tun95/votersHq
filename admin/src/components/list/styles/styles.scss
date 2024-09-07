@@ -1,0 +1,167 @@
+.datatable {
+  padding: 20px;
+  box-shadow: var(--light-shadow);
+  background-color: var(--color-white);
+  border-radius: 10px;
+
+  h3 {
+    color: var(--color-gray);
+  }
+
+  .datagrid {
+    padding: 10px;
+    height: 680px;
+  }
+
+  .cellWidthImg {
+    display: flex;
+    align-items: center;
+
+    .cellImg {
+      width: 32px;
+      height: 32px;
+      border-radius: 5px;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+  }
+
+  .cellWithAdminSellerStatus {
+    .yes {
+      color: green;
+    }
+
+    .no {
+      color: red;
+    }
+
+    .pending {
+      color: goldenrod;
+      background-color: rgba(189, 189, 3, 0.103);
+      padding: 5px;
+      border-radius: 5px;
+    }
+  }
+  .cellWithStatus {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    height: 23px;
+    width: fit-content;
+    border-radius: 5px;
+    position: relative;
+    top: 13px;
+    &.active {
+      color: green;
+
+      background-color: rgba(0, 128, 0, 0.151);
+    }
+
+    &.pending {
+      color: goldenrod;
+      background-color: rgba(189, 189, 3, 0.103);
+    }
+
+    &.blocked {
+      color: red;
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+
+    &.false {
+      color: green;
+      background-color: rgba(0, 128, 0, 0.151);
+    }
+
+    &.true {
+      color: red;
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+  }
+
+  .cellWithPrice {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .cellAction {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    a {
+      text-decoration: none;
+    }
+
+    .blockButton,
+    .deleteButton,
+    .viewButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      line-height: normal; // Ensures buttons don't expand in height
+    }
+
+    .blockButton {
+      color: darkblue !important;
+      border: 1px dotted rgba(0, 0, 139, 0.596) !important;
+    }
+
+    .deleteButton {
+      color: crimson !important;
+      border: 1px dotted rgba(220, 20, 60, 0.6) !important;
+    }
+
+    .viewButton {
+      color: darkgreen !important;
+      border: 1px dotted rgba(0, 139, 0, 0.596) !important;
+    }
+  }
+}
+
+.admin_page_all {
+  .productTitleContainer {
+    margin-bottom: 20px;
+
+    .productTitle {
+      padding: 20px;
+      background-color: var(--color-white);
+    }
+  }
+
+  .order_table {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    .product_not {
+      padding-bottom: 20px;
+    }
+    .tableCell {
+      .alert {
+        padding: 0.23rem 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 11px;
+        margin: -3px 0px;
+        position: relative;
+        right: 18px;
+      }
+      .refund_negate {
+        text-align: center;
+        position: relative;
+        right: 22px;
+      }
+    }
+    .tableEditBtn {
+      border: 1px dotted #e94560;
+      background: transparent;
+      padding: 5px;
+      border-radius: 5px;
+      margin-right: 5px;
+      cursor: pointer;
+      color: var(--color-primary);
+    }
+  }
+}

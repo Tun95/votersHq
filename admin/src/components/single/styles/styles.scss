@@ -1,0 +1,99 @@
+.userInfotop {
+  display: flex;
+  // padding: 20px;
+  margin-top: 20px;
+  gap: 20px;
+
+  .left {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    .userInfo_widget {
+      .left,
+      .right {
+        box-shadow: none;
+      }
+    }
+    .editButton a {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 5px 10px;
+      font-size: 16px;
+      color: #7451f8;
+      background-color: #7551f81c;
+      cursor: pointer;
+      border-radius: 0px 0px 0px 5px;
+      border-top-right-radius: 10px;
+    }
+
+    .item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .itemImg {
+        height: 100px;
+        width: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .details {
+        .itemTitle {
+          margin-bottom: 10px;
+          color: #555;
+        }
+        .detailItem {
+          margin-bottom: 10px;
+          font-size: 14px;
+          display: flex;
+          flex-wrap: wrap;
+          .itemKey {
+            font-weight: bold;
+            color: var(--color-gray);
+            margin-right: 5px;
+          }
+          .itemValue {
+            font-weight: 300;
+          }
+        }
+      }
+    }
+  }
+
+  .right {
+    flex: 2;
+    padding: 20px;
+  }
+}
+.bottom {
+ padding: 20px;
+  margin: 20px 0px;
+}
+.title {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: var(--color-light-gray);
+}
+@media screen and (max-width: 900px) {
+  .userInfotop {
+    flex-direction: column;
+  }
+}
+@media screen and (max-width: 375px) {
+  .userInfotop {
+    .left {
+      .userInfo_widget {
+        .widget {
+          padding: 5px;
+          .counter {
+            font-size: 20px;
+          }
+          .icon {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

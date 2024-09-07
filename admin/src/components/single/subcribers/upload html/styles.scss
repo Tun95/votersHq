@@ -1,0 +1,40 @@
+.html_news {
+  .html_news_letter {
+    .upload_input_btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: last baseline;
+      border: 1px dotted var(--color-light-gray);
+      padding: 10px;
+      border-radius: 8px;
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 350px) {
+        flex-direction: column;
+
+        align-items: flex-start;
+      }
+      .upload_label {
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+        label {
+          margin-bottom: 10px;
+        }
+        input {
+          font-size: 14px;
+          width: 190px;
+        }
+      }
+    }
+    .upload_btn {
+      margin-top: 8px;
+    }
+    .send_upload_btn {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .lower_form {
+      margin-top: 10px;
+    }
+  }
+}
