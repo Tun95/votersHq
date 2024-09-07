@@ -67,9 +67,7 @@ body {
   font-family: "Poppins", sans-serif;
   background-color: var(--color-white);
 }
-.app {
-  margin-top: -25px;
-}
+
 .container {
   width: var(--container-width-lg);
   max-width: 1600px;

@@ -8,7 +8,6 @@ function App() {
     <>
       <div className="app">
         <ToastContainer position="bottom-center" limit={1} />
-
         <Routes>
           <Route path="/" element={<DashboardScreen />} />
         </Routes>
