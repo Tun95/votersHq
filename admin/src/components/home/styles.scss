@@ -1,16 +1,18 @@
 .dashboard {
   display: flex;
 
-  .widgets,
-  .charts {
+  .widgets {
     display: flex;
     padding: 20px 0px;
     gap: 20px;
     width: 100%;
   }
-
-  .charts {
-    padding: 5px 0px;
+  .chart_annoying {
+    // max-height: 400px;
+    .charts {
+      padding: 5px 0px;
+      // height: 450px;
+    }
   }
   .listContainer {
     box-shadow: var(--light-shadow);

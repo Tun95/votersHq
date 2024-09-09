@@ -272,8 +272,8 @@ billsRouter.get(
 //===============================
 billsRouter.put(
   "/:id",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const bill = await Bills.findById(req.params.id);

@@ -600,6 +600,22 @@ userRouter.get(
 );
 
 //==========================
+// fetch all users with latest creation date and limit of 10
+//==========================
+userRouter.get(
+  "/latest",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      // Fetch users sorted by creation date in descending order and limit to 10
+      const users = await User.find().sort({ createdAt: -1 }).limit(10);
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching latest users", error });
+    }
+  })
+);
+
+//==========================
 // fetch users with role "politician"
 //==========================
 userRouter.get(

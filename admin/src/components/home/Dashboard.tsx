@@ -1,58 +1,66 @@
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Helmet } from "react-helmet-async";
 
 import "./styles.scss";
 import axios from "axios";
-import PropTypes from "prop-types";
 import Widget from "../../common/widget/Widget";
 import LoadingBox from "../../utilities/message loading/LoadingBox";
 import MessageBox from "../../utilities/message loading/MessageBox";
 import Chart from "../../common/chart/Chart";
-import { ErrorResponse, getError, useAppContext } from "../../utilities/utils/Utils";
+import {
+  ErrorResponse,
+  getError,
+  useAppContext,
+} from "../../utilities/utils/Utils";
 import { request } from "../../base url/BaseUrl";
 import TableData from "../../common/table/Table";
+import { TooltipProps } from "recharts";
 
-const formatNumber = (num) => {
-  const absNum = Math.abs(num);
+interface StatsData {
+  name: string;
+  "Bills Votes": number;
+  "Election Votes": number;
+}
+
+// Define the types for the fetched data
+interface SummaryData {
+  users: number;
+  bills: number;
+  elections: number;
+  news: number;
+  votes: { date: string; billsVotes: number; electionVotes: number }[];
+}
+
+// Format numbers with suffix (e.g., 1.2k, 3.4m)
+const formatShortNumber = (num: number): string => {
   const ranges = [
     { divider: 1e9, suffix: "b" },
     { divider: 1e6, suffix: "m" },
     { divider: 1e3, suffix: "k" },
   ];
   for (const range of ranges) {
-    if (absNum >= range.divider) {
-      return (
-        new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          minimumFractionDigits: 1,
-        }).format(num / range.divider) + range.suffix
-      );
-    }
-  }
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 1,
-  }).format(num);
-};
-
-const formatShortNumber = (num) => {
-  const absNum = Math.abs(num);
-  const ranges = [
-    { divider: 1e9, suffix: "b" },
-    { divider: 1e6, suffix: "m" },
-    { divider: 1e3, suffix: "k" },
-  ];
-  for (const range of ranges) {
-    if (absNum >= range.divider) {
+    if (Math.abs(num) >= range.divider) {
       return (num / range.divider).toFixed(1) + range.suffix;
     }
   }
   return num.toString();
 };
 
-const reducer = (state, action) => {
+// Define the state structure for the reducer
+interface State {
+  loading: boolean;
+  summary: SummaryData;
+  error: string;
+}
+
+// Define the possible actions the reducer can handle
+type Action =
+  | { type: "FETCH_REQUEST" }
+  | { type: "FETCH_SUCCESS"; payload: SummaryData }
+  | { type: "FETCH_FAIL"; payload: string };
+
+// Reducer function to manage fetching states
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
@@ -69,23 +77,25 @@ function Dashboard() {
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
+  // Define initial state for the dashboard
   const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
     loading: true,
     summary: {
-      salesData: [],
-      users: [{ numUsers: 0 }],
-      orders: [{ numOrders: 0 }],
-      income: [{ sales: 0 }],
-      salePerformance: [{ sales: 0 }],
-    },
+      users: 0,
+      bills: 0,
+      elections: 0,
+      news: 0,
+      votes: [],
+    } as SummaryData,
     error: "",
   });
 
+  // Fetch the summary data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`${request}/api/orders/summary`, {
+        const { data } = await axios.get(`${request}/api/generals/summary`, {
           headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -94,38 +104,49 @@ function Dashboard() {
           type: "FETCH_FAIL",
           payload: getError(error as ErrorResponse),
         });
-        console.log(error);
       }
     };
     fetchData();
   }, [userInfo]);
 
-  const [salesStats, setSalesStats] = useState([]);
+  const [voteStats, setVoteStats] = useState<StatsData[]>([]);
 
+  // Prepare data for the chart based on vote data
   useEffect(() => {
     const getStats = () => {
-      const stats = summary.dailyOrders?.reverse().map((item) => ({
-        name: item._id,
-        "Total Sales": item.sales,
+      const stats = summary.votes.map((item) => ({
+        name: item.date,
+        "Bills Votes": item.billsVotes,
+        "Election Votes": item.electionVotes,
       }));
-      setSalesStats(stats);
+      setVoteStats(stats);
     };
     getStats();
-  }, [summary.dailyOrders]);
+  }, [summary.votes]);
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  // CustomTooltip Component
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+    active,
+    payload,
+    label,
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="custom_tooltip" style={{ padding: "10px" }}>
           {label ? (
-            <p className="label">{`${label}`}</p>
-          ) : payload[0]?.name ? (
-            <p className="">{`Date: ${payload[0]?.name}`}</p>
+            <p className="label">{`Date: ${label}`}</p>
+          ) : payload[0]?.payload.name ? (
+            <p className="">{`Date: ${payload[0]?.payload.name}`}</p>
           ) : (
             ""
           )}
           <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
-            Total Sales: {`${formatNumber(payload[0]?.value)}`}
+            Bills Votes:{" "}
+            {formatShortNumber(payload[0]?.payload["Bills Votes"] ?? 0)}
+          </p>
+          <p className="" style={{ color: "#5550bd", marginTop: "3px" }}>
+            Election Votes:{" "}
+            {formatShortNumber(payload[0]?.payload["Election Votes"] ?? 0)}
           </p>
         </div>
       );
@@ -133,69 +154,44 @@ function Dashboard() {
     return null;
   };
 
-  CustomTooltip.propTypes = {
-    active: PropTypes.bool.isRequired,
-    payload: PropTypes.arrayOf(PropTypes.object),
-    label: PropTypes.string,
-  };
+  const TotalUsers = formatShortNumber(summary.users);
+  const TotalBills = formatShortNumber(summary.bills);
+  const TotalElections = formatShortNumber(summary.elections);
+  const TotalNews = formatShortNumber(summary.news);
 
-  const userNum = summary.users.length ? summary.users[0].numUsers : 0;
-  const TotalUsers = formatShortNumber(userNum);
-
-  const orderNum = summary.orders.length ? summary.orders[0].numOrders : 0;
-  const TotalOrders = formatShortNumber(orderNum);
-
-  // REFUNDS
-  const refundedOrders = summary.refundedOrders || {
-    numRefunded: 0,
-    totalAmountRefunded: 0,
-  };
-  const numRefunded = formatShortNumber(refundedOrders.numRefunded);
-  const totalAmountRefunded = formatNumber(refundedOrders.totalAmountRefunded);
-
-  const salesTotal = summary.income.length ? summary.income[0].sales : 0;
-  const TotalSales = formatNumber(salesTotal); // You can keep formatPrice for TotalSales if you want currency formatting.
-
-  const grandTotal = summary.salePerformance.length
-    ? summary.salePerformance[0].sales
-    : 0;
-  const GrandTotalSales = formatNumber(grandTotal); // Using formatNumber for GrandTotalSales.
-
-  console.log(numRefunded, totalAmountRefunded);
   return (
     <div className="admin_page_all admin_page_screen">
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
 
-      <div className="home dashboard container s_flex">
+      <div className="home dashboard s_flex">
         {loading ? (
           <LoadingBox></LoadingBox>
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
           <>
-            <div className="widgets ">
-              <Widget TotalUsers={TotalUsers} summary={summary} type="user" />
-              <Widget TotalOrders={TotalOrders} type="order" />
-              <Widget numRefunded={numRefunded} type="numRefund" />
-              <Widget TotalSales={TotalSales} type="income" />
-              <Widget
-                totalAmountRefunded={totalAmountRefunded}
-                type="amountRefunded"
-              />
-              <Widget GrandTotalSales={GrandTotalSales} type="balance" />
+            <div className="widgets">
+              <Widget TotalUsers={Number(TotalUsers)} type="user" />
+              <Widget TotalBills={Number(TotalBills)} type="bill" />
+              <Widget TotalElections={Number(TotalElections)} type="election" />
+              <Widget TotalNews={Number(TotalNews)} type="news" />
             </div>
-            <div className="charts">
-              <Chart
-                title="Last 10 Days (Vote)"
-                data={salesStats}
-                grid
-                CustomTooltip={CustomTooltip}
-                dataKey="Total Sales"
-                aspect={2 / 1}
-              />
+
+            <div className="chart_annoying">
+              <div className="charts">
+                <Chart
+                  title="Last 10 Days (Votes)"
+                  data={voteStats}
+                  grid
+                  dataKeys={["Bills Votes", "Election Votes"]}
+                  aspect={2 / 1}
+                  CustomTooltip={CustomTooltip}
+                />
+              </div>
             </div>
+
             <div className="listContainer">
               <div className="listTitle">Latest Registered Users</div>
               <TableData />

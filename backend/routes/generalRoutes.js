@@ -2,6 +2,9 @@ import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import Bills from "../models/billsModels.js";
 import Election from "../models/electionModels.js";
+import { isAdmin, isAuth } from "../utils.js";
+import User from "../models/userModels.js";
+import PoliticalNews from "../models/politicalNewsModels.js";
 
 const generalRouter = express.Router();
 
@@ -190,5 +193,157 @@ generalRouter.get(
   })
 );
 
+//===========
+// SUMMARY
+//===========
+const getBillsVotesLast10Days = async () => {
+  const billsVotes = await Bills.aggregate([
+    {
+      $facet: {
+        yeaVotes: [
+          { $unwind: "$yeaVotes" },
+          { $match: { "yeaVotes.createdAt": { $exists: true } } },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$yeaVotes.createdAt",
+                },
+              },
+              totalVotes: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          { $project: { _id: 0, date: "$_id", totalVotes: 1 } },
+        ],
+        nayVotes: [
+          { $unwind: "$nayVotes" },
+          { $match: { "nayVotes.createdAt": { $exists: true } } },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$nayVotes.createdAt",
+                },
+              },
+              totalVotes: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          { $project: { _id: 0, date: "$_id", totalVotes: 1 } },
+        ],
+      },
+    },
+    {
+      $project: {
+        votes: {
+          $concatArrays: ["$yeaVotes", "$nayVotes"],
+        },
+      },
+    },
+    { $unwind: "$votes" },
+    {
+      $group: {
+        _id: "$votes.date",
+        totalVotes: { $sum: "$votes.totalVotes" },
+      },
+    },
+    { $sort: { _id: -1 } },
+    { $limit: 10 },
+    { $sort: { _id: 1 } },
+  ]);
+
+  return billsVotes;
+};
+
+const getElectionVotesLast10Days = async () => {
+  const electionVotes = await Election.aggregate([
+    {
+      $unwind: "$votes",
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: "%Y-%m-%d", date: "$votes.createdAt" },
+        },
+        totalVotes: { $sum: 1 }, // Count votes
+      },
+    },
+    {
+      $sort: { _id: 1 }, // Sort by date
+    },
+    {
+      $addFields: {
+        date: "$_id",
+        totalVotes: "$totalVotes",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: 1,
+        totalVotes: 1,
+      },
+    },
+    {
+      $sort: { _id: -1 }, // Sort by date descending
+    },
+    {
+      $limit: 10, // Last 10 days
+    },
+    {
+      $sort: { _id: 1 }, // Sort by date ascending for the chart
+    },
+  ]);
+  return electionVotes;
+};
+generalRouter.get(
+  "/summary",
+  expressAsyncHandler(async (req, res) => {
+    const [usersCount, billsCount, electionsCount, politicalNewsCount] =
+      await Promise.all([
+        User.countDocuments(),
+        Bills.countDocuments(),
+        Election.countDocuments(),
+        PoliticalNews.countDocuments(),
+      ]);
+
+    const billsVotes = await getBillsVotesLast10Days();
+    const electionVotes = await getElectionVotesLast10Days();
+
+    const last10Days = Array.from(
+      { length: 10 },
+      (_, i) =>
+        new Date(Date.now() - i * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0]
+    ).reverse();
+
+    const mergedVotes = last10Days.map((date) => {
+      const billsVote = billsVotes.find((v) => v._id === date) || {
+        totalVotes: 0,
+      };
+      const electionVote = electionVotes.find((v) => v.date === date) || {
+        totalVotes: 0,
+      };
+
+      return {
+        date,
+        billsVotes: billsVote.totalVotes,
+        electionVotes: electionVote.totalVotes,
+      };
+    });
+
+    res.send({
+      users: usersCount,
+      bills: billsCount,
+      elections: electionsCount,
+      news: politicalNewsCount,
+      votes: mergedVotes,
+    });
+  })
+);
 
 export default generalRouter;

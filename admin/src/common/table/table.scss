@@ -11,7 +11,7 @@
       object-fit: cover;
     }
   }
-  .widgetLgButton.Approved {
+  .widgetLgButton.Verified {
     // background-color: #e5faf2;
     color: #3bb077;
     border-radius: 5px;
@@ -19,13 +19,13 @@
     padding: 3px;
     border: 1px dotted #3bb077;
   }
-  .widgetLgButton.Passive {
+  .widgetLgButton.Unverified {
     // background-color: #fff0f1;
     color: #f62f5e;
     padding: 3px;
     background: transparent;
     border-radius: 5px;
-    border: 1px dotted var(--color-primary);
+    border: 1px dotted var(--color-red);
   }
   .widgetLgButton.InProgress {
     // background-color: #ebf1fe;

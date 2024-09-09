@@ -4,7 +4,11 @@ export interface TimelineItem {
   timelineDetails: string;
 }
 
-// Define types for the user and state
+export enum UserRole {
+  USER = "user",
+  POLITICIAN = "politician",
+}
+
 export interface User {
   _id: string;
   firstName: string;
@@ -16,10 +20,10 @@ export interface User {
   education: string;
   achievement: string;
   identificationType: string;
-  ninNumber: number;
+  ninNumber: number; 
   stateOfOrigin: string;
   stateOfResidence: string;
-  role: string;
+  role: UserRole; // Changed to UserRole enum
   emailNotification: boolean;
   smsNotification: boolean;
   twoStepVerification: boolean;
@@ -32,10 +36,11 @@ export interface User {
   timeline: TimelineItem[]; // Use specific type
   createdAt: string;
   updatedAt: string;
-  image: string; // Add the image field here
+  image: string; // Added field
 }
 
-export interface State {
+
+export interface userState {
   loading: boolean;
   error: string;
   user?: User;
@@ -45,7 +50,7 @@ export interface State {
   errorUpload?: string;
 }
 
-export interface Action {
+export interface userAction {
   type:
     | "FETCH_REQUEST"
     | "FETCH_SUCCESS"
@@ -62,7 +67,7 @@ export interface Action {
   payload?: User | string; // Adjusted to include user and string types
 }
 
-export const initialState: State = {
+export const initialState: userState = {
   loading: true,
   error: "",
   loadingUpdate: false,

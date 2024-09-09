@@ -1,0 +1,133 @@
+.main_nav {
+  .content {
+    // .main_sidebar {
+    //   display: none;
+    // }
+    .btn {
+      gap: 30px;
+      .login {
+        .onClick_span {
+          transition: var(--transition);
+          font-weight: 500;
+          &:hover {
+            color: var(--color-primary);
+          }
+        }
+      }
+      .register {
+        .main_btn {
+          .icon {
+            top: 2px;
+          }
+        }
+      }
+    }
+    .user_info {
+      column-gap: 15px;
+      .icon {
+        position: relative;
+        top: 3px;
+        color: var(--color-gray);
+        cursor: pointer;
+      }
+      .user_img_icon {
+        cursor: pointer;
+        .img {
+          img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      .btn {
+        display: none;
+      }
+      .main_sidebar {
+        display: block;
+      }
+      .user_info {
+        display: none;
+      }
+    }
+  }
+}
+.nav_bar {
+  padding: 15px 0px;
+  background-color: var(--color-white);
+  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1500;
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    z-index: 1000;
+  }
+  .content {
+    .logo_box {
+      .logo {
+        gap: 10px;
+        width: fit-content;
+        height: fit-content;
+        align-items: start;
+        height: 28px;
+        transition: var(--transition);
+        .img {
+          img {
+            width: 28px;
+          }
+        }
+        .logo_text {
+          color: var(--color-green);
+          transition: var(--transition);
+        }
+        &:hover {
+          .logo_text {
+            color: var(--color-primary);
+          }
+        }
+      }
+    }
+    .list {
+      ul {
+        gap: 40px;
+        a {
+          transition: var(--transition);
+          font-weight: 500;
+          &:hover {
+            color: var(--color-primary);
+          }
+        }
+      }
+    }
+    .btn {
+      .main_btn {
+        border-radius: 20px;
+        font-size: 15px;
+        gap: 5px;
+        height: 40px;
+        padding: 9px 20px;
+        align-items: center;
+        transition: var(--transition);
+        .icon {
+          font-size: 18px;
+          position: relative;
+          top: 3px;
+        }
+        .btn_text {
+          font-size: 14px;
+        }
+      }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      .list {
+        display: none;
+      }
+    }
+  }
+}

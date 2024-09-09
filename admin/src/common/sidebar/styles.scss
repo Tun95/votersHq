@@ -1,0 +1,214 @@
+.side_bar_drawer {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  a {
+    color: var(--color-white);
+  }
+  .toggle_width {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    padding-top: 10px;
+    background-color: var(--color-background-bg);
+    .logo_span {
+      position: relative;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--color-white);
+      padding-bottom: 10px;
+      .logo_text {
+        gap: 10px;
+        img {
+          width: 35px;
+          //height: ;
+          cursor: pointer;
+        }
+        h2 {
+          color: var(--color-white);
+          font-weight: 500;
+        }
+      }
+      .icon {
+        font-size: 25px;
+        position: relative;
+        font-weight: 500;
+        bottom: -9px;
+        left: 3px;
+        cursor: pointer;
+        color: var(--color-white);
+      }
+    }
+
+    .toggle_btn {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 600;
+      width: 180px;
+    }
+  }
+  .main {
+    width: 320px;
+    .login_reg {
+      background-color: var(--color-black);
+      color: var(--color-gray);
+      padding: 15px 20px;
+      width: 100%;
+      a {
+        color: var(--color-white);
+        font-size: 14px;
+        font-weight: 300;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .content {
+        width: 100%;
+        .user_account {
+          width: 100%;
+          margin-right: -20px;
+          .my_account {
+            font-size: 16px;
+            .icon {
+              font-size: 20px;
+            }
+          }
+          .icon {
+            color: var(--color-light-gray);
+            font-size: 18px;
+          }
+          .logout_btn {
+            width: 100%;
+            background: transparent;
+            color: var(--color-white);
+            cursor: pointer;
+            &:hover {
+              .btn_text {
+                border-bottom: 1px solid var(--color-white);
+                padding-bottom: -15px;
+              }
+            }
+          }
+        }
+        .user_account_open {
+          position: relative;
+          top: 8px;
+        }
+        .user {
+          background-color: var(--color-gray);
+          color: var(--color-white);
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          padding: 20px;
+          margin-right: 10px;
+          .icon {
+            font-size: 28px;
+          }
+        }
+        .link_small {
+          font-size: 15px;
+          line-height: 18px;
+          .link {
+            span {
+              margin: 0px 10px;
+            }
+          }
+          small {
+            color: var(--color-light-gray);
+            font-size: 12px;
+            font-weight: 300;
+          }
+        }
+      }
+    }
+
+    .list_info {
+      padding: 15px 20px;
+      color: var(--color-white);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 36px;
+      width: 100%;
+      ul {
+        width: 100%;
+        padding: 0; /* Add padding: 0 to ul to remove any default padding */
+      }
+      li {
+        width: 100%;
+        display: flex; /* Flex display to allow the link to span full width */
+      }
+      a {
+        width: 100%;
+        display: block;
+        padding: 8px;
+        text-decoration: none; /* Remove underline from links */
+        color: inherit; /* Inherit the color from parent */
+        transition: var(--transition);
+        &:hover {
+          color: var(--color-yellow);
+        }
+      }
+    }
+    .login_register {
+      flex-direction: column;
+      gap: 20px;
+      padding: 10px 30px;
+      .main_btn {
+        background-color: var(--color-dark);
+        border-radius: 30px;
+        padding: 12px 50px;
+        font-size: 15px;
+      }
+      .register {
+        .main_btn {
+          background-color: var(--color-white);
+          color: var(--color-black);
+          width: 100%;
+          .icon_span {
+            display: none;
+          }
+        }
+      }
+    }
+    .user_list {
+      width: 100%;
+      li {
+        width: 100%;
+
+        .btn {
+          width: 100% !important;
+          gap: 10px;
+          padding: 8px 5px;
+          cursor: pointer;
+          align-items: center;
+
+          &:hover {
+            color: var(--color-yellow);
+          }
+        }
+        a {
+          gap: 20px;
+          display: flex;
+        }
+      }
+    }
+
+    @media (max-width: 320px) {
+      width: 100%;
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media (min-width: 900px) {
+    // display: none;
+  }
+}
+.menu_icon {
+  font-size: 30px !important;
+  color: var(--color-gray);
+  padding: 0 !important;
+  cursor: pointer;
+}

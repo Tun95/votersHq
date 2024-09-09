@@ -7,15 +7,37 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { TooltipProps } from "recharts";
 
-function Chart({ aspect, title, data, dataKey, CustomTooltip }) {
+// Define the types for the Chart component
+interface DataPoint {
+  name: string;
+  "Bills Votes"?: number; // Optional fields for better flexibility
+  "Election Votes"?: number; // Optional fields for better flexibility
+}
+
+interface ChartProps {
+  aspect: number;
+  title: string;
+  data: DataPoint[];
+  dataKeys: string[];
+  CustomTooltip?: React.FC<TooltipProps<number, string>>;
+  grid?: boolean;
+}
+
+const Chart: React.FC<ChartProps> = ({
+  aspect,
+  title,
+  data,
+  dataKeys,
+  CustomTooltip,
+  grid, // Optional: if you have a grid prop
+}) => {
   return (
     <div className="chart__box light_shadow">
       <div className="title">{title}</div>
-      <ResponsiveContainer width="100%" aspect={aspect}>
+      <ResponsiveContainer aspect={aspect}>
         <AreaChart
-          width="100%"
-          height="100%"
           data={data}
           margin={{ top: 10, right: 5, left: 5, bottom: 0 }}
         >
@@ -26,20 +48,24 @@ function Chart({ aspect, title, data, dataKey, CustomTooltip }) {
             </linearGradient>
           </defs>
           <XAxis dataKey="name" stroke="gray" />
-
-          <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-          <Tooltip content={<CustomTooltip />} />
-          <Area
-            type="monotone"
-            dataKey={dataKey}
-            stroke="#8884d8"
-            fillOpacity={1}
-            fill="url(#total)"
-          />
+          {grid && (
+            <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+          )}
+          {CustomTooltip && <Tooltip content={<CustomTooltip />} />}
+          {dataKeys.map((key) => (
+            <Area
+              key={key}
+              type="monotone"
+              dataKey={key}
+              stroke="#8884d8"
+              fillOpacity={1}
+              fill="url(#total)"
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
     </div>
   );
-}
+};
 
 export default Chart;
