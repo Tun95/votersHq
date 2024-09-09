@@ -30,7 +30,10 @@ export const initialUserListState: userState = {
   error: "",
 };
 
-export const userReducer = (state: userState, action: userAction): userState => {
+export const userReducer = (
+  state: userState,
+  action: userAction
+): userState => {
   switch (action.type) {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
@@ -42,3 +45,33 @@ export const userReducer = (state: userState, action: userAction): userState => 
       return state;
   }
 };
+
+// LIST SCREEN
+export interface ListStateType {
+  loading: boolean;
+  error: string;
+  users: UserList[];
+  loadingBlock?: boolean;
+  successBlock?: boolean;
+  loadingUnBlock?: boolean;
+  successUnBlock?: boolean;
+  loadingDelete?: boolean;
+  successDelete?: boolean;
+}
+
+export type ListActionType =
+  | { type: "FETCH_REQUEST" }
+  | { type: "FETCH_SUCCESS"; payload: UserList[] }
+  | { type: "FETCH_FAIL"; payload: string }
+  | { type: "BLOCK_REQUEST" }
+  | { type: "BLOCK_SUCCESS" }
+  | { type: "BLOCK_FAIL" }
+  | { type: "BLOCK_RESET" }
+  | { type: "UNBLOCK_REQUEST" }
+  | { type: "UNBLOCK_SUCCESS" }
+  | { type: "UNBLOCK_FAIL" }
+  | { type: "UNBLOCK_RESET" }
+  | { type: "DELETE_REQUEST" }
+  | { type: "DELETE_SUCCESS" }
+  | { type: "DELETE_FAIL" }
+  | { type: "DELETE_RESET" };

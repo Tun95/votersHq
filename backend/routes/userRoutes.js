@@ -851,6 +851,121 @@ userRouter.put(
   })
 );
 
+//=================
+// ADMIN BLOCK USER
+//=================
+userRouter.put(
+  "/block/:id",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findById(req.params.id);
+    if (user.isAdmin) {
+      res.status(400).send({ message: "Cannot Block Admin User" });
+    } else {
+      try {
+        const user = await User.findByIdAndUpdate(
+          id,
+          {
+            isBlocked: true,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+        res.send(user);
+      } catch {
+        res.send({ message: "Fail to block user" });
+      }
+    }
+  })
+);
+
+//==================
+//ADMIN UNBLOCK USER
+//=================
+userRouter.put(
+  "/unblock/:id",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const id = req.params.id;
+    try {
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          isBlocked: false,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      res.send(user);
+    } catch {
+      res.send({ message: "Fail to unblock user" });
+    }
+  })
+);
+
+//==================
+// ADMIN USER DELETE
+//==================
+userRouter.delete(
+  "/:id",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not Found" });
+    }
+
+    if (user.isAdmin) {
+      return res.status(400).send({ message: "Cannot Delete Admin User" });
+    }
+
+    try {
+      // Use deleteOne to delete the user
+      await User.deleteOne({ _id: req.params.id });
+      res.send({ message: "User Deleted Successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  })
+);
+
+//=================
+//ADMIN USER UPDATE
+//=================
+userRouter.put(
+  "/:id",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.firstName = req.body.firstName;
+      user.email = req.body.email;
+      user.phone = req.body.phone;
+      user.image = req.body.image || user.image;
+      user.isAdmin = Boolean(req.body.isAdmin);
+      user.isBlocked = Boolean(req.body.isBlocked);
+      const updatedUser = await user.save();
+      res.send({
+        message: "User Updated Successfully",
+        user: updatedUser,
+      });
+    } else {
+      res.status(404).send({ message: "User Not Found" });
+    }
+  })
+);
+
 //==========================
 // Upgrade user to politician
 //==========================

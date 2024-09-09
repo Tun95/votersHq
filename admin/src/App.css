@@ -235,6 +235,14 @@ button:disabled {
   background-color: var(--color-light-green);
 }
 
+.filterPlus {
+  color: var(--color-primary);
+  font-size: 26px;
+  position: relative;
+  bottom: 5px;
+  cursor: pointer;
+}
+
 [type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;

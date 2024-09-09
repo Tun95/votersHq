@@ -7,12 +7,16 @@ import axios from "axios";
 
 import photo from "../../../assets/photo.jpg";
 import ReactTimeAgo from "react-time-ago";
-import { Context } from "../../../../context/Context";
-import { request } from "../../../../base url/BaseUrl";
-import { getError } from "../../../../utilities/utils/Utils";
-import LoadingBox from "../../../../utilities/message loading/LoadingBox";
-import MessageBox from "../../../../utilities/message loading/MessageBox";
+
 import PropTypes from "prop-types";
+import LoadingBox from "../../../utilities/message loading/LoadingBox";
+import MessageBox from "../../../utilities/message loading/MessageBox";
+import { request } from "../../../base url/BaseUrl";
+import {
+  ErrorResponse,
+  getError,
+  useAppContext,
+} from "../../../utilities/utils/Utils";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -45,7 +49,7 @@ const reducer = (state, action) => {
   }
 };
 
-function ProductList({ rows }) {
+function BillsListComponent() {
   const columns = [
     { field: "_id", headerName: "ID", width: 220 },
     {
@@ -103,8 +107,8 @@ function ProductList({ rows }) {
 
   const navigate = useNavigate();
 
-  const { state } = useContext(Context);
-  const { userInfo } = state;
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
 
   const [
     {
@@ -127,7 +131,7 @@ function ProductList({ rows }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${request}/api/products`, {
+        const { data } = await axios.get(`${request}/api/bills`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({
@@ -136,7 +140,10 @@ function ProductList({ rows }) {
         });
         window.scrollTo(0, 0);
       } catch (err) {
-        dispatch({ type: "FETCH_FAIL" });
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: getError(err as ErrorResponse),
+        });
       }
     };
 
@@ -153,7 +160,7 @@ function ProductList({ rows }) {
   const deleteHandler = async (product) => {
     if (window.confirm("Are you sure to delete this product?")) {
       try {
-        await axios.delete(`${request}/api/products/${product.id}`, {
+        await axios.delete(`${request}/api/bills/${product.id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
@@ -162,7 +169,7 @@ function ProductList({ rows }) {
         });
         dispatch({ type: "DELETE_SUCCESS" });
       } catch (err) {
-        toast.error(getError(err), { position: "bottom-center" });
+        toast.error(getError(err as ErrorResponse));
         dispatch({ type: "DELETE_FAIL" });
       }
     }
@@ -177,7 +184,7 @@ function ProductList({ rows }) {
         return (
           <div className="cellAction">
             <Link
-              to={`/admin/product/${product.id}/edit`}
+              to={`/bills/${product.id}/edit`}
               style={{ textDecoration: "none" }}
             >
               <div className="viewButton">View</div>
@@ -220,12 +227,9 @@ function ProductList({ rows }) {
   };
   return (
     <div className="admin_page_all admin_page_screen">
-      <Helmet>
-        <title>All Products</title>
-      </Helmet>
       <div className="container ">
         <div className="productTitleContainer">
-          <h3 className="productTitle light_shadow uppercase">All Products</h3>
+          <h3 className="productTitle light_shadow uppercase">All Bills</h3>
         </div>
         <div className="datatable">
           <span className="c_flex">
@@ -259,4 +263,4 @@ function ProductList({ rows }) {
   );
 }
 
-export default ProductList;
+export default BillsListComponent;
