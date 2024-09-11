@@ -84,6 +84,9 @@
       .sendButton {
         margin-top: 20px;
         padding: 8px 20px;
+        color: var(--color-white);
+        border-radius: 5px;
+        background-color: var( --color-light-green);
       }
     }
   }

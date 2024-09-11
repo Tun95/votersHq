@@ -17,6 +17,7 @@ import RegisterScreen from "./screens/formscreens/registerscreen/RegisterScreen"
 import AdminRoute from "./utilities/protectedRoute/AdminRoute";
 import OtpScreen from "./screens/formscreens/otpscreen/OtpScreen";
 import CreatedScreen from "./screens/formscreens/createdscreen/CreatedScreen";
+import SubscriberScreen from "./screens/messagescreens/subscriberscreen/SubscriberScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -86,6 +87,15 @@ function App() {
             element={
               <AdminRoute>
                 <PoliticalNewScreen />
+              </AdminRoute>
+            }
+          />
+          {/* MESSAGE */}
+          <Route
+            path="/subscribers"
+            element={
+              <AdminRoute>
+                <SubscriberScreen />
               </AdminRoute>
             }
           />

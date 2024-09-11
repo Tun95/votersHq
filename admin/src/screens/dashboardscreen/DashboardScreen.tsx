@@ -9,7 +9,7 @@ function DashboardScreen() {
         <title>Dashboard</title>
       </Helmet>
       <MainNavBar />
-      <div className="container">
+      <div className="container page_background">
         <div className="content">
           <Dashboard />
         </div>

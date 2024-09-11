@@ -23,6 +23,7 @@ import {
   MenuItem,
   FormControl,
   SelectChangeEvent,
+  Chip,
 } from "@mui/material";
 
 //DON'T CHANGE THIS LIST
@@ -56,7 +57,7 @@ const statusList = [
 
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
+  return date?.toISOString()?.slice(0, 16); // Format to YYYY-MM-DDTHH:MM
 };
 
 // Types for election and candidates
@@ -273,7 +274,7 @@ function ElectionsEdit() {
   // Image upload handler
   const uploadFileHandler = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    forImages: boolean
+    isBanner: boolean
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -289,10 +290,10 @@ function ElectionsEdit() {
         },
       });
       dispatch({ type: "UPLOAD_SUCCESS" });
-      if (forImages) {
-        setBanner(data.secure_url);
+      if (isBanner) {
+        setBanner(data.secure_url); // Set the banner image
       } else {
-        setImage(data.secure_url);
+        setImage(data.secure_url); // Set the general image
       }
       toast.success("Image uploaded successfully. Click update to apply it");
     } catch (err) {
@@ -321,8 +322,10 @@ function ElectionsEdit() {
   // Handle multi-select change
   const handleCandidateChange = (e: SelectChangeEvent<string[]>) => {
     const selectedValues = e.target.value as string[];
-    setCandidates(selectedValues);
+    setCandidates(selectedValues); // Update the selected candidates
   };
+
+  console.log("CANDIDATE:", candidates);
 
   return (
     <>
@@ -466,14 +469,28 @@ function ElectionsEdit() {
                                   id="demo-multiple-name"
                                   multiple
                                   className="mui_select"
-                                  value={candidates}
-                                  onChange={handleCandidateChange}
+                                  value={candidates} // The current selected candidates
+                                  onChange={handleCandidateChange} // Handle new candidate selection
+                                  renderValue={(selected) => (
+                                    <div className="selected-candidates">
+                                      {selected.map((value) => {
+                                        const candidate = candidatesList.find(
+                                          (item) => item._id === value
+                                        );
+                                        return (
+                                          <Chip
+                                            key={value}
+                                            label={`${candidate?.firstName} ${candidate?.lastName}`}
+                                          />
+                                        );
+                                      })}
+                                    </div>
+                                  )}
                                   MenuProps={{
                                     PaperProps: { style: menuPaperProps.style },
                                   }}
                                   sx={{
                                     borderRadius: 2, // Adjust the border radius as needed
-
                                     "&.Mui-focused .MuiOutlinedInput-notchedOutline":
                                       {
                                         border: "none", // Remove the outline when focused
@@ -624,12 +641,12 @@ function ElectionsEdit() {
                               <div className="drop_zone">
                                 <img
                                   src={image}
-                                  alt="Banner"
+                                  alt="Election"
                                   className="images"
                                 />
                                 <div className="icon_bg l_flex">
                                   <label
-                                    htmlFor="files"
+                                    htmlFor="electionImage"
                                     className={
                                       loadingUpload
                                         ? "upload_box disabled l_flex"
@@ -652,10 +669,10 @@ function ElectionsEdit() {
                                         <input
                                           style={{ display: "none" }}
                                           type="file"
-                                          id="files"
+                                          id="electionImage"
                                           onChange={(e) =>
-                                            uploadFileHandler(e, true)
-                                          }
+                                            uploadFileHandler(e, false)
+                                          } // Pass false for general image
                                         />
                                       </label>
                                     )}
@@ -708,7 +725,7 @@ function ElectionsEdit() {
                                 />
                                 <div className="icon_bg l_flex">
                                   <label
-                                    htmlFor="files"
+                                    htmlFor="banner"
                                     className={
                                       loadingUpload
                                         ? "upload_box disabled l_flex"
@@ -731,10 +748,10 @@ function ElectionsEdit() {
                                         <input
                                           style={{ display: "none" }}
                                           type="file"
-                                          id="files"
+                                          id="banner"
                                           onChange={(e) =>
                                             uploadFileHandler(e, true)
-                                          }
+                                          } // Pass true for banner image
                                         />
                                       </label>
                                     )}

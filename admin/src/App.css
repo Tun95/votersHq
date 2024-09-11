@@ -68,7 +68,7 @@ html {
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: var(--color-white);
+  background: var(--color-background);
 }
 
 .container {
@@ -259,6 +259,8 @@ button:disabled {
 .mui_select_box {
   width: auto;
   outline: none !important;
+
+  max-width: 420px;
 }
 .mui_select {
   height: 40px;
