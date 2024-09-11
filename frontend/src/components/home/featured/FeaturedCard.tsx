@@ -201,7 +201,7 @@ const FeaturedCard: FC<FeaturedCardProps> = ({ item }) => {
                     </div>
                     <div className="description">
                       <TruncateMarkup lines={1}>
-                        <p>{item.pollOverview}</p>
+                        <p>{parse(item.pollOverview)}</p>
                       </TruncateMarkup>
                     </div>
                   </div>

@@ -73,7 +73,7 @@ function PoliticalNews() {
       const length = politicalNews?.length ?? 0; // Default to 0 if no news
 
       // Set slides to show based on screen width
-      const slidesToShow = screenWidth >= 800 ? 3 : screenWidth >= 450 ? 2 : 1;
+      const slidesToShow = screenWidth >= 800 ? 3 : screenWidth >= 600 ? 2 : 1;
 
       // Ensure that slidesToShow does not exceed the number of available items
       setSlidesToShow(Math.min(slidesToShow, length));

@@ -18,6 +18,7 @@ import {
 import { toast } from "react-toastify";
 import { ElectionResponse } from "../../types/election/election details/types";
 import { ElectionModal } from "../../common/modals/Modals";
+import parse from "html-react-parser";
 
 // Reducer function
 const reducer = (state: VoteState, action: VoteAction): VoteState => {
@@ -134,7 +135,7 @@ function PolesVotes({
               </h2>
             </div>
             <div className="text">
-              <p>{election.pollOverview}</p>
+              <p>{parse(election.pollOverview)}</p>
             </div>
           </div>
         </div>
