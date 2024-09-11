@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     about: { type: String },
     education: { type: String },
     achievement: { type: String },
-    role: { type: String, enum: ["user", "politician"], default: "user" },
+    role: { type: String, enum: ["user", "politician","admin"], default: "user" },
 
     // New fields for identity verification
     selfieImage: { type: String }, // URL or path to stored selfie image

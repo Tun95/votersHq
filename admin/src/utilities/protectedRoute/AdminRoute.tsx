@@ -13,7 +13,7 @@ export default function AdminRoute({ children }: AdminRouteProps) {
   if (!userInfo) {
     // Handle case where userInfo is null or undefined
     console.error("User info is not available");
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   return userInfo.isAdmin ? <>{children}</> : <Navigate to="/" />;

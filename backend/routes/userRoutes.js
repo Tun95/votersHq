@@ -96,6 +96,100 @@ userRouter.post(
 );
 
 //============
+//ADMIN SIGN IN
+//============
+userRouter.post(
+  "/admin/signin",
+  expressAsyncHandler(async (req, res) => {
+    const { emailOrPhone, password } = req.body;
+
+    console.log("Admin Login Attempt:", { emailOrPhone, password });
+
+    const admin = await User.findOne({
+      $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
+      isAdmin: true, // Ensure that only admins can sign in here
+    });
+
+    if (!admin) {
+      return res
+        .status(401)
+        .send({ message: "No admin found with this email/phone" });
+    }
+    if (admin.isBlocked === true) {
+      return res.status(403).send({
+        message: "😲 It appears this account has been blocked by Admin",
+      });
+    }
+    if (!admin.isAccountVerified) {
+      return res.status(401).send({ message: "Account not verified" });
+    }
+    if (bcrypt.compareSync(password, admin.password)) {
+      console.log("Password Match Successful");
+      res.send({
+        _id: admin._id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        image: admin.image,
+        email: admin.email,
+        phone: admin.phone,
+        isAdmin: admin.isAdmin,
+        role: admin.role,
+        region: admin.region,
+        isBlocked: admin.isBlocked,
+        isAccountVerified: admin.isAccountVerified,
+        token: generateToken(admin),
+      });
+      return;
+    }
+    console.log("Password Match Failed");
+    res.status(401).send({ message: "Invalid email/phone or password" });
+  })
+);
+//===========
+//ADMIN SIGNUP
+//===========
+userRouter.post(
+  "/admin/signup",
+  expressAsyncHandler(async (req, res) => {
+    const userExists = await User.findOne({ email: req.body?.email });
+    if (userExists) {
+      throw new Error("User already exists");
+    }
+
+    const newAdmin = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phone: req.body.phone,
+      identificationType: req.body.identificationType,
+      ninNumber: req.body.ninNumber,
+      stateOfOrigin: req.body.stateOfOrigin,
+      stateOfResidence: req.body.stateOfResidence,
+      region: req.body.region,
+      password: bcrypt.hashSync(req.body.password),
+      isAdmin: true, // Admins are always marked as admin
+      role: req.body.role || "admin", // Set role, defaulting to "admin"
+    });
+
+    const admin = await newAdmin.save();
+    res.send({
+      _id: admin._id,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      image: admin.image,
+      email: admin.email,
+      phone: admin.phone,
+      isAdmin: admin.isAdmin,
+      isBlocked: admin.isBlocked,
+      region: admin.region,
+      isAccountVerified: admin.isAccountVerified,
+      role: admin.role, // Include the role in the response
+      token: generateToken(admin),
+    });
+  })
+);
+
+//============
 //USER SIGN IN
 //============
 userRouter.post(
@@ -154,7 +248,6 @@ userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
     const userCount = await User.countDocuments();
-    const isAdmin = userCount === 0; // Check if this is the first user
 
     const userExists = await User.findOne({ email: req.body?.email });
     if (userExists) {
@@ -172,7 +265,7 @@ userRouter.post(
       stateOfResidence: req.body.stateOfResidence,
       region: req.body.region,
       password: bcrypt.hashSync(req.body.password),
-      isAdmin: isAdmin, // Set isAdmin based on whether this is the first user
+      isAdmin: false, // Ensure that new users are not admins
       role: req.body.role || "user", // Set role, defaulting to "user"
     });
 

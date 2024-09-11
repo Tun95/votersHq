@@ -1,7 +1,6 @@
 import "./styles.scss";
 import logo from "../../assets/logo/logo.png";
 import { Link } from "react-router-dom";
-import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import { useAppContext } from "../../utilities/utils/Utils";
 import Sidebar from "../sidebar/Sidebar";
 import p1 from "../../assets/nav/p.png";
@@ -26,26 +25,23 @@ function MainNavBar() {
           </div>
 
           {userInfo && (
-            <div className="user_info a_flex">
-              <div className="creative">
-                <small>Creative Box</small>
+            <span className="a_flex span_gap">
+              <div className="user_info a_flex">
+                <span className="user_img_icon a_flex">
+                  <div className="img">
+                    <img
+                      src={userInfo?.image ? userInfo?.image : p1}
+                      alt="user image"
+                    />
+                  </div>
+                </span>
               </div>
-              <div className="alarm_icon">
-                <NotificationsActiveOutlinedIcon className="icon" />
+
+              <div className="main_sidebar">
+                <Sidebar />
               </div>
-              <span className="user_img_icon a_flex">
-                <div className="img">
-                  <img
-                    src={userInfo?.image ? userInfo?.image : p1}
-                    alt="user image"
-                  />
-                </div>
-              </span>
-            </div>
+            </span>
           )}
-          <div className="main_sidebar">
-            <Sidebar />
-          </div>
         </div>
       </div>
     </div>

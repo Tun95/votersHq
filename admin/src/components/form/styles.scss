@@ -89,6 +89,7 @@
               background-color: var(--color-background);
               border: 1px solid var(--color-border);
               color: var(--color-dark-gray);
+              width: 100%;
             }
             .select {
               padding: 15px;
@@ -196,6 +197,12 @@
         }
       }
     }
+  }
+}
+
+.created_account_menu {
+  .text_details {
+    flex-direction: column;
   }
 }
 

@@ -48,6 +48,24 @@ politicalNewsRouter.get(
   })
 );
 
+//=====================================
+// Fetch latest 8 political news articles
+//=====================================
+politicalNewsRouter.get(
+  "/latest",
+  expressAsyncHandler(async (req, res) => {
+    try {
+      const news = await PoliticalNews.find({})
+        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+        .limit(8) // Limit the results to 8 articles
+        .populate("user", "firstName lastName email"); // Populate user with selected fields
+      res.send(news);
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  })
+);
+
 //==================
 // Fetch all political news articles with pagination, sorted by latest createdAt
 //==================

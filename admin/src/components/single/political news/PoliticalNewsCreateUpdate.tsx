@@ -16,6 +16,8 @@ import { request } from "../../../base url/BaseUrl";
 import { PaginationProps } from "antd/es/pagination";
 import parse from "html-react-parser";
 import TruncateMarkup from "react-truncate-markup";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import photo from "../../../assets/others/photo.jpg";
 
 // Types
 interface PoliticalNews {
@@ -103,10 +105,14 @@ export function PoliticalNewsCreateUpdate() {
         `${request}/api/political-news`,
         formData,
         {
-          headers: { Authorization: `Bearer ${userInfo?.token}` },
+          headers: {
+            Authorization: `Bearer ${userInfo?.token}`,
+            "Content-Type": "application/json", // Ensure correct content type if sending JSON
+          },
         }
       );
       setNews((prevNews) => [...prevNews, response.data.news]);
+      fetchNews();
       toast.success("Political News added successfully");
     } catch (error) {
       toast.error(getError(error as ErrorResponse));
@@ -152,6 +158,7 @@ export function PoliticalNewsCreateUpdate() {
           headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
         setNews((prevNews) => prevNews.filter((item) => item._id !== id));
+        fetchNews();
         toast.success("Political News deleted successfully");
       } catch (error) {
         toast.error(getError(error as ErrorResponse));
@@ -165,7 +172,10 @@ export function PoliticalNewsCreateUpdate() {
       `${request}/api/political-news/${id}`,
       updatedData,
       {
-        headers: { Authorization: `Bearer ${userInfo?.token}` },
+        headers: {
+          Authorization: `Bearer ${userInfo?.token}`,
+          "Content-Type": "application/json", // Ensure correct content type if sending JSON
+        },
       }
     );
     return response.data.news;
@@ -186,7 +196,7 @@ export function PoliticalNewsCreateUpdate() {
             item._id === formData._id ? updatedNews : item
           )
         );
-
+        fetchNews();
         toast.success("Political News updated successfully");
       } catch (error) {
         console.error("Error updating political news:", error);
@@ -228,7 +238,35 @@ export function PoliticalNewsCreateUpdate() {
     }
   };
 
-  console.log(news);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+
+  // Image upload handler
+  const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+
+    try {
+      setLoadingUpload(true); // Start upload
+      const { data } = await axios.post(`${request}/api/upload`, bodyFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo?.token}`,
+        },
+      });
+      setFormData((prevData) => ({
+        ...prevData,
+        image: data.secure_url, // Set the uploaded image URL to formData
+      }));
+      toast.success("Image uploaded successfully. Click update to apply it");
+    } catch (err) {
+      toast.error(getError(err as ErrorResponse));
+    } finally {
+      setLoadingUpload(false); // End upload
+    }
+  };
   return (
     <>
       <div className="product_edit blog_admin_page admin_page_all page_background">
@@ -273,16 +311,62 @@ export function PoliticalNewsCreateUpdate() {
                               placeholder="Title"
                             />
                           </span>
-                          <span className="img">
-                            <label htmlFor="img">Image Url</label>
-                            <input
-                              type="text"
-                              name="image"
-                              value={formData.image}
-                              onChange={handleInputChange}
-                              placeholder="Image URL"
-                            />
-                          </span>
+
+                          <div className="a_flex image_drop">
+                            <div className="drop_zone">
+                              <img
+                                src={formData.image ? formData.image : photo}
+                                alt="Banner"
+                                className="images"
+                              />
+                              <div className="icon_bg l_flex">
+                                <label
+                                  htmlFor="files"
+                                  className={
+                                    loadingUpload
+                                      ? "upload_box disabled l_flex"
+                                      : "upload_box l_flex"
+                                  }
+                                >
+                                  {loadingUpload ? (
+                                    <i className="fa fa-spinner fa-spin"></i>
+                                  ) : (
+                                    <label>
+                                      <div className="inner">
+                                        <div className="icon_btn">
+                                          <CloudUploadIcon
+                                            className={
+                                              formData.image
+                                                ? "icon white"
+                                                : "icon"
+                                            }
+                                          />
+                                        </div>
+                                      </div>
+                                      <input
+                                        style={{ display: "none" }}
+                                        type="file"
+                                        id="files"
+                                        onChange={uploadFileHandler}
+                                      />
+                                    </label>
+                                  )}
+                                </label>
+                              </div>
+                            </div>
+
+                            <span className="img">
+                              <label htmlFor="img">Image Url</label>
+                              <input
+                                type="text"
+                                name="image"
+                                value={formData.image}
+                                onChange={handleInputChange}
+                                placeholder="Image URL"
+                              />
+                            </span>
+                          </div>
+
                           <span className="description">
                             <label htmlFor="description">Description</label>
                             <JoditEditor
@@ -313,7 +397,7 @@ export function PoliticalNewsCreateUpdate() {
                       <ul className="color_list home_wrappers">
                         {news.map((item) => (
                           <li key={item._id}>
-                            <div className="info">
+                            <div className="info f_flex">
                               <img
                                 src={item.image}
                                 alt={item.title}
@@ -321,7 +405,7 @@ export function PoliticalNewsCreateUpdate() {
                               />
                               <div className="details">
                                 <h4>{item.title}</h4>
-                                <TruncateMarkup lines={3}>
+                                <TruncateMarkup lines={2}>
                                   <p>{parse(item.description)}</p>
                                 </TruncateMarkup>
                                 <div className="author">

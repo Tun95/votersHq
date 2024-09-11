@@ -1,16 +1,20 @@
 import OtpInput from "react-otp-input";
 import v1 from "../../../assets/others/v1.png";
-import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import { Formik, ErrorMessage, Form, Field, FormikHelpers } from "formik";
 import { otpSchema } from "../../../schema/Index";
 import "../styles.scss";
-import { ErrorResponse, getError } from "../../../utilities/utils/Utils";
+import {
+  ErrorResponse,
+  getError,
+  useAppContext,
+} from "../../../utilities/utils/Utils";
 import { useEffect, useReducer, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { OtpValues } from "../../../types/auth/types";
+import { useNavigate } from "react-router-dom";
 
 // Initial values for the OTP form
 const initialOtpValues = {
@@ -48,14 +52,9 @@ const formatTime = (seconds: number) => {
   ).padStart(2, "0")}`;
 };
 
-interface OtpVerificationDropDownMenuProps {
-  onClose: () => void;
-  setMenu: (menu: "register" | "otp" | "created" | "pending" | "login") => void;
-}
-function OtpVerificationDropDownMenu({
-  onClose,
-  setMenu,
-}: OtpVerificationDropDownMenuProps) {
+function OtpVerificationComponent() {
+  const navigate = useNavigate();
+
   const [, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
@@ -138,7 +137,7 @@ function OtpVerificationDropDownMenu({
 
       // Call the function here and pass the isAccountVerified value
       handleVerifiedOTP(data.isAccountVerified);
-      setMenu("created");
+      navigate("/created");
     } catch (err) {
       dispatch({
         type: "SUBMIT_FAIL",
@@ -188,14 +187,16 @@ function OtpVerificationDropDownMenu({
     }
   };
 
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   return (
     <Box className="menu_modal otp_menu">
-      <div className="close_icon">
-        <span className="a_flex" onClick={onClose}>
-          <CloseIcon className="icon" />
-          <small>Close</small>
-        </span>
-      </div>
       <div className="otp_created_pending_login header_box">
         <div className="img_width l_flex">
           {" "}
@@ -269,7 +270,7 @@ function OtpVerificationDropDownMenu({
                           )}
                         </button>
                       </div>
-                      <div className="text_details">
+                      <div className="text_details l_flex">
                         <small>
                           Didn't receive OTP? &#160;
                           <span
@@ -300,4 +301,4 @@ function OtpVerificationDropDownMenu({
   );
 }
 
-export default OtpVerificationDropDownMenu;
+export default OtpVerificationComponent;

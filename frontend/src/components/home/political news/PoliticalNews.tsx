@@ -44,7 +44,9 @@ function PoliticalNews() {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
-        const { data } = await axios.get(`${request}/api/political-news`);
+        const { data } = await axios.get(
+          `${request}/api/political-news/latest`
+        );
         dispatch({
           type: "FETCH_SUCCESS",
           payload: data,
@@ -68,17 +70,13 @@ function PoliticalNews() {
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
-      const length = politicalNews?.length ?? 0; // Provide a default value of 0
+      const length = politicalNews?.length ?? 0; // Default to 0 if no news
 
-      if (screenWidth >= 1250) {
-        setSlidesToShow(Math.min(4, length));
-      } else if (screenWidth >= 800) {
-        setSlidesToShow(Math.min(3, length));
-      } else if (screenWidth >= 450) {
-        setSlidesToShow(Math.min(2, length));
-      } else {
-        setSlidesToShow(Math.min(1, length));
-      }
+      // Set slides to show based on screen width
+      const slidesToShow = screenWidth >= 800 ? 3 : screenWidth >= 450 ? 2 : 1;
+
+      // Ensure that slidesToShow does not exceed the number of available items
+      setSlidesToShow(Math.min(slidesToShow, length));
     };
 
     handleResize();
