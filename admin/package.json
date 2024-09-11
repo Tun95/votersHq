@@ -21,6 +21,9 @@
     "axios": "^1.7.7",
     "date-fns": "^3.6.0",
     "formik": "^2.4.6",
+    "html-react-parser": "^5.1.15",
+    "javascript-time-ago": "^2.5.11",
+    "jodit-react": "^4.1.2",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -29,6 +32,7 @@
     "react-spinners": "^0.14.1",
     "react-time-ago": "^7.3.3",
     "react-toastify": "^10.0.5",
+    "react-truncate-markup": "^5.1.2",
     "recharts": "^2.12.7",
     "sass": "^1.78.0",
     "yup": "^1.4.0"

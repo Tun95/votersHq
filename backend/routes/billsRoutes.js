@@ -296,6 +296,8 @@ billsRouter.put(
 //===============================
 billsRouter.get(
   "/:id",
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const bill = await Bills.findById(req.params.id).populate("user");
@@ -658,8 +660,8 @@ billsRouter.get(
 //===============================
 billsRouter.delete(
   "/:id",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const bill = await Bills.findById(req.params.id);
@@ -703,14 +705,18 @@ billsRouter.post(
     }
 
     // Check if the user has already voted either "yea" or "nay"
-    const alreadyVoted = bill.yeaVotes.some(
-      (vote) => vote.voterId.toString() === userId.toString()
-    ) || bill.nayVotes.some(
-      (vote) => vote.voterId.toString() === userId.toString()
-    );
+    const alreadyVoted =
+      bill.yeaVotes.some(
+        (vote) => vote.voterId.toString() === userId.toString()
+      ) ||
+      bill.nayVotes.some(
+        (vote) => vote.voterId.toString() === userId.toString()
+      );
 
     if (alreadyVoted) {
-      return res.status(400).send({ message: "You have already cast your vote" });
+      return res
+        .status(400)
+        .send({ message: "You have already cast your vote" });
     }
 
     if (voteType === "yea") {
@@ -736,7 +742,6 @@ billsRouter.post(
     res.send({ message: `Successfully cast your ${voteType} vote` });
   })
 );
-
 
 //****************************************
 // Comment Routes for Bills

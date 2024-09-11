@@ -10,6 +10,8 @@
   --color-bg: #f3f5f9;
   --color-border: #e7e8eb;
   --color-background: #f6f9fc;
+  --color-number-bg: #abacff7e;
+  --color-number-text: #5052ba;
   --color-light-light-gray: #f6f6f6;
   --color-yellow: #d6ab14;
   --color-plan: #fdba3d;
@@ -26,6 +28,7 @@
   --color-card-third: #10c09c;
   --color-light-light-green: #0d9a7d26;
   --color-light-bg-green: #f0fffc;
+  --color-blue: #3462fa;
   --color-tab: #389efd;
   --color-text: #cdcdcd;
   --color-text-dull: #788da3;
@@ -251,6 +254,21 @@ button:disabled {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
+}
+
+.mui_select_box {
+  width: auto;
+  outline: none !important;
+}
+.mui_select {
+  height: 40px;
+  border-radius: 10px;
+  outline: none !important;
+  border: 1px solid var(--color-light-gray);
+}
+#demo-multiple-name {
+  width: 70%;
+  outline: none !important;
 }
 
 .bills_f_tag {

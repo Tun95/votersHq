@@ -16,17 +16,17 @@ import {
   useAppContext,
 } from "../../../utilities/utils/Utils";
 
-interface Candidate {
+interface User {
   firstName: string;
   lastName: string;
 }
 
-interface Bill {
+interface Election {
   _id: string;
   title: string;
   banner: string;
   image: string;
-  candidates: Candidate[];
+  user: User;
   createdAt: string;
   sortCategory: string[];
 }
@@ -34,14 +34,14 @@ interface Bill {
 interface State {
   loading: boolean;
   error: string;
-  bills: Bill[];
+  elections: Election[];
   loadingDelete: boolean;
   successDelete: boolean;
 }
 
 type Action =
   | { type: "FETCH_REQUEST" }
-  | { type: "FETCH_SUCCESS"; payload: Bill[] }
+  | { type: "FETCH_SUCCESS"; payload: Election[] }
   | { type: "FETCH_FAIL"; payload: string }
   | { type: "DELETE_REQUEST" }
   | { type: "DELETE_SUCCESS" }
@@ -51,12 +51,13 @@ type Action =
 const initialState: State = {
   loading: true,
   error: "",
-  bills: [],
+  elections: [],
   loadingDelete: false,
   successDelete: false,
 };
+
 interface GridParams {
-  row: Bill;
+  row: Election;
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -64,7 +65,7 @@ const reducer = (state: State, action: Action): State => {
     case "FETCH_REQUEST":
       return { ...state, loading: true };
     case "FETCH_SUCCESS":
-      return { ...state, loading: false, bills: action.payload };
+      return { ...state, loading: false, elections: action.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
     case "DELETE_REQUEST":
@@ -80,7 +81,7 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-function BillsListComponent() {
+function ElectionListComponent() {
   const columns: GridColDef[] = [
     { field: "_id", headerName: "ID", width: 220 },
     {
@@ -92,7 +93,7 @@ function BillsListComponent() {
           <div className="cellWidthImg">
             <img
               src={params.row.image || photo}
-              alt="bill_banner"
+              alt="election_banner"
               className="cellImg"
             />
             {params.row.title}
@@ -101,23 +102,17 @@ function BillsListComponent() {
       },
     },
     {
-      field: "candidates",
-      headerName: "Candidates",
+      field: "user",
+      headerName: "User",
       width: 180,
       renderCell: (params: GridParams) => {
         return (
           <div className="cellWidthImg">
-            {params.row.candidates
-              .map(
-                (candidate: Candidate) =>
-                  `${candidate.firstName} ${candidate.lastName}`
-              )
-              .join(", ")}
+            {params.row.user.lastName} {params.row.user.firstName}
           </div>
         );
       },
     },
-
     {
       field: "createdAt",
       headerName: "Date",
@@ -141,7 +136,7 @@ function BillsListComponent() {
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
-  const [{ loading, error, bills, successDelete }, dispatch] = useReducer(
+  const [{ loading, error, elections, successDelete }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -152,7 +147,7 @@ function BillsListComponent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${request}/api/bills`, {
+        const { data } = await axios.get(`${request}/api/elections`, {
           headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -175,13 +170,13 @@ function BillsListComponent() {
   //===================
   // DELETE HANDLER
   //===================
-  const deleteHandler = async (bill: Bill) => {
-    if (window.confirm("Are you sure to delete this bill?")) {
+  const deleteHandler = async (election: Election) => {
+    if (window.confirm("Are you sure to delete this election?")) {
       try {
-        await axios.delete(`${request}/api/bills/${bill._id}`, {
+        await axios.delete(`${request}/api/elections/${election._id}`, {
           headers: { Authorization: `Bearer ${userInfo?.token}` },
         });
-        toast.success("Bill deleted successfully", {
+        toast.success("Election deleted successfully", {
           position: "bottom-center",
         });
         dispatch({ type: "DELETE_SUCCESS" });
@@ -203,7 +198,7 @@ function BillsListComponent() {
       renderCell: (params) => (
         <div className="cellAction">
           <Link
-            to={`/bills/${params.row._id}`}
+            to={`/elections/${params.row._id}`}
             style={{ textDecoration: "none" }}
           >
             <div className="viewButton">View</div>
@@ -220,21 +215,21 @@ function BillsListComponent() {
   ];
 
   const customTranslations = {
-    noRowsLabel: "No bills found",
+    noRowsLabel: "No elections found",
   };
 
   return (
     <div className="admin_page_all admin_page_screen">
       <div className="">
         <div className="productTitleContainer">
-          <h3 className="productTitle light_shadow uppercase">All Bills</h3>
+          <h3 className="productTitle light_shadow uppercase">All Elections</h3>
         </div>
         <div className="datatable">
           <span className="c_flex">
             <span></span>
             <i
               onClick={() => {
-                navigate(`/bill/new`);
+                navigate(`/elections/new`);
               }}
               className="fa-solid fa-square-plus filterPlus"
             ></i>
@@ -246,7 +241,7 @@ function BillsListComponent() {
           ) : (
             <DataGrid
               className="datagrid"
-              rows={bills}
+              rows={elections}
               localeText={customTranslations}
               getRowId={(row) => row._id}
               columns={columns.concat(actionColumn)}
@@ -260,4 +255,4 @@ function BillsListComponent() {
   );
 }
 
-export default BillsListComponent;
+export default ElectionListComponent;

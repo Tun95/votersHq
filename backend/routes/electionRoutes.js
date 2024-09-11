@@ -62,7 +62,7 @@ electionRouter.get(
   expressAsyncHandler(async (req, res) => {
     try {
       const elections = await Election.find({})
-        .populate("candidates")
+        .populate("candidates user")
         .sort({ createdAt: -1 }) // Sort by createdAt in descending order
         .exec();
 
@@ -434,8 +434,8 @@ electionRouter.put(
 //======================
 electionRouter.delete(
   "/:id",
-  isAuth,
-  isAdmin,
+  // isAuth,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const electionId = req.params.id;
