@@ -1,10 +1,10 @@
-import {  useEffect, useReducer, useState } from "react";
-import PhoneInput from "react-phone-number-input";
+import { useEffect, useReducer, useRef, useState } from "react";
 import "react-phone-number-input/style.css";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import noimage from "../../../assets/others/photo.jpg";
+import photo from "../../../assets/others/photo.jpg";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import "./styles.scss";
 import LoadingBox from "../../../utilities/message loading/LoadingBox";
@@ -15,6 +15,7 @@ import {
   getError,
   useAppContext,
 } from "../../../utilities/utils/Utils";
+import JoditEditor from "jodit-react";
 
 const roleList = [
   { name: "Admin", value: "admin" },
@@ -49,6 +50,7 @@ interface User {
 }
 
 // Reducer Action Types
+// Reducer Action Types
 type Action =
   | { type: "FETCH_REQUEST" }
   | { type: "FETCH_SUCCESS"; payload: User }
@@ -56,15 +58,27 @@ type Action =
   | { type: "UPDATE_REQUEST" }
   | { type: "UPDATE_SUCCESS" }
   | { type: "UPDATE_FAIL" }
-  | { type: "UPLOAD_REQUEST" }
-  | { type: "UPLOAD_SUCCESS" }
-  | { type: "UPLOAD_FAIL" };
+  | { type: "UPLOAD_IMAGE_REQUEST" }
+  | { type: "UPLOAD_IMAGE_SUCCESS" }
+  | { type: "UPLOAD_IMAGE_FAIL" }
+  | { type: "UPLOAD_PARTY_IMAGE_REQUEST" }
+  | { type: "UPLOAD_PARTY_IMAGE_SUCCESS" }
+  | { type: "UPLOAD_PARTY_IMAGE_FAIL" }
+  | { type: "UPLOAD_RUNNING_MATE_IMAGE_REQUEST" }
+  | { type: "UPLOAD_RUNNING_MATE_IMAGE_SUCCESS" }
+  | { type: "UPLOAD_RUNNING_MATE_IMAGE_FAIL" }
+  | { type: "UPLOAD_BANNER_REQUEST" }
+  | { type: "UPLOAD_BANNER_SUCCESS" }
+  | { type: "UPLOAD_BANNER_FAIL" };
 
 // Reducer State Type
 interface State {
   loading: boolean;
   loadingUpdate: boolean;
-  loadingUpload: boolean;
+  loadingImageUpload: boolean;
+  loadingPartyImageUpload: boolean;
+  loadingRunningMateImageUpload: boolean;
+  loadingBannerUpload: boolean;
   error: string;
   user?: User;
 }
@@ -73,7 +87,10 @@ interface State {
 const initialState: State = {
   loading: true,
   loadingUpdate: false,
-  loadingUpload: false,
+  loadingImageUpload: false,
+  loadingPartyImageUpload: false,
+  loadingRunningMateImageUpload: false,
+  loadingBannerUpload: false,
   error: "",
 };
 
@@ -86,31 +103,66 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, loading: false, user: action.payload };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+
     case "UPDATE_REQUEST":
       return { ...state, loadingUpdate: true };
     case "UPDATE_SUCCESS":
       return { ...state, loadingUpdate: false };
     case "UPDATE_FAIL":
       return { ...state, loadingUpdate: false };
-    case "UPLOAD_REQUEST":
-      return { ...state, loadingUpload: true };
-    case "UPLOAD_SUCCESS":
-      return { ...state, loadingUpload: false };
-    case "UPLOAD_FAIL":
-      return { ...state, loadingUpload: false };
+
+    // Image Upload States
+    case "UPLOAD_IMAGE_REQUEST":
+      return { ...state, loadingImageUpload: true };
+    case "UPLOAD_IMAGE_SUCCESS":
+    case "UPLOAD_IMAGE_FAIL":
+      return { ...state, loadingImageUpload: false };
+
+    case "UPLOAD_PARTY_IMAGE_REQUEST":
+      return { ...state, loadingPartyImageUpload: true };
+    case "UPLOAD_PARTY_IMAGE_SUCCESS":
+    case "UPLOAD_PARTY_IMAGE_FAIL":
+      return { ...state, loadingPartyImageUpload: false };
+
+    case "UPLOAD_RUNNING_MATE_IMAGE_REQUEST":
+      return { ...state, loadingRunningMateImageUpload: true };
+    case "UPLOAD_RUNNING_MATE_IMAGE_SUCCESS":
+    case "UPLOAD_RUNNING_MATE_IMAGE_FAIL":
+      return { ...state, loadingRunningMateImageUpload: false };
+
+    case "UPLOAD_BANNER_REQUEST":
+      return { ...state, loadingBannerUpload: true };
+    case "UPLOAD_BANNER_SUCCESS":
+    case "UPLOAD_BANNER_FAIL":
+      return { ...state, loadingBannerUpload: false };
+
     default:
       return state;
   }
 };
+
 function UserEdit() {
   const params = useParams();
   const { id: userId } = params;
 
+  const editor = useRef(null);
+
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
-  const [{ loading, error, loadingUpdate, loadingUpload, user }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    {
+      loading,
+      error,
+      loadingUpdate,
+      loadingImageUpload,
+      loadingPartyImageUpload,
+      loadingRunningMateImageUpload,
+      loadingBannerUpload,
+      user,
+    },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -123,6 +175,7 @@ function UserEdit() {
   const [region, setRegion] = useState("");
   const [image, setImage] = useState("");
   const [role, setRole] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // POLITICIAN
   const [title, setTitle] = useState("");
@@ -156,6 +209,8 @@ function UserEdit() {
       setRegion(data.region || "");
       setImage(data.image || "");
       setRole(data.role || "");
+      setIsAdmin(data.isAdmin);
+
       setTitle(data.title || "");
       setPartyImage(data.partyImage || "");
       setPartyName(data.partyName || "");
@@ -201,6 +256,8 @@ function UserEdit() {
           region,
           image,
           role,
+          isAdmin,
+
           title,
           partyImage,
           partyName,
@@ -241,9 +298,23 @@ function UserEdit() {
     bodyFormData.append("file", file);
 
     try {
-      dispatch({ type: "UPLOAD_REQUEST" });
-      const { data } = await axios.post<{ publicUrl: string }>(
-        `/api/upload`,
+      // Dispatch the corresponding action based on the field
+      switch (field) {
+        case "image":
+          dispatch({ type: "UPLOAD_IMAGE_REQUEST" });
+          break;
+        case "partyImage":
+          dispatch({ type: "UPLOAD_PARTY_IMAGE_REQUEST" });
+          break;
+        case "runningMateImage":
+          dispatch({ type: "UPLOAD_RUNNING_MATE_IMAGE_REQUEST" });
+          break;
+        case "banner":
+          dispatch({ type: "UPLOAD_BANNER_REQUEST" });
+          break;
+      }
+      const { data } = await axios.post<{ secure_url: string; url: string }>(
+        `${request}/api/upload`,
         bodyFormData,
         {
           headers: {
@@ -252,38 +323,55 @@ function UserEdit() {
           },
         }
       );
-      dispatch({ type: "UPLOAD_SUCCESS" });
-      toast.success("Image uploaded successfully", {
-        position: "bottom-center",
-      });
 
-      // Update the state based on the field
-      switch (field) {
-        case "image":
-          setImage(data.publicUrl);
-          break;
-        case "partyImage":
-          setPartyImage(data.publicUrl);
-          break;
-        case "runningMateImage":
-          setRunningMateImage(data.publicUrl);
-          break;
-        case "banner":
-          setBanner(data.publicUrl);
-          break;
+      // Use secure_url or url from the response
+      const imageUrl = data.secure_url || data.url;
+
+      if (imageUrl) {
+        console.log("Setting IMAGE URL:", imageUrl);
+        switch (field) {
+          case "image":
+            dispatch({ type: "UPLOAD_IMAGE_SUCCESS" });
+            setImage(imageUrl);
+            break;
+          case "partyImage":
+            dispatch({ type: "UPLOAD_PARTY_IMAGE_SUCCESS" });
+            setPartyImage(imageUrl);
+            break;
+          case "runningMateImage":
+            dispatch({ type: "UPLOAD_RUNNING_MATE_IMAGE_SUCCESS" });
+            setRunningMateImage(imageUrl);
+            break;
+          case "banner":
+            dispatch({ type: "UPLOAD_BANNER_SUCCESS" });
+            setBanner(imageUrl);
+            break;
+        }
+
+        toast.success("Image uploaded successfully", {
+          position: "bottom-center",
+        });
+      } else {
+        console.error("No URL returned in response");
       }
     } catch (err) {
       toast.error(getError(err as Error), { position: "bottom-center" });
-      dispatch({ type: "UPLOAD_FAIL" });
+      switch (field) {
+        case "image":
+          dispatch({ type: "UPLOAD_IMAGE_FAIL" });
+          break;
+        case "partyImage":
+          dispatch({ type: "UPLOAD_PARTY_IMAGE_FAIL" });
+          break;
+        case "runningMateImage":
+          dispatch({ type: "UPLOAD_RUNNING_MATE_IMAGE_FAIL" });
+          break;
+        case "banner":
+          dispatch({ type: "UPLOAD_BANNER_FAIL" });
+          break;
+      }
     }
   };
-
-  // PHONE
-  type E164Number = string;
-  const handlePhoneChange = (value: E164Number | undefined) => {
-    setPhone(value ? value.toString() : "");
-  };
-  console.log(user);
 
   return (
     <div className="product_edit admin_page_all">
@@ -302,10 +390,187 @@ function UserEdit() {
             <div className="userEdit">
               <div className="ubottom">
                 <div className="left light_shadow">
-                  <div className="featured">
-                    <img src={image ? image : noimage} alt="" />
+                  <div className="img_parent a_flex">
+                    <div className="user_img">
+                      <label htmlFor="">User Image:</label>
+                      <div className="drop_zone">
+                        <img
+                          src={image ? image : photo}
+                          alt="Election"
+                          className="images"
+                        />
+                        <div className="icon_bg l_flex">
+                          <label
+                            htmlFor="userImage"
+                            className={
+                              loadingImageUpload
+                                ? "upload_box disabled l_flex"
+                                : "upload_box l_flex"
+                            }
+                          >
+                            {loadingImageUpload ? (
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
+                              <label>
+                                <div className="inner">
+                                  <div className="icon_btn">
+                                    <CloudUploadIcon
+                                      className={image ? "icon white" : "icon"}
+                                    />
+                                  </div>
+                                </div>
+                                <input
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  id="userImage"
+                                  onChange={(e) =>
+                                    uploadFileHandler(e, "image")
+                                  } // Pass the correct field
+                                />
+                              </label>
+                            )}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="user_party_img">
+                      <label htmlFor="">Party Logo:</label>
+                      <div className="drop_zone">
+                        <img
+                          src={partyImage ? partyImage : photo}
+                          alt="Election"
+                          className="images"
+                        />
+                        <div className="icon_bg l_flex">
+                          <label
+                            htmlFor="partyImage"
+                            className={
+                              loadingPartyImageUpload
+                                ? "upload_box disabled l_flex"
+                                : "upload_box l_flex"
+                            }
+                          >
+                            {loadingPartyImageUpload ? (
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
+                              <label>
+                                <div className="inner">
+                                  <div className="icon_btn">
+                                    <CloudUploadIcon
+                                      className={
+                                        partyImage ? "icon white" : "icon"
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <input
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  id="partyImage"
+                                  onChange={(e) =>
+                                    uploadFileHandler(e, "partyImage")
+                                  } // Pass the correct field
+                                />
+                              </label>
+                            )}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="img_parent a_flex">
+                    <div className="user_img">
+                      <label htmlFor="">Running Mate Image:</label>
+                      <div className="drop_zone running_mate">
+                        <img
+                          src={runningMateImage ? runningMateImage : photo}
+                          alt="Election"
+                          className="images"
+                        />
+                        <div className="icon_bg l_flex">
+                          <label
+                            htmlFor="runningMateImage"
+                            className={
+                              loadingRunningMateImageUpload
+                                ? "upload_box disabled l_flex"
+                                : "upload_box l_flex"
+                            }
+                          >
+                            {loadingRunningMateImageUpload ? (
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
+                              <label>
+                                <div className="inner">
+                                  <div className="icon_btn">
+                                    <CloudUploadIcon
+                                      className={
+                                        runningMateImage ? "icon white" : "icon"
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <input
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  id="runningMateImage"
+                                  onChange={(e) =>
+                                    uploadFileHandler(e, "runningMateImage")
+                                  } // Pass the correct field
+                                />
+                              </label>
+                            )}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="img_parent a_flex">
+                    <div className="user_img banner_img">
+                      <label htmlFor="">Banner:</label>
+                      <div className="drop_zone running_mate">
+                        <img
+                          src={banner ? banner : photo}
+                          alt="Election"
+                          className="images"
+                        />
+                        <div className="icon_bg l_flex">
+                          <label
+                            htmlFor="banner"
+                            className={
+                              loadingBannerUpload
+                                ? "upload_box disabled l_flex"
+                                : "upload_box l_flex"
+                            }
+                          >
+                            {loadingBannerUpload ? (
+                              <i className="fa fa-spinner fa-spin"></i>
+                            ) : (
+                              <label>
+                                <div className="inner">
+                                  <div className="icon_btn">
+                                    <CloudUploadIcon
+                                      className={banner ? "icon white" : "icon"}
+                                    />
+                                  </div>
+                                </div>
+                                <input
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  id="banner"
+                                  onChange={(e) =>
+                                    uploadFileHandler(e, "banner")
+                                  } // Pass the correct field
+                                />
+                              </label>
+                            )}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div className="right light_shadow">
                   <form action="" onSubmit={submitHandler}>
                     <div className="form_group">
@@ -376,22 +641,19 @@ function UserEdit() {
                       </div>
                       <div className="formInput">
                         <label htmlFor="">Phone</label>
-                        <PhoneInput
-                          international
-                          countryCallingCodeEditable={false}
-                          id="specialInput"
-                          className="userUpdateInput"
-                          placeholder="Enter phone number"
+                        <input
                           value={phone}
-                          onChange={handlePhoneChange}
-                          defaultCountry="NG"
+                          onChange={(e) => setPhone(e.target.value)}
+                          type="text"
+                          placeholder="08123456789"
                         />
-                      </div>
+                      </div>{" "}
                       {/* ROLES */}
                       <div className="formInput">
                         <label htmlFor="role">Role</label>
                         <select
                           name="role"
+                          className="select"
                           id="role"
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
@@ -405,6 +667,85 @@ function UserEdit() {
                             </option>
                           ))}
                         </select>
+                      </div>
+                      <div className="formInput formUserType d_flex">
+                        <span className="checkBox a_flex ">
+                          <input
+                            type="checkbox"
+                            checked={isAdmin}
+                            id="isAdmin"
+                            disabled={userInfo?._id === user?._id}
+                            onChange={(e) => setIsAdmin(e.target.checked)}
+                          />
+                          <label htmlFor="isAdmin">IsAdmin</label>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="form_group politician">
+                      <div className="formInput">
+                        <label htmlFor="title">Position</label>
+                        <input
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          type="text"
+                          placeholder="Senator"
+                          id="title"
+                        />
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="partyName">Party</label>
+                        <input
+                          value={partyName}
+                          onChange={(e) => setPartyName(e.target.value)}
+                          type="text"
+                          placeholder="PDP"
+                          id="partyName"
+                        />
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="contestingFor">Contesting For</label>
+                        <input
+                          value={contestingFor}
+                          onChange={(e) => setContestingFor(e.target.value)}
+                          type="text"
+                          placeholder="Governor"
+                          id="contestingFor"
+                        />
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="runningMateName">
+                          Running Mate Name
+                        </label>
+                        <input
+                          value={runningMateName}
+                          onChange={(e) => setRunningMateName(e.target.value)}
+                          type="text"
+                          placeholder="Governor"
+                          id="runningMateName"
+                        />
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="runningMateTitle">
+                          Running Mate Position
+                        </label>
+                        <input
+                          value={runningMateTitle}
+                          onChange={(e) => setRunningMateTitle(e.target.value)}
+                          type="text"
+                          placeholder="Governor"
+                          id="runningMateTitle"
+                        />
+                      </div>
+                    </div>
+                    <div className="form_group_jodit">
+                      <div className="formInput">
+                        <label htmlFor="manifesto">Manifesto:</label>
+                        <JoditEditor
+                          className="editor"
+                          ref={editor}
+                          value={manifesto}
+                          onBlur={(newContent) => setManifesto(newContent)} // preferred to use only this option to update the content for performance reasons
+                        />
                       </div>
                     </div>
                     <div className="bottom_btn ">

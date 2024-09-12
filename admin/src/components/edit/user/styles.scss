@@ -16,17 +16,52 @@
       .left {
         flex: 1;
         padding: 20px;
-        .featured {
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        label {
+          font-size: 15px;
+          text-wrap: nowrap;
+        }
+        .drop_zone {
+          border-radius: 10px;
+          border: 1px solid #b4b4b4;
           img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+        .img_parent {
+          column-gap: 20px;
+          row-gap: 10px;
+          border: 1.5px dotted var(--color-border);
+          padding: 15px;
+          border-radius: 10px;
+          align-items: last baseline;
+          flex-wrap: wrap;
+          margin-bottom: 10px;
+        }
+        .user_img {
+          .drop_zone {
             width: 200px;
             height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #b4b4b4;
+          }
+          .running_mate {
+            width: 100px;
+            height: 100px;
+          }
+        }
+        .user_party_img {
+          .drop_zone {
+            width: 50px;
+            height: 50px;
+            .icon {
+              font-size: 19px !important;
+            }
+          }
+        }
+        .banner_img {
+          .drop_zone {
+            width: 100%;
+            height: 200px;
           }
         }
       }
@@ -81,6 +116,12 @@
               cursor: pointer;
             }
           }
+        }
+        .politician {
+          margin: 20px 0px;
+        }
+        .form_group_jodit {
+          margin-bottom: 20px;
         }
         .bottom_btn {
           width: 100%;

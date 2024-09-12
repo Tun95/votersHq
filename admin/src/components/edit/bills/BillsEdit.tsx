@@ -253,7 +253,7 @@ function BillsEdit() {
   // Image upload handler
   const uploadFileHandler = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    forImages: boolean
+    isBanner: boolean
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -269,12 +269,12 @@ function BillsEdit() {
         },
       });
       dispatch({ type: "UPLOAD_SUCCESS" });
-      if (forImages) {
-        setBanner(data.secure_url);
+      if (isBanner) {
+        setBanner(data.secure_url); // Set the banner image
       } else {
-        setImage(data.secure_url);
+        setImage(data.secure_url); // Set the general image
       }
-      toast.success("Image uploaded successfully. Click update to apply it");
+      toast.success("Image uploaded successfully. Click save to apply it");
     } catch (err) {
       toast.error(getError(err as ErrorResponse));
       dispatch({
@@ -591,10 +591,10 @@ function BillsEdit() {
                                         <input
                                           style={{ display: "none" }}
                                           type="file"
-                                          id="files"
+                                          id="electionImage"
                                           onChange={(e) =>
-                                            uploadFileHandler(e, true)
-                                          }
+                                            uploadFileHandler(e, false)
+                                          } // false for general image
                                         />
                                       </label>
                                     )}
@@ -670,10 +670,10 @@ function BillsEdit() {
                                         <input
                                           style={{ display: "none" }}
                                           type="file"
-                                          id="files"
+                                          id="banner"
                                           onChange={(e) =>
                                             uploadFileHandler(e, true)
-                                          }
+                                          } // true for banner
                                         />
                                       </label>
                                     )}

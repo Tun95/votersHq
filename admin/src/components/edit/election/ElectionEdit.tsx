@@ -180,42 +180,41 @@ function ElectionsEdit() {
   const [expirationDate, setExpirationDate] = useState("");
 
   // Fetch election data
- useEffect(() => {
-   const fetchData = async () => {
-     try {
-       dispatch({ type: "FETCH_REQUEST" });
-       const { data } = await axios.get(
-         `${request}/api/elections/${electionId}`
-       );
-       setTitle(data.title);
-       setPollOverview(data.pollOverview);
-       setFeatured(data.featured);
-       setLocation(data.location);
-       setSortType(data.sortType);
-       setSortStatus(data.sortStatus);
-       setSortCategory(data.sortCategory);
-       setStatus(data.status);
-       setStartDate(formatDate(data.startDate));
-       setExpirationDate(formatDate(data.expirationDate));
-       setImage(data.image);
-       setBanner(data.banner);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const { data } = await axios.get(
+          `${request}/api/elections/${electionId}`
+        );
+        setTitle(data.title);
+        setPollOverview(data.pollOverview);
+        setFeatured(data.featured);
+        setLocation(data.location);
+        setSortType(data.sortType);
+        setSortStatus(data.sortStatus);
+        setSortCategory(data.sortCategory);
+        setStatus(data.status);
+        setStartDate(formatDate(data.startDate));
+        setExpirationDate(formatDate(data.expirationDate));
+        setImage(data.image);
+        setBanner(data.banner);
 
-       // Map candidates to only their IDs
-       setCandidates(
-         data.candidates.map((candidate: Candidate) => candidate._id)
-       );
+        // Map candidates to only their IDs
+        setCandidates(
+          data.candidates.map((candidate: Candidate) => candidate._id)
+        );
 
-       dispatch({ type: "FETCH_SUCCESS", payload: data });
-     } catch (err) {
-       dispatch({
-         type: "FETCH_FAIL",
-         payload: getError(err as ErrorResponse),
-       });
-     }
-   };
-   fetchData();
- }, [electionId]);
-
+        dispatch({ type: "FETCH_SUCCESS", payload: data });
+      } catch (err) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: getError(err as ErrorResponse),
+        });
+      }
+    };
+    fetchData();
+  }, [electionId]);
 
   // Submit handler
   const submitHandler = async (e: React.FormEvent) => {
@@ -301,7 +300,7 @@ function ElectionsEdit() {
       } else {
         setImage(data.secure_url); // Set the general image
       }
-      toast.success("Image uploaded successfully. Click update to apply it");
+      toast.success("Image uploaded successfully. Click save to apply it");
     } catch (err) {
       toast.error(getError(err as ErrorResponse));
       dispatch({

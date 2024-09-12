@@ -1037,17 +1037,18 @@ userRouter.delete(
 //=================
 userRouter.put(
   "/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
-      user.firstName = req.body.firstName;
-      user.email = req.body.email;
-      user.phone = req.body.phone;
-      user.image = req.body.image || user.image;
-      user.isAdmin = Boolean(req.body.isAdmin);
-      user.isBlocked = Boolean(req.body.isBlocked);
+      // Loop through the keys in req.body and update user fields
+      Object.keys(req.body).forEach((key) => {
+        if (key in user) {
+          user[key] = req.body[key];
+        }
+      });
+
       const updatedUser = await user.save();
       res.send({
         message: "User Updated Successfully",
