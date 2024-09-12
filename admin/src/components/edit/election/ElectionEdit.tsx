@@ -180,36 +180,42 @@ function ElectionsEdit() {
   const [expirationDate, setExpirationDate] = useState("");
 
   // Fetch election data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `${request}/api/elections/${electionId}`
-        ); // Updated from bills to elections
-        setTitle(data.title);
-        setPollOverview(data.pollOverview);
-        setFeatured(data.featured);
-        setLocation(data.location);
-        setSortType(data.sortType);
-        setSortStatus(data.sortStatus);
-        setSortCategory(data.sortCategory);
-        setStatus(data.status);
-        setStartDate(formatDate(data.startDate));
-        setExpirationDate(formatDate(data.expirationDate));
-        setImage(data.image);
-        setBanner(data.banner);
-        setCandidates(data.candidates);
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: getError(err as ErrorResponse),
-        });
-      }
-    };
-    fetchData();
-  }, [electionId]);
+ useEffect(() => {
+   const fetchData = async () => {
+     try {
+       dispatch({ type: "FETCH_REQUEST" });
+       const { data } = await axios.get(
+         `${request}/api/elections/${electionId}`
+       );
+       setTitle(data.title);
+       setPollOverview(data.pollOverview);
+       setFeatured(data.featured);
+       setLocation(data.location);
+       setSortType(data.sortType);
+       setSortStatus(data.sortStatus);
+       setSortCategory(data.sortCategory);
+       setStatus(data.status);
+       setStartDate(formatDate(data.startDate));
+       setExpirationDate(formatDate(data.expirationDate));
+       setImage(data.image);
+       setBanner(data.banner);
+
+       // Map candidates to only their IDs
+       setCandidates(
+         data.candidates.map((candidate: Candidate) => candidate._id)
+       );
+
+       dispatch({ type: "FETCH_SUCCESS", payload: data });
+     } catch (err) {
+       dispatch({
+         type: "FETCH_FAIL",
+         payload: getError(err as ErrorResponse),
+       });
+     }
+   };
+   fetchData();
+ }, [electionId]);
+
 
   // Submit handler
   const submitHandler = async (e: React.FormEvent) => {
@@ -477,12 +483,15 @@ function ElectionsEdit() {
                                         const candidate = candidatesList.find(
                                           (item) => item._id === value
                                         );
-                                        return (
-                                          <Chip
-                                            key={value}
-                                            label={`${candidate?.firstName} ${candidate?.lastName}`}
-                                          />
-                                        );
+                                        if (candidate) {
+                                          return (
+                                            <Chip
+                                              key={value}
+                                              label={`${candidate.firstName} ${candidate.lastName}`}
+                                            />
+                                          );
+                                        }
+                                        return null; // In case candidate isn't found in the list
                                       })}
                                     </div>
                                   )}
@@ -733,9 +742,9 @@ function ElectionsEdit() {
                                     }
                                   >
                                     {loadingUpload ? (
-                                      <i className="fa fa-spinner fa-spin"></i>
+                                      <i className="fa fa-spinner fa-spin spinner"></i>
                                     ) : (
-                                      <label>
+                                      <label className="upload_label">
                                         <div className="inner">
                                           <div className="icon_btn">
                                             <CloudUploadIcon

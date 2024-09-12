@@ -264,45 +264,6 @@
               .display_none {
                 display: none;
               }
-              .drop_zone {
-                position: relative;
-                padding-bottom: 0;
-                margin-bottom: 0;
-                width: 280px;
-                height: 280px;
-                border-radius: 5px;
-                border: 1px dotted var(--color-border);
-                overflow: hidden;
-                transition: all 0.5s ease-in-out;
-                .images {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: contain;
-                }
-                .icon_bg {
-                  position: absolute;
-                  display: none;
-                  width: 100%;
-                  height: 100%;
-                  left: 0;
-                  top: 0;
-                  background: rgba(0, 0, 0, 0.081);
-                  transition: all 0.5s ease-in-out;
-                  .icon {
-                    background-color: var(--color-light-gray);
-                    padding: 5px;
-                    color: rgba(0, 0, 0, 0.5);
-                    border-radius: 50%;
-                    cursor: pointer;
-                    font-size: 28px !important;
-                  }
-                }
-                &:hover {
-                  .icon_bg {
-                    display: flex;
-                  }
-                }
-              }
 
               .upload_box {
                 border: 1px dotted var(--color-border) !important;
@@ -366,5 +327,38 @@
   .productTitle {
     padding: 20px;
     color: var(--color-gray);
+  }
+}
+.drop_zone {
+  position: relative;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  width: 280px;
+  height: 280px;
+  border-radius: 5px;
+  border: 1px dotted var(--color-border);
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+  .images {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .icon_bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.081);
+    transition: all 0.5s ease-in-out;
+    .icon {
+      background-color: var(--color-light-gray);
+      padding: 5px;
+      color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 28px !important;
+    }
   }
 }

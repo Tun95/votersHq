@@ -18,6 +18,7 @@ import AdminRoute from "./utilities/protectedRoute/AdminRoute";
 import OtpScreen from "./screens/formscreens/otpscreen/OtpScreen";
 import CreatedScreen from "./screens/formscreens/createdscreen/CreatedScreen";
 import SubscriberScreen from "./screens/messagescreens/subscriberscreen/SubscriberScreen";
+import UserEditScreen from "./screens/userscreen/editscreen/UserEditScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -42,6 +43,7 @@ function App() {
               </AdminRoute>
             }
           />
+          {/* USER */}
           <Route
             path="/users"
             element={
@@ -49,7 +51,16 @@ function App() {
                 <UserListScreen />
               </AdminRoute>
             }
+          />{" "}
+          <Route
+            path="/user/:id"
+            element={
+              <AdminRoute>
+                <UserEditScreen />
+              </AdminRoute>
+            }
           />
+          {/* BILLS */}
           <Route
             path="/bills"
             element={
@@ -66,6 +77,7 @@ function App() {
               </AdminRoute>
             }
           />{" "}
+          {/* ELECTION */}
           <Route
             path="/elections"
             element={

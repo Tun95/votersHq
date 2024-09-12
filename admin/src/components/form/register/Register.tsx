@@ -134,7 +134,7 @@ function RegisterComponent() {
   return (
     <div>
       <Box className=" menu_modal">
-        <div className="header_box register_header_box">
+        <div className="header_box light_shadow register_header_box">
           <div className="menu_header ">
             <div className="left">
               <h2>Register</h2>

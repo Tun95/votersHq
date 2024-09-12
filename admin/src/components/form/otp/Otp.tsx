@@ -197,7 +197,7 @@ function OtpVerificationComponent() {
 
   return (
     <Box className="menu_modal otp_menu">
-      <div className="otp_created_pending_login header_box">
+      <div className="otp_created_pending_login light_shadow header_box">
         <div className="img_width l_flex">
           {" "}
           <div className="img">

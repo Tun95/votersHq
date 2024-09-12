@@ -70,7 +70,7 @@ function LoginComponent() {
   return (
     <div>
       <Box className="menu_modal login_menu">
-        <div className="otp_created_pending_login header_box">
+        <div className="otp_created_pending_login light_shadow header_box">
           <div className="menu_header">
             <div className="left">
               <h2>Log In</h2>
