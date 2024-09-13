@@ -224,7 +224,7 @@ const Subscribers: React.FC = () => {
             <>
               <div className="light_shadow">
                 <div className="list">
-                  <h3 className="mb">Subscribers</h3>
+                  <h4 className="mb">Subscribers</h4>
                   <DataGrid
                     className="datagrid"
                     rows={subscribers}
@@ -236,7 +236,7 @@ const Subscribers: React.FC = () => {
                 </div>
               </div>
               <div className="light_shadow">
-                <h3>Send Newsletter</h3>
+                <h4>Send Newsletter</h4>
                 <form className="settingsForm" onSubmit={submitHandler}>
                   <div className="settingsItem">
                     <input

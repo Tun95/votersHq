@@ -27,8 +27,11 @@ import {
 
 //DON'T CHANGE THIS LIST
 const sortTypeList = [
-  { name: "State Bills", value: "state bills" },
-  { name: "National Bills", value: "national bills" },
+  { name: "Presidential", value: "presidential" },
+  { name: "Gubernatorial", value: "gubernatorial" },
+  { name: "National Assembly", value: "national" },
+  { name: "State House of Assembly", value: "state" },
+  { name: "Local Government", value: "local" },
 ];
 
 const sortStatusList = [
@@ -308,7 +311,7 @@ function AddElection() {
                                 id="title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Bill title"
+                                placeholder="Election title"
                               />
                             </div>
                             <div className="form-group">
