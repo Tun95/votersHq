@@ -2,13 +2,15 @@ import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import EmailMsg from "../models/emailMessaging.js";
 import SibApiV3Sdk from "sib-api-v3-sdk";
+import User from "../models/userModels.js";
+import { Termii } from "termii-nodejs";
 
-const sendEmailRouter = express.Router();
+const sendEmailSmsRouter = express.Router();
 
 //=========================
 // Subscribe to News Letter
 //=========================
-sendEmailRouter.post(
+sendEmailSmsRouter.post(
   "/subscribe",
   // isAuth,
   expressAsyncHandler(async (req, res) => {
@@ -35,7 +37,7 @@ sendEmailRouter.post(
 );
 
 //Fetch All
-sendEmailRouter.get(
+sendEmailSmsRouter.get(
   "/",
   // isAuth,
   // isAdmin,
@@ -50,7 +52,7 @@ sendEmailRouter.get(
 );
 
 // Unsubscribe from News Letter
-sendEmailRouter.post(
+sendEmailSmsRouter.post(
   "/unsubscribe",
   expressAsyncHandler(async (req, res) => {
     const { email } = req.body;
@@ -73,7 +75,7 @@ sendEmailRouter.post(
 //=======
 //Delete
 //=======
-sendEmailRouter.delete(
+sendEmailSmsRouter.delete(
   "/:id",
   // isAuth,
   // isAdmin,
@@ -94,8 +96,8 @@ sendEmailRouter.delete(
   })
 );
 
-// Send News Letter email
-sendEmailRouter.post(
+// Send News Letter email to subscribers
+sendEmailSmsRouter.post(
   "/send",
   expressAsyncHandler(async (req, res) => {
     const { subject, message } = req.body;
@@ -231,4 +233,242 @@ sendEmailRouter.post(
   })
 );
 
-export default sendEmailRouter;
+// const termii = new Termii({
+//   api_key: process.env.TERMII_API,
+//   sender_id: "YourSenderID", // Replace with your actual sender ID
+// });
+// // Send SMS to Users with smsNotification enabled
+// sendEmailSmsRouter.post(
+//   "/send-sms",
+//   expressAsyncHandler(async (req, res) => {
+//     try {
+//       const { message } = req.body;
+
+//       if (!message) {
+//         return res
+//           .status(400)
+//           .send({ message: "Message content is required." });
+//       }
+
+//       // Find users with smsNotification enabled
+//       const users = await User.find({ smsNotification: true });
+
+//       // Send SMS to each user
+//       const smsPromises = users.map((user) => {
+//         if (user.phone) {
+//           return termii.sendMessage(user.phone, message);
+//         }
+//       });
+
+//       // Wait for all SMS to be sent
+//       await Promise.all(smsPromises);
+
+//       res.status(200).send({
+//         message:
+//           "SMS sent successfully to all users with smsNotification enabled.",
+//       });
+//     } catch (error) {
+//       res.status(500).send({ message: "Error sending SMS", error });
+//     }
+//   })
+// );
+
+// Send SMS to Users with smsNotification enabled
+sendEmailSmsRouter.post(
+  "/send-sms",
+  expressAsyncHandler(async (req, res) => {
+    // Initialize Termii
+    const termiiClient = new Termii({
+      api_key: process.env.TERMII_API, // Load API key from environment variable
+    });
+
+    try {
+      // Fetch all users with smsNotification enabled
+      const users = await User.find({
+        smsNotification: true,
+        phone: { $exists: true, $ne: null },
+      });
+
+      if (!users.length) {
+        return res
+          .status(404)
+          .json({ message: "No users with SMS notifications enabled." });
+      }
+
+      // Prepare a message (You can customize this)
+      const message =
+        "This is a test message. Stay informed about the latest updates!";
+
+      // Iterate through users and send SMS
+      // Iterate through users and send SMS
+      for (const user of users) {
+        let phone = user.phone;
+
+        // Convert local Nigerian numbers to international format
+        if (/^0\d{10}$/.test(phone)) {
+          phone = phone.replace(/^0/, "+234");
+        }
+
+        // Ensure phone number starts with +234 and is 13 digits long
+        if (/^\+234\d{10}$/.test(phone)) {
+          await termiiClient.sendMessage({
+            to: phone,
+            from: "YourAppName", // Use your business name or sender ID (if set up)
+            sms: message,
+            type: "plain", // 'plain' is a standard SMS
+            channel: "generic", // The SMS channel type, can be generic, dnd, etc.
+          });
+        }
+      }
+
+      res.status(200).json({ message: "SMS successfully sent to users." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error sending SMS" });
+    }
+  })
+);
+
+// Send Email to Users with emailNotification enabled
+sendEmailSmsRouter.post(
+  "/send-email",
+  expressAsyncHandler(async (req, res) => {
+    const { subject, message } = req.body;
+
+    const facebook = process.env.FACEBOOK_PROFILE_LINK;
+    const instagram = process.env.INSTAGRAM_PROFILE_LINK;
+    const tiktok = process.env.TIKTOK_PROFILE_LINK;
+    const webName = process.env.WEB_NAME;
+
+    // Configure Sendinblue
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
+
+    try {
+      // Retrieve all users with emailNotification enabled
+      const usersWithEmailNotification = await User.find({
+        emailNotification: true,
+      });
+
+      // Check if there are users with email notifications enabled
+      if (usersWithEmailNotification.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "No users with email notifications enabled." });
+      }
+
+      // Extract email addresses into an array
+      const mailList = usersWithEmailNotification.map((user) => user.email);
+
+      // Create the email template with unsubscribe and social links
+      const emailMessageWithUnsubscribe = `
+        <html>
+         <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+            }
+            p {
+              margin-bottom: 16px;
+            }
+            .anchor {
+              display: inline-block;
+              padding: 10px 20px;
+              background-color: #007BFF;
+              color: #FFFFFF !important;
+              text-decoration: none;
+              border-radius: 4px;
+            }
+            .footer {
+              margin-top: 20px;
+            }
+            .footer_info {
+              color: #666;
+              margin: 10px 0;
+            }
+            a {
+              text-decoration: none;
+            }
+            .social-icons {
+              margin-top: 10px;
+              display: flex;
+              align-items: center;
+            }
+            .social-icon {
+              margin: 0 5px;
+              font-size: 24px;
+              color: #333;
+            }
+            .icons {
+              width: 25px;
+              height: 25px;
+            }
+            .instagram {
+              margin-top: 2px;
+              width: 22px;
+              height: 22px;
+            }
+            .tik {
+              width: 26px;
+              height: 26px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="content">
+              ${message}
+            </div>
+            <hr/>
+            <div class="footer">
+              <div class="social-icons">
+                <a href="${facebook}" class="social-icon">
+                  <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png" alt="Facebook" />
+                </a>
+                <a href="${instagram}" class="social-icon">
+                  <img class="icons instagram" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681997/instagram_iznt7t.png" alt="Instagram" />
+                </a>
+                <a href="${tiktok}" class="social-icon">
+                  <img class="icons tik" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681756/tiktok_y8dkwy.png" alt="Tiktok" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Define the BCC recipients separately
+      const bccRecipients = mailList.map((email) => ({ email }));
+
+      // Prepare the Sendinblue email payload
+      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+      // Set sender, subject, content, and BCC recipients
+      sendSmtpEmail.sender = {
+        email: process.env.EMAIL_ADDRESS,
+        name: webName,
+      };
+      sendSmtpEmail.subject = subject;
+      sendSmtpEmail.htmlContent = emailMessageWithUnsubscribe;
+      sendSmtpEmail.bcc = bccRecipients; // Add BCC recipients here
+
+      // Send the email
+      const sendResponse = await emailApiInstance.sendTransacEmail(
+        sendSmtpEmail
+      );
+      console.log("Email sent successfully:", sendResponse);
+
+      res.send("Mail sent to " + mailList.join(", "));
+    } catch (err) {
+      console.error("Error sending email:", err);
+      res.status(500).json({
+        message: "We seem to be experiencing issues. Please try again later.",
+      });
+    }
+  })
+);
+
+export default sendEmailSmsRouter;

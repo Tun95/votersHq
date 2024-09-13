@@ -6,7 +6,8 @@
   .light_shadow {
     padding: 20px;
     margin: 0px;
-    h3 {
+    h3,
+    h4 {
       color: var(--color-gray);
     }
     .list {
@@ -73,7 +74,10 @@
       margin-bottom: 10px;
     }
     .textarea {
+      margin-top: 10px;
       min-height: 200px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
       &::-webkit-scrollbar {
         display: none;
       }
@@ -86,7 +90,7 @@
         padding: 8px 20px;
         color: var(--color-white);
         border-radius: 5px;
-        background-color: var( --color-light-green);
+        background-color: var(--color-light-green);
       }
     }
   }

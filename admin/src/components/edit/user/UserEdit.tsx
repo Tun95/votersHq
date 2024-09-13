@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import "react-phone-number-input/style.css";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import photo from "../../../assets/others/photo.jpg";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -16,6 +16,7 @@ import {
   useAppContext,
 } from "../../../utilities/utils/Utils";
 import JoditEditor from "jodit-react";
+import CloseIcon from "@mui/icons-material/Close";
 
 const roleList = [
   { name: "Admin", value: "admin" },
@@ -142,6 +143,8 @@ const reducer = (state: State, action: Action): State => {
 };
 
 function UserEdit() {
+  const navigate = useNavigate();
+
   const params = useParams();
   const { id: userId } = params;
 
@@ -175,6 +178,9 @@ function UserEdit() {
   const [region, setRegion] = useState("");
   const [image, setImage] = useState("");
   const [role, setRole] = useState("");
+  const [about, setAbout] = useState("");
+  const [education, setEducation] = useState("");
+  const [achievement, setAchievement] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   // POLITICIAN
@@ -208,6 +214,9 @@ function UserEdit() {
       setGender(data.gender || "");
       setRegion(data.region || "");
       setImage(data.image || "");
+      setAbout(data.about || "");
+      setEducation(data.education || "");
+      setAchievement(data.achievement || "");
       setRole(data.role || "");
       setIsAdmin(data.isAdmin);
 
@@ -255,6 +264,9 @@ function UserEdit() {
           gender,
           region,
           image,
+          about,
+          education,
+          achievement,
           role,
           isAdmin,
 
@@ -631,7 +643,7 @@ function UserEdit() {
                         />
                       </div>{" "}
                       <div className="formInput">
-                        <label htmlFor="">Age</label>
+                        <label htmlFor="">Gender</label>
                         <input
                           value={gender}
                           onChange={(e) => setGender(e.target.value)}
@@ -739,6 +751,39 @@ function UserEdit() {
                     </div>
                     <div className="form_group_jodit">
                       <div className="formInput">
+                        <label htmlFor="about">About:</label>
+                        <textarea
+                          name="text"
+                          id="about"
+                          className="textarea"
+                          value={about}
+                          onChange={(e) => setAbout(e.target.value)}
+                          placeholder="about user..."
+                        ></textarea>
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="education">Education:</label>
+                        <textarea
+                          name="text"
+                          id="education"
+                          className="textarea"
+                          value={education}
+                          onChange={(e) => setEducation(e.target.value)}
+                          placeholder="education status..."
+                        ></textarea>
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="achievement">Achievement:</label>
+                        <textarea
+                          name="text"
+                          id="achievement"
+                          className="textarea"
+                          value={achievement}
+                          onChange={(e) => setAchievement(e.target.value)}
+                          placeholder="achievement..."
+                        ></textarea>
+                      </div>
+                      <div className="formInput">
                         <label htmlFor="manifesto">Manifesto:</label>
                         <JoditEditor
                           className="editor"
@@ -748,7 +793,14 @@ function UserEdit() {
                         />
                       </div>
                     </div>
-                    <div className="bottom_btn ">
+                    <div className="bottom_btn a_flex">
+                      {" "}
+                      <button
+                        className="cancel a_flex"
+                        onClick={() => navigate("/users")}
+                      >
+                        <CloseIcon className="icon" /> Cancel
+                      </button>
                       <button
                         type="submit"
                         className="a_flex"

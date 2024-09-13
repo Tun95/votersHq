@@ -122,14 +122,20 @@
         }
         .form_group_jodit {
           margin-bottom: 20px;
+          .textarea {
+            border: 1px solid var(--color-light-gray);
+            border-radius: 10px;
+            min-height: 150px;
+          }
         }
         .bottom_btn {
           width: 100%;
           display: flex;
           justify-content: flex-end;
+          gap: 10px;
           button {
             background-color: var(--color-light-green);
-            padding: 10px !important;
+            padding: 8px 10px !important;
             border-radius: 8px;
             color: var(--color-white);
             cursor: pointer;
@@ -137,6 +143,9 @@
               font-size: 17px;
               margin-right: 3px;
             }
+          }
+          .cancel {
+            background-color: var(--color-red);
           }
         }
       }

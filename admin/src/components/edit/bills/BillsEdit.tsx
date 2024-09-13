@@ -21,13 +21,11 @@ import {
 
 //DON'T CHANGE THIS LIST
 const sortTypeList = [
-  { name: "All types", value: "all" },
   { name: "State Bills", value: "state bills" },
   { name: "National Bills", value: "national bills" },
 ];
 
 const sortStatusList = [
-  { name: "All status", value: "all" },
   { name: "First Reading", value: "first reading" },
   { name: "Second Reading", value: "second reading" },
   { name: "Committee Stage", value: "committee stage" },
@@ -39,20 +37,22 @@ const sortStatusList = [
 ];
 
 const sortCategoryList = [
-  { name: "All categories", value: "all" },
   { name: "Bills", value: "bills" },
   { name: "Policies", value: "policies" },
   { name: "Issues", value: "issues" },
 ];
 
 const sortStateList = [
-  { name: "All states", value: "all" },
   { name: "Bills", value: "bills" },
   { name: "Policies", value: "policies" },
   { name: "Issues", value: "issues" },
 ];
 
-const formatDate = (dateStr: string) => {
+const formatDate = (dateStr: string | undefined) => {
+  if (!dateStr || isNaN(new Date(dateStr).getTime())) {
+    return ""; // Return an empty string if the date is invalid or undefined
+  }
+
   const date = new Date(dateStr);
   return date.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
 };
@@ -146,7 +146,7 @@ function BillsEdit() {
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
-  const [{ bill, candidatesList, loading, loadingUpload }, dispatch] =
+  const [{ bill, candidatesList, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       bill: {} as Bill,
       candidatesList: [],
@@ -240,7 +240,7 @@ function BillsEdit() {
 
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Bill updated successfully");
-      navigate("/bills");
+      //navigate("/bills");
     } catch (err) {
       toast.error(getError(err as ErrorResponse));
       dispatch({
@@ -307,9 +307,7 @@ function BillsEdit() {
         <div className="">
           <div className=" ">
             <div className="productTitleContainer">
-              <h3 className="productTitle light_shadow uppercase">
-                Edit Product
-              </h3>
+              <h3 className="productTitle light_shadow uppercase">Edit Bill</h3>
             </div>
             <div className="productBottom mtb">
               <form action="" onSubmit={submitHandler}>
@@ -399,7 +397,16 @@ function BillsEdit() {
                                 placeholder="Bill title"
                               />
                             </div>
-
+                            <div className="form-group">
+                              <label htmlFor="location">Location</label>
+                              <input
+                                type="text"
+                                id="location"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder="e.g Lagos"
+                              />
+                            </div>
                             <div className="form-group">
                               <label htmlFor="expirationDate">
                                 Expiration Date
@@ -562,7 +569,7 @@ function BillsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={image}
+                                  src={image ? image : photo}
                                   alt="Banner"
                                   className="images"
                                 />
@@ -641,7 +648,7 @@ function BillsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={banner}
+                                  src={banner ? banner : photo}
                                   alt="Banner"
                                   className="images"
                                 />
@@ -740,8 +747,12 @@ function BillsEdit() {
                     >
                       <CloseIcon className="icon" /> Cancel
                     </button>
-                    <button type="submit" className="a_flex" disabled={loading}>
-                      {loading ? (
+                    <button
+                      type="submit"
+                      className="a_flex"
+                      disabled={loadingUpdate}
+                    >
+                      {loadingUpdate ? (
                         <span className="a_flex">
                           <i className="fa fa-spinner fa-spin"></i>
                           Saving...

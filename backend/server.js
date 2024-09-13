@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import sendEmailRouter from "./routes/emailMsgRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
 import politicalNewsRouter from "./routes/politicalNewsRoutes.js";
@@ -15,6 +14,7 @@ import Election from "./models/electionModels.js";
 import billsRouter from "./routes/billsRoutes.js";
 import generalRouter from "./routes/generalRoutes.js";
 import { fileURLToPath } from "url";
+import sendEmailSmsRouter from "./routes/emailMsgRoutes.js";
 
 // Get the equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -70,7 +70,7 @@ app.use("/api/models", express.static(path.join(__dirname, "facemodels")));
 app.use("/api/upload", uploadRouter);
 app.use("/api/generals", generalRouter);
 
-app.use("/api/message", sendEmailRouter);
+app.use("/api/message", sendEmailSmsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/political-news", politicalNewsRouter);
 app.use("/api/elections", electionRouter);

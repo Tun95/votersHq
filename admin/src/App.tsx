@@ -19,6 +19,10 @@ import OtpScreen from "./screens/formscreens/otpscreen/OtpScreen";
 import CreatedScreen from "./screens/formscreens/createdscreen/CreatedScreen";
 import SubscriberScreen from "./screens/messagescreens/subscriberscreen/SubscriberScreen";
 import UserEditScreen from "./screens/userscreen/editscreen/UserEditScreen";
+import AddNewUserScreen from "./screens/userscreen/addscreen/AddNewUserScreen";
+import AddNewBillScreen from "./screens/billscreen/addscreen/AddNewBillScreen";
+import AddElectionScreen from "./screens/electionscreen/addscreen/AddElectionScreen";
+import MessageScreen from "./screens/messagescreens/messagesmscreen/MessageScreen";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru);
@@ -53,6 +57,14 @@ function App() {
             }
           />{" "}
           <Route
+            path="/user/new"
+            element={
+              <AdminRoute>
+                <AddNewUserScreen />
+              </AdminRoute>
+            }
+          />{" "}
+          <Route
             path="/user/:id"
             element={
               <AdminRoute>
@@ -70,6 +82,14 @@ function App() {
             }
           />{" "}
           <Route
+            path="/bill/new"
+            element={
+              <AdminRoute>
+                <AddNewBillScreen />
+              </AdminRoute>
+            }
+          />{" "}
+          <Route
             path="/bills/:id"
             element={
               <AdminRoute>
@@ -83,6 +103,14 @@ function App() {
             element={
               <AdminRoute>
                 <ElectionListScreen />
+              </AdminRoute>
+            }
+          />{" "}
+          <Route
+            path="/elections/new"
+            element={
+              <AdminRoute>
+                <AddElectionScreen />
               </AdminRoute>
             }
           />
@@ -108,6 +136,14 @@ function App() {
             element={
               <AdminRoute>
                 <SubscriberScreen />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/message"
+            element={
+              <AdminRoute>
+                <MessageScreen />
               </AdminRoute>
             }
           />

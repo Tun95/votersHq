@@ -75,7 +75,7 @@ const columns: GridColDef[] = [
   },
   {
     field: "status",
-    headerName: "Status",
+    headerName: "Account Status",
     width: 160,
     renderCell: (params) => (
       <div className={`cellWithStatus ${params.row.isBlocked}`}>
@@ -83,6 +83,20 @@ const columns: GridColDef[] = [
           <span className="blocked">Blocked</span>
         ) : (
           <span className="active">Active</span>
+        )}
+      </div>
+    ),
+  },
+  {
+    field: "isAccountVerified",
+    headerName: "Verification Status",
+    width: 160,
+    renderCell: (params) => (
+      <div className={`cellWithStatus ${!params.row.isAccountVerified}`}>
+        {!params.row.isAccountVerified ? (
+          <span className="blocked">Unverified</span>
+        ) : (
+          <span className="active">Verified</span>
         )}
       </div>
     ),

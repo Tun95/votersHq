@@ -288,7 +288,7 @@ userRouter.post(
 );
 
 //===================
-// ADD NEW USER ROUTE
+// ADMIN ADD NEW USER ROUTE
 //===================
 userRouter.post(
   "/add-user",
@@ -317,6 +317,7 @@ userRouter.post(
       about,
       education,
       achievement,
+
       partyImage, // Updated field name
       partyName, // Updated field name
       title, // New field
@@ -325,9 +326,9 @@ userRouter.post(
       runningMateTitle, // New field
       runningMateImage, // New field
       banner, // New field
-      biography, // New field
+
       manifesto, // New field
-      isAdmin,
+
       password,
     } = req.body;
 
@@ -357,6 +358,7 @@ userRouter.post(
       about,
       education,
       achievement,
+
       role: "politician", // Default role set to "politician"
       partyImage, // Updated field name
       partyName, // Updated field name
@@ -366,9 +368,8 @@ userRouter.post(
       runningMateTitle, // New field
       runningMateImage, // New field
       banner, // New field
-      biography, // New field
+
       manifesto, // New field
-      isAdmin,
       password: hashedPassword,
     });
 
@@ -661,13 +662,14 @@ userRouter.put(
 );
 
 //==========================
-// fetch all users
+// Fetch all users by latest
 //==========================
 userRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
-      const users = await User.find();
+      // Fetch users and sort by latest using the createdAt field in descending order
+      const users = await User.find().sort({ createdAt: -1 });
       res.json(users);
     } catch (error) {
       res.status(500).json({ message: "Error fetching users", error });
@@ -949,8 +951,8 @@ userRouter.put(
 //=================
 userRouter.put(
   "/block/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(req.params.id);
@@ -981,8 +983,8 @@ userRouter.put(
 //=================
 userRouter.put(
   "/unblock/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
     try {
@@ -1008,8 +1010,8 @@ userRouter.put(
 //==================
 userRouter.delete(
   "/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
 
@@ -1038,7 +1040,7 @@ userRouter.delete(
 userRouter.put(
   "/:id",
   isAuth,
-  isAdmin,
+  // isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
@@ -1292,11 +1294,11 @@ userRouter.put(
 // NOTIFICATION UPDATE
 //================
 userRouter.put(
-  "/update-notifications",
+  "/update-notifications/:id", // Add ':id' to the route
   isAuth,
   expressAsyncHandler(async (req, res) => {
     try {
-      const user = await User.findById(req.user._id);
+      const user = await User.findById(req.params.id); // Use req.params.id instead of req.user._id
 
       if (user) {
         // Update email and SMS notification settings

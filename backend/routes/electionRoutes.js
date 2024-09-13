@@ -33,10 +33,104 @@ electionRouter.post(
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
-      const electionData = req.body;
+      const {
+        title,
+        image,
+        banner,
+        pollOverview,
+        location,
+        sortType,
+        sortStatus,
+        sortCategory,
+        status,
+        candidates,
+        startDate,
+        expirationDate,
+      } = req.body;
 
-      // Associate the user ID with the election
-      electionData.user = req.user._id;
+      // Check for missing required fields
+      if (
+        !title ||
+        !image ||
+        !banner ||
+        !pollOverview ||
+        !location ||
+        !sortType ||
+        !sortStatus ||
+        !sortCategory ||
+        !status ||
+        !candidates.length
+      ) {
+        return res.status(400).send({
+          message: "Please provide all required fields.",
+        });
+      }
+
+      const currentDate = new Date();
+
+      // Check if startDate is in the past
+      if (startDate && new Date(startDate) < currentDate) {
+        return res.status(400).send({
+          message: "Start date cannot be in the past.",
+        });
+      }
+
+      // Check if expirationDate is earlier than startDate or current date,
+      // but allow it for "concluded" elections
+      if (
+        expirationDate &&
+        status !== "concluded" &&
+        new Date(expirationDate) < currentDate
+      ) {
+        return res.status(400).send({
+          message:
+            "Expiration date cannot be in the past unless the status is concluded.",
+        });
+      }
+
+      if (
+        startDate &&
+        expirationDate &&
+        new Date(expirationDate) < new Date(startDate)
+      ) {
+        return res.status(400).send({
+          message: "Expiration date cannot be earlier than the start date.",
+        });
+      }
+
+      // Check if status is ongoing and expirationDate is missing
+      if (status === "ongoing" && !expirationDate) {
+        return res.status(400).send({
+          message: "Expiration date is required when status is set to ongoing.",
+        });
+      }
+
+      // Check if status is upcoming and both startDate and expirationDate are required
+      if (status === "upcoming") {
+        if (!startDate || !expirationDate) {
+          return res.status(400).send({
+            message:
+              "Both start date and expiration date are required when status is set to upcoming.",
+          });
+        }
+      }
+
+      // Check if status is concluded and expirationDate can be in the past
+      if (
+        status === "concluded" &&
+        expirationDate &&
+        new Date(expirationDate) >= currentDate
+      ) {
+        return res.status(400).send({
+          message:
+            "Expiration date must be in the past when status is set to concluded.",
+        });
+      }
+
+      const electionData = {
+        ...req.body,
+        user: req.user._id, // Associate the election with the user
+      };
 
       const election = new Election(electionData);
       await election.validate(); // Manually trigger validation if needed
@@ -49,7 +143,7 @@ electionRouter.post(
       res.status(201).send(createdElection);
     } catch (error) {
       console.error("Error creating election:", error);
-      res.status(400).json({ message: error.message }); // Return validation error
+      res.status(400).json({ message: error.message });
     }
   })
 );

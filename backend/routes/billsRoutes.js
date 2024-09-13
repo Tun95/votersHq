@@ -2,7 +2,6 @@ import express from "express";
 import Bills from "../models/billsModels.js";
 import expressAsyncHandler from "express-async-handler";
 import { isAdmin, isAuth } from "../utils.js";
-import mongoose from "mongoose";
 import User from "../models/userModels.js";
 import UserActivity from "../models/userActivitiesModels.js";
 
@@ -17,12 +16,65 @@ billsRouter.post(
   isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
+      const {
+        title,
+        image,
+        banner,
+        description,
+        featured,
+        location,
+        sortType,
+        sortStatus,
+        sortCategory,
+        sortState,
+        candidates,
+        expirationDate,
+      } = req.body;
+
+      // Validate required fields
+      if (
+        !title ||
+        !image ||
+        !banner ||
+        !description ||
+        !location ||
+        !sortType ||
+        !sortStatus ||
+        !sortCategory ||
+        !sortState ||
+        !candidates ||
+        !expirationDate
+      ) {
+        return res.status(400).send({ message: "All fields are required" });
+      }
+
+      // Check if expirationDate is in the past
+      const currentDate = new Date();
+      if (new Date(expirationDate) < currentDate) {
+        return res.status(400).send({
+          message: "Expiration date cannot be in the past",
+        });
+      }
+
+      // Create new bill
       const bill = new Bills({
-        ...req.body,
+        title,
+        image,
+        banner,
+        description,
+        featured,
+        location,
+        sortType,
+        sortStatus,
+        sortCategory,
+        sortState,
+        candidates,
+        expirationDate,
         slug: "", // This will be generated in the pre-save middleware
         user: req.user._id,
       });
 
+      // Save to database
       const createdBill = await bill.save();
       res.status(201).send({ message: "Bill Created", bill: createdBill });
     } catch (error) {
@@ -272,8 +324,8 @@ billsRouter.get(
 //===============================
 billsRouter.put(
   "/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const bill = await Bills.findById(req.params.id);

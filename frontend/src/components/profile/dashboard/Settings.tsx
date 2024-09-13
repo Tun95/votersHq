@@ -104,7 +104,7 @@ function Settings({ user }: TabMainPanelProps) {
   const handleEmailToggle = async () => {
     try {
       const { data } = await axios.put(
-        `${request}/api/users/update-notifications`,
+        `${request}/api/users/update-notifications/${user._id}`,
         { emailNotification: !emailNotification },
         {
           headers: { Authorization: `Bearer ${userInfo?.token}` }, // Replace `userToken` with your token variable
@@ -122,7 +122,7 @@ function Settings({ user }: TabMainPanelProps) {
   const handleSmsToggle = async () => {
     try {
       const { data } = await axios.put(
-        `${request}/api/users/update-notifications`,
+        `${request}/api/users/update-notifications/${user._id}`,
         { smsNotification: !smsNotification },
         {
           headers: { Authorization: `Bearer ${userInfo?.token}` }, // Replace `userToken` with your token variable

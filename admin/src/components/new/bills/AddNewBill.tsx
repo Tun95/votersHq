@@ -1,8 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
-import "../styles/styles.scss";
-import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Checkbox } from "antd";
@@ -11,21 +9,16 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import photo from "../../../assets/others/photo.jpg";
 import { request } from "../../../base url/BaseUrl";
+import photo from "../../../assets/others/photo.jpg";
+
 import {
   ErrorResponse,
   getError,
   useAppContext,
 } from "../../../utilities/utils/Utils";
-import {
-  Select,
-  MenuItem,
-  FormControl,
-  SelectChangeEvent,
-  Chip,
-} from "@mui/material";
 
+//DON'T CHANGE THIS LIST
 //DON'T CHANGE THIS LIST
 const sortTypeList = [
   { name: "State Bills", value: "state bills" },
@@ -49,40 +42,11 @@ const sortCategoryList = [
   { name: "Issues", value: "issues" },
 ];
 
-const statusList = [
-  { name: "ongoing", value: "ongoing" },
-  { name: "upcoming", value: "upcoming" },
-  { name: "concluded", value: "concluded" },
+const sortStateList = [
+  { name: "Bills", value: "bills" },
+  { name: "Policies", value: "policies" },
+  { name: "Issues", value: "issues" },
 ];
-
-const formatDate = (dateStr: string | undefined) => {
-  if (!dateStr || isNaN(new Date(dateStr).getTime())) {
-    return ""; // Return an empty string if the date is invalid or undefined
-  }
-
-  const date = new Date(dateStr);
-  return date.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
-};
-
-// Types for election and candidates
-interface Election {
-  _id: string;
-  slug: string;
-  title: string;
-  image: string;
-  banner: string;
-  views: number;
-  pollOverview: string;
-  featured: boolean;
-  location: string;
-  sortType: string;
-  sortStatus: string;
-  sortCategory: string;
-  sortState: string;
-  candidates: Candidate[]; // Updated to an array of Candidate objects
-  startDate: string;
-  expirationDate: string;
-}
 
 interface Candidate {
   _id: string;
@@ -91,18 +55,17 @@ interface Candidate {
 }
 
 interface State {
-  election: Election; // Updated from bill to election
   candidatesList: Candidate[];
   loading: boolean;
   error: string;
+  loadingCreate?: boolean;
   loadingUpload?: boolean;
-  loadingUpdate?: boolean;
 }
 
 type Action =
-  | { type: "FETCH_REQUEST" }
-  | { type: "FETCH_SUCCESS"; payload: Election } // Updated from Bill to Election
-  | { type: "FETCH_FAIL"; payload: string }
+  | { type: "CREATE_REQUEST" }
+  | { type: "CREATE_SUCCESS" }
+  | { type: "CREATE_FAIL"; payload: string }
   | { type: "FETCH_CANDIDATE_REQUEST" }
   | { type: "FETCH_CANDIDATE_SUCCESS"; payload: Candidate[] }
   | { type: "FETCH_CANDIDATE_FAIL"; payload: string }
@@ -115,24 +78,20 @@ type Action =
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false, election: action.payload }; // Updated from bill to election
-    case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+    case "CREATE_REQUEST":
+      return { ...state, loadingCreate: true };
+    case "CREATE_SUCCESS":
+      return { ...state, loadingCreate: false };
+    case "CREATE_FAIL":
+      return { ...state, loadingCreate: false };
+
     case "FETCH_CANDIDATE_REQUEST":
       return { ...state, loading: true };
     case "FETCH_CANDIDATE_SUCCESS":
       return { ...state, loading: false, candidatesList: action.payload };
     case "FETCH_CANDIDATE_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "UPDATE_REQUEST":
-      return { ...state, loadingUpdate: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, loadingUpdate: false };
-    case "UPDATE_FAIL":
-      return { ...state, loadingUpdate: false, error: action.payload };
+
     case "UPLOAD_REQUEST":
       return { ...state, loadingUpload: true };
     case "UPLOAD_SUCCESS":
@@ -144,26 +103,16 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-// Define custom styles for the menu
-const menuPaperProps = {
-  style: {
-    maxHeight: 200, // Adjust the height as needed
-    width: 250, // Adjust the width as needed
-  },
-};
-function ElectionsEdit() {
+function AddNewBill() {
   const editor = useRef(null);
 
   const navigate = useNavigate();
-  const params = useParams<{ id: string }>();
-  const { id: electionId } = params;
 
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
-  const [{ election, candidatesList, loadingUpdate, loadingUpload }, dispatch] =
+  const [{ candidatesList, loadingCreate, loadingUpload }, dispatch] =
     useReducer(reducer, {
-      election: {} as Election, // Updated from bill to election
       candidatesList: [],
       loading: true,
       error: "",
@@ -172,95 +121,15 @@ function ElectionsEdit() {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [banner, setBanner] = useState("");
-  const [pollOverview, setPollOverview] = useState("");
+  const [description, setDescription] = useState("");
   const [featured, setFeatured] = useState(false);
   const [location, setLocation] = useState("");
   const [sortType, setSortType] = useState("");
   const [sortStatus, setSortStatus] = useState("");
   const [sortCategory, setSortCategory] = useState("");
-  const [status, setStatus] = useState("");
-  const [candidates, setCandidates] = useState<string[]>([]); // Array of candidate IDs
-  const [startDate, setStartDate] = useState("");
+  const [sortState, setSortState] = useState("");
+  const [candidates, setCandidates] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
-
-  // Fetch election data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `${request}/api/elections/${electionId}`
-        );
-        setTitle(data.title);
-        setPollOverview(data.pollOverview);
-        setFeatured(data.featured);
-        setLocation(data.location);
-        setSortType(data.sortType);
-        setSortStatus(data.sortStatus);
-        setSortCategory(data.sortCategory);
-        setStatus(data.status);
-        setStartDate(formatDate(data.startDate));
-        setExpirationDate(formatDate(data.expirationDate));
-        setImage(data.image);
-        setBanner(data.banner);
-
-        // Map candidates to only their IDs
-        setCandidates(
-          data.candidates.map((candidate: Candidate) => candidate._id)
-        );
-
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: getError(err as ErrorResponse),
-        });
-      }
-    };
-    fetchData();
-  }, [electionId]);
-
-  // Submit handler
-  const submitHandler = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      dispatch({ type: "UPDATE_REQUEST" });
-      const updatedElection = {
-        title,
-        pollOverview,
-        featured,
-        location,
-        sortType,
-        sortStatus,
-        sortCategory,
-        status,
-        startDate,
-        expirationDate,
-        image,
-        banner,
-        candidates, // Array of candidate IDs
-      };
-
-      await axios.put(
-        `${request}/api/elections/${electionId}`,
-        updatedElection,
-        {
-          // Updated from bills to elections
-          headers: { Authorization: `Bearer ${userInfo?.token}` },
-        }
-      );
-
-      dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success("Election updated successfully");
-      //navigate("/elections"); // Updated from bills to elections
-    } catch (err) {
-      toast.error(getError(err as ErrorResponse));
-      dispatch({
-        type: "UPDATE_FAIL",
-        payload: getError(err as ErrorResponse),
-      });
-    }
-  };
 
   // Fetch candidates
   useEffect(() => {
@@ -279,6 +148,42 @@ function ElectionsEdit() {
     };
     fetchCandidates();
   }, []);
+
+  // Submit handler
+  const submitHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "CREATE_REQUEST" });
+      const createBill = {
+        title,
+        description,
+        featured,
+        location,
+        sortType,
+        sortStatus,
+        sortCategory,
+        sortState,
+        expirationDate,
+        image,
+        banner,
+        candidates,
+      };
+
+      await axios.post(`${request}/api/bills`, createBill, {
+        headers: { Authorization: `Bearer ${userInfo?.token}` },
+      });
+
+      dispatch({ type: "CREATE_SUCCESS" });
+      toast.success("Bill Created successfully");
+      navigate("/bills");
+    } catch (err) {
+      toast.error(getError(err as ErrorResponse));
+      dispatch({
+        type: "CREATE_FAIL",
+        payload: getError(err as ErrorResponse),
+      });
+    }
+  };
 
   // Image upload handler
   const uploadFileHandler = async (
@@ -328,25 +233,14 @@ function ElectionsEdit() {
     }
   };
 
-  // Handle multi-select change
-  const handleCandidateChange = (e: SelectChangeEvent<string[]>) => {
-    const selectedValues = e.target.value as string[];
-    setCandidates(selectedValues); // Update the selected candidates
-  };
-
-  console.log("CANDIDATE:", candidates);
-
   return (
     <>
-      <Helmet>
-        <title>Edit Election :: {election ? `${election.title}` : ""}</title>{" "}
-      </Helmet>
       <div className="product_edit admin_page_all">
         <div className="">
           <div className=" ">
             <div className="productTitleContainer">
               <h3 className="productTitle light_shadow uppercase">
-                Edit Election
+                Add Bill
               </h3>
             </div>
             <div className="productBottom mtb">
@@ -368,8 +262,8 @@ function ElectionsEdit() {
                               <span>01</span>
                             </div>
                             <div className="text">
-                              <h4>Election Info</h4>
-                              <small>Fill all election information below</small>
+                              <h4>Bill Info</h4>
+                              <small>Fill all bill information below</small>
                             </div>
                           </div>
                         </div>
@@ -383,59 +277,6 @@ function ElectionsEdit() {
                       </div>
                       {openBox === 0 && (
                         <>
-                          <div className="product_chart_info f_flex">
-                            <div className="product_right light_shadow">
-                              <table className="productTable">
-                                <tbody>
-                                  <tr className="product_img_text">
-                                    <td className="imageCell l_flex">
-                                      <div className="productImg ">
-                                        <img
-                                          src={
-                                            election?.image
-                                              ? election?.image
-                                              : photo
-                                          }
-                                          alt=""
-                                          className="img"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td className="textCell">
-                                      <div>
-                                        <label htmlFor="title">Title:</label>
-                                        <span>{election?.title}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="slug">Slug:</label>
-                                        <span>{election?.slug}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="views">Views:</label>
-                                        <span>{election?.views}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="startDate">
-                                          Start On:
-                                        </label>
-                                        <span>
-                                          {formatDate(election?.startDate)}
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="expirationDate">
-                                          Expires On:
-                                        </label>
-                                        <span>
-                                          {formatDate(election?.expirationDate)}
-                                        </span>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
                           <div className="product_info_box box">
                             <div className="form-group">
                               <label htmlFor="title">Title</label>
@@ -458,15 +299,6 @@ function ElectionsEdit() {
                               />
                             </div>
                             <div className="form-group">
-                              <label htmlFor="startDate">Starting Date</label>
-                              <input
-                                type="datetime-local"
-                                id="startDate"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                              />
-                            </div>
-                            <div className="form-group">
                               <label htmlFor="expirationDate">
                                 Expiration Date
                               </label>
@@ -482,56 +314,22 @@ function ElectionsEdit() {
                             {/* CANDIDATE SELECTION */}
                             <div className="form-group">
                               <label htmlFor="candidate">Candidate</label>
-                              <FormControl className="mui_select_box">
-                                <Select
-                                  labelId="demo-multiple-name-label"
-                                  id="demo-multiple-name"
-                                  multiple
-                                  className="mui_select"
-                                  value={candidates} // The current selected candidates
-                                  onChange={handleCandidateChange} // Handle new candidate selection
-                                  renderValue={(selected) => (
-                                    <div className="selected-candidates">
-                                      {selected.map((value) => {
-                                        const candidate = candidatesList.find(
-                                          (item) => item._id === value
-                                        );
-                                        if (candidate) {
-                                          return (
-                                            <Chip
-                                              key={value}
-                                              label={`${candidate.firstName} ${candidate.lastName}`}
-                                            />
-                                          );
-                                        }
-                                        return null; // In case candidate isn't found in the list
-                                      })}
-                                    </div>
-                                  )}
-                                  MenuProps={{
-                                    PaperProps: { style: menuPaperProps.style },
-                                  }}
-                                  sx={{
-                                    borderRadius: 2, // Adjust the border radius as needed
-                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline":
-                                      {
-                                        border: "none", // Remove the outline when focused
-                                      },
-                                  }}
-                                >
-                                  {candidatesList.map((item) => (
-                                    <MenuItem
-                                      className="mui_options"
-                                      key={item._id}
-                                      value={item._id}
-                                    >
-                                      {item.lastName} {item.firstName}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
+                              <select
+                                name="candidate"
+                                id="candidate"
+                                value={candidates}
+                                onChange={(e) => setCandidates(e.target.value)}
+                              >
+                                <option value="" disabled>
+                                  Select Candidate
+                                </option>
+                                {candidatesList.map((item, index) => (
+                                  <option value={item._id} key={index}>
+                                    {item.firstName} {item.lastName}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
-
                             {/* TYPE */}
                             <div className="form-group">
                               <label htmlFor="sortType">Type</label>
@@ -541,7 +339,7 @@ function ElectionsEdit() {
                                 value={sortType}
                                 onChange={(e) => setSortType(e.target.value)}
                               >
-                                <option value="" selected disabled>
+                                <option value="" disabled>
                                   Select Type
                                 </option>
                                 {sortTypeList.map((item, index) => (
@@ -592,19 +390,19 @@ function ElectionsEdit() {
                                 ))}
                               </select>
                             </div>
-                            {/* STATUS */}
+                            {/* STATE */}
                             <div className="form-group">
-                              <label htmlFor="status">Status</label>
+                              <label htmlFor="sortState">State</label>
                               <select
-                                name="status"
-                                id="status"
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
+                                name="sortState"
+                                id="sortState"
+                                value={sortState}
+                                onChange={(e) => setSortState(e.target.value)}
                               >
                                 <option value="" disabled>
-                                  Select Status
+                                  Select State
                                 </option>
-                                {statusList.map((item, index) => (
+                                {sortStateList.map((item, index) => (
                                   <option value={item.value} key={index}>
                                     {item.name}
                                   </option>
@@ -627,7 +425,7 @@ function ElectionsEdit() {
                         </>
                       )}
                     </div>
-                    {/* Election IMAGE UPLOAD */}
+                    {/* BILL IMAGE UPLOAD */}
                     <div className="light_shadow mt product_images banners">
                       <div
                         className={
@@ -643,8 +441,8 @@ function ElectionsEdit() {
                               <span>02</span>
                             </div>
                             <div className="text">
-                              <h4>Election Image</h4>
-                              <small>Upload election image</small>
+                              <h4>Bill Image</h4>
+                              <small>Upload bill Image</small>
                             </div>
                           </div>
                         </div>
@@ -662,13 +460,13 @@ function ElectionsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={image}
-                                  alt="Election"
+                                  src={image ? image : photo}
+                                  alt="Banner"
                                   className="images"
                                 />
                                 <div className="icon_bg l_flex">
                                   <label
-                                    htmlFor="electionImage"
+                                    htmlFor="files"
                                     className={
                                       loadingUpload
                                         ? "upload_box disabled l_flex"
@@ -694,7 +492,7 @@ function ElectionsEdit() {
                                           id="electionImage"
                                           onChange={(e) =>
                                             uploadFileHandler(e, false)
-                                          } // Pass false for general image
+                                          } // false for general image
                                         />
                                       </label>
                                     )}
@@ -706,7 +504,7 @@ function ElectionsEdit() {
                         </div>
                       )}
                     </div>
-                    {/* ELECTION BANNER UPLOAD */}
+                    {/* BILL BANNER UPLOAD */}
                     <div className="light_shadow mt product_images banners">
                       <div
                         className={
@@ -722,8 +520,8 @@ function ElectionsEdit() {
                               <span>03</span>
                             </div>
                             <div className="text">
-                              <h4>Election Banner</h4>
-                              <small>Upload election banner</small>
+                              <h4>Bill Banner</h4>
+                              <small>Upload bill banner</small>
                             </div>
                           </div>
                         </div>
@@ -741,13 +539,13 @@ function ElectionsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={banner}
+                                  src={banner ? banner : photo}
                                   alt="Banner"
                                   className="images"
                                 />
                                 <div className="icon_bg l_flex">
                                   <label
-                                    htmlFor="banner"
+                                    htmlFor="files"
                                     className={
                                       loadingUpload
                                         ? "upload_box disabled l_flex"
@@ -755,9 +553,9 @@ function ElectionsEdit() {
                                     }
                                   >
                                     {loadingUpload ? (
-                                      <i className="fa fa-spinner fa-spin spinner"></i>
+                                      <i className="fa fa-spinner fa-spin"></i>
                                     ) : (
-                                      <label className="upload_label">
+                                      <label>
                                         <div className="inner">
                                           <div className="icon_btn">
                                             <CloudUploadIcon
@@ -773,7 +571,7 @@ function ElectionsEdit() {
                                           id="banner"
                                           onChange={(e) =>
                                             uploadFileHandler(e, true)
-                                          } // Pass true for banner image
+                                          } // true for banner
                                         />
                                       </label>
                                     )}
@@ -801,10 +599,8 @@ function ElectionsEdit() {
                               <span>04</span>
                             </div>
                             <div className="text">
-                              <h4>Election Description</h4>
-                              <small>
-                                Provide detailed election description
-                              </small>
+                              <h4>Bill Description</h4>
+                              <small>Provide detailed bill description</small>
                             </div>
                           </div>
                         </div>
@@ -819,13 +615,13 @@ function ElectionsEdit() {
                       {openBox === 3 && (
                         <div className="product_info_desc box">
                           <div className="form-group">
-                            <label htmlFor="">Poll Overview</label>
+                            <label htmlFor="">Description</label>
                             <JoditEditor
                               className="editor"
                               ref={editor}
-                              value={pollOverview}
+                              value={description}
                               onBlur={(newContent) =>
-                                setPollOverview(newContent)
+                                setDescription(newContent)
                               } // preferred to use only this option to update the content for performance reasons
                             />
                           </div>
@@ -838,23 +634,23 @@ function ElectionsEdit() {
                   <span className="a_flex">
                     <button
                       className=" a_flex"
-                      onClick={() => navigate("/elections")}
+                      onClick={() => navigate("/bills")}
                     >
                       <CloseIcon className="icon" /> Cancel
                     </button>
                     <button
                       type="submit"
                       className="a_flex"
-                      disabled={loadingUpdate}
+                      disabled={loadingCreate}
                     >
-                      {loadingUpdate ? (
+                      {loadingCreate ? (
                         <span className="a_flex">
                           <i className="fa fa-spinner fa-spin"></i>
-                          Saving...
+                          Creating...
                         </span>
                       ) : (
                         <>
-                          <DescriptionOutlinedIcon className="icon" /> Save
+                          <DescriptionOutlinedIcon className="icon" /> Create
                         </>
                       )}
                     </button>
@@ -869,4 +665,4 @@ function ElectionsEdit() {
   );
 }
 
-export default ElectionsEdit;
+export default AddNewBill;

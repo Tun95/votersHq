@@ -15,6 +15,7 @@ import HowToVoteOutlinedIcon from "@mui/icons-material/HowToVoteOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
 import ContactMailOutlinedIcon from "@mui/icons-material/ContactMailOutlined";
+import ForwardToInboxOutlinedIcon from "@mui/icons-material/ForwardToInboxOutlined";
 
 type Anchor = "left" | "right";
 
@@ -135,7 +136,17 @@ function Sidebar() {
                       <NewspaperOutlinedIcon className="icon" />
                       <span> Political News</span>
                     </Link>
-                  </li>{" "}
+                  </li>
+                  <li>
+                    <Link
+                      onClick={toggleDrawer(anchor as Anchor, false)}
+                      to="/message"
+                      className="a_flex"
+                    >
+                      <ForwardToInboxOutlinedIcon className="icon" />
+                      <span> Message</span>
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       onClick={toggleDrawer(anchor as Anchor, false)}

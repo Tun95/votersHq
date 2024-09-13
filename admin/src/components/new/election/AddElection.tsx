@@ -1,8 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import JoditEditor from "jodit-react";
 import "../styles/styles.scss";
-import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Checkbox } from "antd";
@@ -55,35 +54,6 @@ const statusList = [
   { name: "concluded", value: "concluded" },
 ];
 
-const formatDate = (dateStr: string | undefined) => {
-  if (!dateStr || isNaN(new Date(dateStr).getTime())) {
-    return ""; // Return an empty string if the date is invalid or undefined
-  }
-
-  const date = new Date(dateStr);
-  return date.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
-};
-
-// Types for election and candidates
-interface Election {
-  _id: string;
-  slug: string;
-  title: string;
-  image: string;
-  banner: string;
-  views: number;
-  pollOverview: string;
-  featured: boolean;
-  location: string;
-  sortType: string;
-  sortStatus: string;
-  sortCategory: string;
-  sortState: string;
-  candidates: Candidate[]; // Updated to an array of Candidate objects
-  startDate: string;
-  expirationDate: string;
-}
-
 interface Candidate {
   _id: string;
   firstName: string;
@@ -91,18 +61,17 @@ interface Candidate {
 }
 
 interface State {
-  election: Election; // Updated from bill to election
   candidatesList: Candidate[];
   loading: boolean;
   error: string;
   loadingUpload?: boolean;
-  loadingUpdate?: boolean;
+  loadingCreate?: boolean;
 }
 
 type Action =
-  | { type: "FETCH_REQUEST" }
-  | { type: "FETCH_SUCCESS"; payload: Election } // Updated from Bill to Election
-  | { type: "FETCH_FAIL"; payload: string }
+  | { type: "CREATE_REQUEST" }
+  | { type: "CREATE_SUCCESS" }
+  | { type: "CREATE_FAIL"; payload: string }
   | { type: "FETCH_CANDIDATE_REQUEST" }
   | { type: "FETCH_CANDIDATE_SUCCESS"; payload: Candidate[] }
   | { type: "FETCH_CANDIDATE_FAIL"; payload: string }
@@ -115,24 +84,20 @@ type Action =
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false, election: action.payload }; // Updated from bill to election
-    case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
+    case "CREATE_REQUEST":
+      return { ...state, loadingCreate: true };
+    case "CREATE_SUCCESS":
+      return { ...state, loadingCreate: false };
+    case "CREATE_FAIL":
+      return { ...state, loadingCreate: false };
+
     case "FETCH_CANDIDATE_REQUEST":
       return { ...state, loading: true };
     case "FETCH_CANDIDATE_SUCCESS":
       return { ...state, loading: false, candidatesList: action.payload };
     case "FETCH_CANDIDATE_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "UPDATE_REQUEST":
-      return { ...state, loadingUpdate: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, loadingUpdate: false };
-    case "UPDATE_FAIL":
-      return { ...state, loadingUpdate: false, error: action.payload };
+
     case "UPLOAD_REQUEST":
       return { ...state, loadingUpload: true };
     case "UPLOAD_SUCCESS":
@@ -151,19 +116,16 @@ const menuPaperProps = {
     width: 250, // Adjust the width as needed
   },
 };
-function ElectionsEdit() {
+function AddElection() {
   const editor = useRef(null);
 
   const navigate = useNavigate();
-  const params = useParams<{ id: string }>();
-  const { id: electionId } = params;
 
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
-  const [{ election, candidatesList, loadingUpdate, loadingUpload }, dispatch] =
+  const [{ candidatesList, loadingCreate, loadingUpload }, dispatch] =
     useReducer(reducer, {
-      election: {} as Election, // Updated from bill to election
       candidatesList: [],
       loading: true,
       error: "",
@@ -183,49 +145,12 @@ function ElectionsEdit() {
   const [startDate, setStartDate] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
 
-  // Fetch election data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `${request}/api/elections/${electionId}`
-        );
-        setTitle(data.title);
-        setPollOverview(data.pollOverview);
-        setFeatured(data.featured);
-        setLocation(data.location);
-        setSortType(data.sortType);
-        setSortStatus(data.sortStatus);
-        setSortCategory(data.sortCategory);
-        setStatus(data.status);
-        setStartDate(formatDate(data.startDate));
-        setExpirationDate(formatDate(data.expirationDate));
-        setImage(data.image);
-        setBanner(data.banner);
-
-        // Map candidates to only their IDs
-        setCandidates(
-          data.candidates.map((candidate: Candidate) => candidate._id)
-        );
-
-        dispatch({ type: "FETCH_SUCCESS", payload: data });
-      } catch (err) {
-        dispatch({
-          type: "FETCH_FAIL",
-          payload: getError(err as ErrorResponse),
-        });
-      }
-    };
-    fetchData();
-  }, [electionId]);
-
   // Submit handler
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      dispatch({ type: "UPDATE_REQUEST" });
-      const updatedElection = {
+      dispatch({ type: "CREATE_SUCCESS" });
+      const createElection = {
         title,
         pollOverview,
         featured,
@@ -241,22 +166,17 @@ function ElectionsEdit() {
         candidates, // Array of candidate IDs
       };
 
-      await axios.put(
-        `${request}/api/elections/${electionId}`,
-        updatedElection,
-        {
-          // Updated from bills to elections
-          headers: { Authorization: `Bearer ${userInfo?.token}` },
-        }
-      );
+      await axios.post(`${request}/api/elections`, createElection, {
+        headers: { Authorization: `Bearer ${userInfo?.token}` },
+      });
 
-      dispatch({ type: "UPDATE_SUCCESS" });
+      dispatch({ type: "CREATE_SUCCESS" });
       toast.success("Election updated successfully");
-      //navigate("/elections"); // Updated from bills to elections
+      navigate("/elections");
     } catch (err) {
       toast.error(getError(err as ErrorResponse));
       dispatch({
-        type: "UPDATE_FAIL",
+        type: "CREATE_FAIL",
         payload: getError(err as ErrorResponse),
       });
     }
@@ -338,15 +258,12 @@ function ElectionsEdit() {
 
   return (
     <>
-      <Helmet>
-        <title>Edit Election :: {election ? `${election.title}` : ""}</title>{" "}
-      </Helmet>
       <div className="product_edit admin_page_all">
         <div className="">
           <div className=" ">
             <div className="productTitleContainer">
               <h3 className="productTitle light_shadow uppercase">
-                Edit Election
+                Add Election
               </h3>
             </div>
             <div className="productBottom mtb">
@@ -383,59 +300,6 @@ function ElectionsEdit() {
                       </div>
                       {openBox === 0 && (
                         <>
-                          <div className="product_chart_info f_flex">
-                            <div className="product_right light_shadow">
-                              <table className="productTable">
-                                <tbody>
-                                  <tr className="product_img_text">
-                                    <td className="imageCell l_flex">
-                                      <div className="productImg ">
-                                        <img
-                                          src={
-                                            election?.image
-                                              ? election?.image
-                                              : photo
-                                          }
-                                          alt=""
-                                          className="img"
-                                        />
-                                      </div>
-                                    </td>
-                                    <td className="textCell">
-                                      <div>
-                                        <label htmlFor="title">Title:</label>
-                                        <span>{election?.title}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="slug">Slug:</label>
-                                        <span>{election?.slug}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="views">Views:</label>
-                                        <span>{election?.views}</span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="startDate">
-                                          Start On:
-                                        </label>
-                                        <span>
-                                          {formatDate(election?.startDate)}
-                                        </span>
-                                      </div>
-                                      <div>
-                                        <label htmlFor="expirationDate">
-                                          Expires On:
-                                        </label>
-                                        <span>
-                                          {formatDate(election?.expirationDate)}
-                                        </span>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
                           <div className="product_info_box box">
                             <div className="form-group">
                               <label htmlFor="title">Title</label>
@@ -662,7 +526,7 @@ function ElectionsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={image}
+                                  src={image ? image : photo}
                                   alt="Election"
                                   className="images"
                                 />
@@ -741,7 +605,7 @@ function ElectionsEdit() {
                             <div className="form_group f_flex">
                               <div className="drop_zone">
                                 <img
-                                  src={banner}
+                                  src={banner ? banner : photo}
                                   alt="Banner"
                                   className="images"
                                 />
@@ -845,16 +709,16 @@ function ElectionsEdit() {
                     <button
                       type="submit"
                       className="a_flex"
-                      disabled={loadingUpdate}
+                      disabled={loadingCreate}
                     >
-                      {loadingUpdate ? (
+                      {loadingCreate ? (
                         <span className="a_flex">
                           <i className="fa fa-spinner fa-spin"></i>
-                          Saving...
+                          Creating...
                         </span>
                       ) : (
                         <>
-                          <DescriptionOutlinedIcon className="icon" /> Save
+                          <DescriptionOutlinedIcon className="icon" /> Create
                         </>
                       )}
                     </button>
@@ -869,4 +733,4 @@ function ElectionsEdit() {
   );
 }
 
-export default ElectionsEdit;
+export default AddElection;
