@@ -646,6 +646,16 @@
 
 .parse_details_content {
   margin-top: 30px;
+  ul {
+    li {
+      list-style: circle;
+    }
+  }
+  ol {
+    li {
+      list-style: decimal;
+    }
+  }
 }
 
 .tab_panel {

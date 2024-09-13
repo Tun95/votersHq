@@ -157,6 +157,16 @@
 }
 
 .biography_manifesto {
+  ul {
+    li {
+      list-style: circle;
+    }
+  }
+  ol {
+    li {
+       list-style: decimal;
+    }
+  }
   .manifest_header {
     color: var(--color-gray);
     margin-bottom: 15px;

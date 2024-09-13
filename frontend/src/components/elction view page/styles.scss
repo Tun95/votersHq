@@ -59,6 +59,18 @@
 .poles_votes {
   margin-bottom: 30px;
   .content {
+    .poles {
+      ul {
+        li {
+          list-style: circle;
+        }
+      }
+      ol {
+        li {
+          list-style: decimal;
+        }
+      }
+    }
     .vote {
       margin-top: 40px;
 

@@ -1,4 +1,5 @@
 import { CandidateProps } from "../../../types/candidate/types";
+import parse from "html-react-parser";
 
 function Manifesto({ candidate }: CandidateProps) {
   return (
@@ -8,7 +9,7 @@ function Manifesto({ candidate }: CandidateProps) {
       </div> */}
       <div className="content">
         <div className="text_content">
-          <p>{candidate?.manifesto}</p>
+          <p>{parse(candidate?.manifesto ?? "")}</p>
         </div>
         {/* <div className="introduction">
           <div className="header">
