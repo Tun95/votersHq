@@ -161,6 +161,7 @@ const Messages: React.FC = () => {
               </div>
             </form>
           </div>
+					
           <div className="light_shadow">
             <h4>Send Email Message</h4>
             <form className="settingsForm" onSubmit={submitHandler}>
