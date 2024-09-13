@@ -283,7 +283,7 @@ function AddNewUser() {
         <div className=" ">
           <div className="productTitleContainer">
             <h3 className="productTitle light_shadow uppercase">
-              Add New User
+              Add New Politician
             </h3>
           </div>
           <div className="userEdit">
