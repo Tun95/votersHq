@@ -5,6 +5,7 @@ import { SemiCircleProgress } from "../../utilities/component/Component";
 import {
   ErrorResponse,
   formatNumberNoDecimalShort,
+  formatNumberShort,
   formatNumberWithCommas,
   getError,
   useAppContext,
@@ -179,7 +180,7 @@ function VoteStats({
                 gradientId="progressGradient1"
               />
               <div className="text_num a_flex">
-                <h4>{age18to25}%</h4>
+                <h4>{formatNumberShort(age18to25)}%</h4>
                 <small>18 - 25 Years</small>
               </div>
             </div>
@@ -189,7 +190,7 @@ function VoteStats({
                 gradientId="progressGradient3"
               />
               <div className="text_num a_flex">
-                <h4>{age41to60}%</h4>
+                <h4>{formatNumberShort(age41to60)}%</h4>
                 <small>41 - 60 Years</small>
               </div>
             </div>
@@ -201,7 +202,7 @@ function VoteStats({
                 gradientId="progressGradient2"
               />
               <div className="text_num a_flex">
-                <h4>{age26to40}%</h4>
+                <h4>{formatNumberShort(age26to40)}%</h4>
                 <small>26 - 40 Years</small>
               </div>
             </div>
@@ -211,7 +212,7 @@ function VoteStats({
                 gradientId="progressGradient4"
               />
               <div className="text_num a_flex">
-                <h4>{age60Plus}%</h4>
+                <h4>{formatNumberShort(age60Plus)}%</h4>
                 <small>60+ Years</small>
               </div>
             </div>

@@ -227,7 +227,7 @@ interface State {
 }
 // Interface for props
 interface ElectionModalsProps {
-  item: Candidate;
+  item: Candidate | null; // Allow item to be null
   state: State;
   handleVote: (candidateId: string) => void;
   currentElectionModal: "auth" | "vote" | null;
@@ -243,6 +243,11 @@ export function ElectionModal({
   handleCloseElectionModal,
 }: ElectionModalsProps) {
   const { showDrawer, setMenu } = useAppContext();
+
+  // Check if item is null before using it
+  if (!item) {
+    return null; // Or handle the null case in another appropriate way
+  }
 
   //Login Menu
   const navigateToLogin = () => {
@@ -265,6 +270,13 @@ export function ElectionModal({
         aria-labelledby="auth-modal-title"
         aria-describedby="auth-modal-description"
         className="bill_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.2)", // Example of semi-transparent black
+            },
+          },
+        }}
       >
         <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
           <div className="drawer_close_icon">
@@ -307,6 +319,13 @@ export function ElectionModal({
         aria-labelledby="yea-modal-title"
         aria-describedby="yea-modal-description"
         className="bill_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.2)", // Example of semi-transparent black
+            },
+          },
+        }}
       >
         <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
           <div className="drawer_close_icon">
@@ -335,7 +354,7 @@ export function ElectionModal({
               <div className="reg_confirm_btn">
                 <button
                   className="main_btn l_flex"
-                  onClick={() => handleVote(item._id)}
+                  onClick={() => item && handleVote(item._id)} // Handle vote only if item is not null
                   disabled={state.loading[item._id]} // Disable if voting is in progress
                 >
                   {state.loading[item._id] ? (

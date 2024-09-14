@@ -71,13 +71,22 @@ function PolesVotes({
 }: ElectionResponse) {
   const [state, dispatch] = useReducer(reducer, initialVoteState);
 
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
+
   //MODAL TOGGLE
   const [currentElectionModal, setCurrentElectionModal] = useState<
     "auth" | "vote" | null
   >(null);
 
-  const handleElectionOpenModal = (modal: "auth" | "vote") =>
+  const handleElectionOpenModal = (
+    modal: "auth" | "vote",
+    candidate: Candidate | null = null
+  ) => {
+    setSelectedCandidate(candidate); // Set the selected candidate
     setCurrentElectionModal(modal);
+  };
   const handleCloseElectionModal = () => setCurrentElectionModal(null);
 
   //CONTEXT
@@ -181,8 +190,11 @@ function PolesVotes({
                           election.status !== "ongoing" ? "gray_bg" : ""
                         }`}
                         onClick={() =>
-                          handleElectionOpenModal(userInfo ? "vote" : "auth")
-                        }
+                          handleElectionOpenModal(
+                            userInfo ? "vote" : "auth",
+                            item
+                          )
+                        } // Pass the current candidate here
                         disabled={
                           election.status !== "ongoing" ||
                           state.loading[item._id]
@@ -191,9 +203,10 @@ function PolesVotes({
                         <FingerprintOutlinedIcon className="icon" />
                         <span>Vote</span>
                       </button>
+
                       <span>
                         <ElectionModal
-                          item={item}
+                          item={selectedCandidate}
                           state={state}
                           handleVote={handleVote}
                           currentElectionModal={currentElectionModal}

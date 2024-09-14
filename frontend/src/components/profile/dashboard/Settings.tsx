@@ -450,13 +450,13 @@ function Settings({ user, fetchData }: TabMainPanelProps) {
                   </small>
                 </div>
                 <div className="right">
-                  {/* <button
+                  <button
                     onClick={() => handleDashboardOpenModal("verification")}
                     className="main_btn cancel_btn"
                   >
                     <small>Start</small>
-                  </button> */}
-                  {user?.isIdentityVerified ? (
+                  </button>
+                  {/* {user?.isIdentityVerified ? (
                     <small
                       className={
                         user?.isIdentityVerified
@@ -473,7 +473,7 @@ function Settings({ user, fetchData }: TabMainPanelProps) {
                     >
                       <small>Start</small>
                     </button>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
