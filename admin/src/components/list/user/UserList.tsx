@@ -56,15 +56,15 @@ const reducer = (
 };
 
 const columns: GridColDef[] = [
-  { field: "firstName", headerName: "First Name", width: 150 },
-  { field: "lastName", headerName: "Last Name", width: 150 },
+  { field: "firstName", headerName: "First Name", width: 120 },
+  { field: "lastName", headerName: "Last Name", width: 120 },
   { field: "email", headerName: "Email", width: 230 },
   {
     field: "isAdmin",
     headerName: "isAdmin",
     width: 100,
     renderCell: (params) => (
-      <div className={`cellWithAdminSellerStatus ${params.row.isBlocked}`}>
+      <div className={`cellWithAdminSellerStatus ${params.row.isAdmin}`}>
         {params.row.isAdmin ? (
           <span className="yes">YES</span>
         ) : (
@@ -73,6 +73,7 @@ const columns: GridColDef[] = [
       </div>
     ),
   },
+  { field: "role", headerName: "Role", width: 120 },
   {
     field: "status",
     headerName: "Account Status",
