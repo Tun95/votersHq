@@ -449,36 +449,88 @@ function UserEdit() {
                       </div>
                     </div>
                     <div className="left_selfie_party">
-                      <div className=" a_flex">
-                        <div className="user_img">
-                          <label htmlFor="">Selfie:</label>
-                          <div className="drop_zone running_mate">
-                            <img
-                              src={user?.selfieImage}
-                              alt="Selfie"
-                              className="images"
-                            />
+                      {user?.selfieImage && (
+                        <div className=" a_flex">
+                          <div className="user_img">
+                            <label htmlFor="">Selfie:</label>
+                            <div className="drop_zone running_mate">
+                              <img
+                                src={user?.selfieImage}
+                                alt="Selfie"
+                                className="images"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="user_party_img">
-                        <label htmlFor="">Party Logo:</label>
-                        <div className="drop_zone">
+                      )}
+                      {user?.role === "politician" && (
+                        <div className="user_party_img">
+                          <label htmlFor="">Party Logo:</label>
+                          <div className="drop_zone">
+                            <img
+                              src={partyImage ? partyImage : photo}
+                              alt="Election"
+                              className="images"
+                            />
+                            <div className="icon_bg l_flex">
+                              <label
+                                htmlFor="partyImage"
+                                className={
+                                  loadingPartyImageUpload
+                                    ? "upload_box disabled l_flex"
+                                    : "upload_box l_flex"
+                                }
+                              >
+                                {loadingPartyImageUpload ? (
+                                  <i className="fa fa-spinner fa-spin"></i>
+                                ) : (
+                                  <label>
+                                    <div className="inner">
+                                      <div className="icon_btn">
+                                        <CloudUploadIcon
+                                          className={
+                                            partyImage ? "icon white" : "icon"
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                    <input
+                                      style={{ display: "none" }}
+                                      type="file"
+                                      id="partyImage"
+                                      onChange={(e) =>
+                                        uploadFileHandler(e, "partyImage")
+                                      } // Pass the correct field
+                                    />
+                                  </label>
+                                )}
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {user?.role === "politician" && (
+                    <div className="img_parent a_flex">
+                      <div className="user_img">
+                        <label htmlFor="">Running Mate Image:</label>
+                        <div className="drop_zone running_mate">
                           <img
-                            src={partyImage ? partyImage : photo}
+                            src={runningMateImage ? runningMateImage : photo}
                             alt="Election"
                             className="images"
                           />
                           <div className="icon_bg l_flex">
                             <label
-                              htmlFor="partyImage"
+                              htmlFor="runningMateImage"
                               className={
-                                loadingPartyImageUpload
+                                loadingRunningMateImageUpload
                                   ? "upload_box disabled l_flex"
                                   : "upload_box l_flex"
                               }
                             >
-                              {loadingPartyImageUpload ? (
+                              {loadingRunningMateImageUpload ? (
                                 <i className="fa fa-spinner fa-spin"></i>
                               ) : (
                                 <label>
@@ -486,7 +538,9 @@ function UserEdit() {
                                     <div className="icon_btn">
                                       <CloudUploadIcon
                                         className={
-                                          partyImage ? "icon white" : "icon"
+                                          runningMateImage
+                                            ? "icon white"
+                                            : "icon"
                                         }
                                       />
                                     </div>
@@ -494,9 +548,9 @@ function UserEdit() {
                                   <input
                                     style={{ display: "none" }}
                                     type="file"
-                                    id="partyImage"
+                                    id="runningMateImage"
                                     onChange={(e) =>
-                                      uploadFileHandler(e, "partyImage")
+                                      uploadFileHandler(e, "runningMateImage")
                                     } // Pass the correct field
                                   />
                                 </label>
@@ -506,97 +560,55 @@ function UserEdit() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="img_parent a_flex">
-                    <div className="user_img">
-                      <label htmlFor="">Running Mate Image:</label>
-                      <div className="drop_zone running_mate">
-                        <img
-                          src={runningMateImage ? runningMateImage : photo}
-                          alt="Election"
-                          className="images"
-                        />
-                        <div className="icon_bg l_flex">
-                          <label
-                            htmlFor="runningMateImage"
-                            className={
-                              loadingRunningMateImageUpload
-                                ? "upload_box disabled l_flex"
-                                : "upload_box l_flex"
-                            }
-                          >
-                            {loadingRunningMateImageUpload ? (
-                              <i className="fa fa-spinner fa-spin"></i>
-                            ) : (
-                              <label>
-                                <div className="inner">
-                                  <div className="icon_btn">
-                                    <CloudUploadIcon
-                                      className={
-                                        runningMateImage ? "icon white" : "icon"
-                                      }
-                                    />
+                  )}
+                  {user?.role === "politician" && (
+                    <div className="img_parent a_flex">
+                      <div className="user_img banner_img">
+                        <label htmlFor="">Banner:</label>
+                        <div className="drop_zone running_mate">
+                          <img
+                            src={banner ? banner : photo}
+                            alt="Election"
+                            className="images"
+                          />
+                          <div className="icon_bg l_flex">
+                            <label
+                              htmlFor="banner"
+                              className={
+                                loadingBannerUpload
+                                  ? "upload_box disabled l_flex"
+                                  : "upload_box l_flex"
+                              }
+                            >
+                              {loadingBannerUpload ? (
+                                <i className="fa fa-spinner fa-spin"></i>
+                              ) : (
+                                <label>
+                                  <div className="inner">
+                                    <div className="icon_btn">
+                                      <CloudUploadIcon
+                                        className={
+                                          banner ? "icon white" : "icon"
+                                        }
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                                <input
-                                  style={{ display: "none" }}
-                                  type="file"
-                                  id="runningMateImage"
-                                  onChange={(e) =>
-                                    uploadFileHandler(e, "runningMateImage")
-                                  } // Pass the correct field
-                                />
-                              </label>
-                            )}
-                          </label>
+                                  <input
+                                    style={{ display: "none" }}
+                                    type="file"
+                                    id="banner"
+                                    onChange={(e) =>
+                                      uploadFileHandler(e, "banner")
+                                    } // Pass the correct field
+                                  />
+                                </label>
+                              )}
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="img_parent a_flex">
-                    <div className="user_img banner_img">
-                      <label htmlFor="">Banner:</label>
-                      <div className="drop_zone running_mate">
-                        <img
-                          src={banner ? banner : photo}
-                          alt="Election"
-                          className="images"
-                        />
-                        <div className="icon_bg l_flex">
-                          <label
-                            htmlFor="banner"
-                            className={
-                              loadingBannerUpload
-                                ? "upload_box disabled l_flex"
-                                : "upload_box l_flex"
-                            }
-                          >
-                            {loadingBannerUpload ? (
-                              <i className="fa fa-spinner fa-spin"></i>
-                            ) : (
-                              <label>
-                                <div className="inner">
-                                  <div className="icon_btn">
-                                    <CloudUploadIcon
-                                      className={banner ? "icon white" : "icon"}
-                                    />
-                                  </div>
-                                </div>
-                                <input
-                                  style={{ display: "none" }}
-                                  type="file"
-                                  id="banner"
-                                  onChange={(e) =>
-                                    uploadFileHandler(e, "banner")
-                                  } // Pass the correct field
-                                />
-                              </label>
-                            )}
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="right light_shadow">
