@@ -23,6 +23,7 @@ export interface User {
   emailNotification: boolean;
   smsNotification: boolean;
   twoStepVerification: boolean;
+  isIdentityVerified: boolean;
   isBlocked: boolean;
   isAdmin: boolean;
   password: string;
@@ -98,6 +99,7 @@ export interface TabMainPanelProps {
     updatedEducation,
     updatedAchievement,
   }: SubmitHandlerParams) => Promise<void>;
+  fetchData: () => Promise<void>;
 }
 
 //ACTIVITIES

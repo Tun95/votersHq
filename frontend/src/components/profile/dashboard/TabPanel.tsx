@@ -36,6 +36,7 @@ function TabMainPanel({
   user,
   loadingUpdate,
   submitHandler,
+  fetchData,
 }: TabMainPanelProps) {
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
@@ -89,6 +90,7 @@ function TabMainPanel({
             <Box>
               <Profile
                 user={user}
+                fetchData={fetchData}
                 loadingUpdate={loadingUpdate}
                 submitHandler={submitHandler}
               />
@@ -98,6 +100,7 @@ function TabMainPanel({
             <Box>
               <Settings
                 user={user}
+                fetchData={fetchData}
                 loadingUpdate={loadingUpdate}
                 submitHandler={submitHandler}
               />
@@ -107,6 +110,7 @@ function TabMainPanel({
             <Box>
               <Biography
                 user={user}
+                fetchData={fetchData}
                 loadingUpdate={loadingUpdate}
                 submitHandler={submitHandler}
               />

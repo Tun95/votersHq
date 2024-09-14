@@ -333,6 +333,7 @@ function DashboardScreen() {
             {user && (
               <TabMainPanel
                 user={user}
+                fetchData={fetchData}
                 submitHandler={submitHandler}
                 loadingUpdate={loadingUpdate || false}
               />

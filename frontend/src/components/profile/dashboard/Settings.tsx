@@ -23,7 +23,7 @@ const initialPasswordValues = {
   newPassword: "",
   confirmPassword: "",
 };
-function Settings({ user }: TabMainPanelProps) {
+function Settings({ user, fetchData }: TabMainPanelProps) {
   //PASSWORD
   const [currentPasswordType, setCurrentPasswordType] = useState<
     "password" | "text"
@@ -79,24 +79,23 @@ function Settings({ user }: TabMainPanelProps) {
   const [emailNotification, setEmailNotification] = useState(false);
   const [smsNotification, setSmsNotification] = useState(false);
 
+  // Fetch the current settings from the backend when the component loads
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await axios.get(
+        `${request}/api/users/info/${user._id}`,
+        {
+          headers: { Authorization: `Bearer ${userInfo?.token}` }, // Replace `userToken` with your token variable
+        }
+      );
+
+      setEmailNotification(data.emailNotification);
+      setSmsNotification(data.smsNotification);
+    } catch (error) {
+      console.error("Error fetching notification settings:", error);
+    }
+  };
   useEffect(() => {
-    // Fetch the current settings from the backend when the component loads
-    const fetchNotifications = async () => {
-      try {
-        const { data } = await axios.get(
-          `${request}/api/users/info/${user._id}`,
-          {
-            headers: { Authorization: `Bearer ${userInfo?.token}` }, // Replace `userToken` with your token variable
-          }
-        );
-
-        setEmailNotification(data.emailNotification);
-        setSmsNotification(data.smsNotification);
-      } catch (error) {
-        console.error("Error fetching notification settings:", error);
-      }
-    };
-
     fetchNotifications();
   }, []);
 
@@ -451,12 +450,30 @@ function Settings({ user }: TabMainPanelProps) {
                   </small>
                 </div>
                 <div className="right">
-                  <button
+                  {/* <button
                     onClick={() => handleDashboardOpenModal("verification")}
                     className="main_btn cancel_btn"
                   >
                     <small>Start</small>
-                  </button>
+                  </button> */}
+                  {user?.isIdentityVerified ? (
+                    <small
+                      className={
+                        user?.isIdentityVerified
+                          ? "green success"
+                          : "gray success"
+                      }
+                    >
+                      {user?.isIdentityVerified ? "Successful" : "Unverified"}
+                    </small>
+                  ) : (
+                    <button
+                      onClick={() => handleDashboardOpenModal("verification")}
+                      className="main_btn cancel_btn"
+                    >
+                      <small>Start</small>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -509,6 +526,7 @@ function Settings({ user }: TabMainPanelProps) {
       <span>
         <DashboardModal
           user={user}
+          fetchData={fetchData}
           currentDashboardModal={currentDashboardModal}
           handleDashboardOpenModal={handleDashboardOpenModal}
           handleCloseDashboardModal={handleCloseDashboardModal}

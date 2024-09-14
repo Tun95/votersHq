@@ -3,9 +3,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import "./styles.scss";
 import Modal from "@mui/material/Modal";
-// import f1 from "../../assets/profile/f1.png";
-// import f2 from "../../assets/profile/f2.png";
-// import f3 from "../../assets/profile/f3.png";
+import f1 from "../../assets/profile/f1.png";
+import f2 from "../../assets/profile/f2.png";
+import f3 from "../../assets/profile/f3.png";
 import {
   ErrorResponse,
   getError,
@@ -367,17 +367,21 @@ interface DashboardModalsProps {
   currentDashboardModal: "verification" | "webcam" | null;
   handleDashboardOpenModal: (modal: "verification" | "webcam") => void; // Accept both "verification" and "webcam"
   handleCloseDashboardModal: () => void;
+  fetchData: () => Promise<void>;
 }
 
 export function DashboardModal({
   user,
   currentDashboardModal,
+  handleDashboardOpenModal,
   handleCloseDashboardModal,
+  fetchData,
 }: DashboardModalsProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasCaptured, setHasCaptured] = useState(false); // Prevent multiple captures
+  const [isVerified, setIsVerified] = useState(false); // Track successful verification
   const webcamRef = useRef<Webcam>(null);
 
   // Load face-api models asynchronously
@@ -477,9 +481,11 @@ export function DashboardModal({
                   );
 
                   if (response.status === 200) {
-                    toast.success("Selfie verification successful!");
+                    setIsVerified(true); // Mark verification as successful
                     setHasCaptured(true); // Stop further captures
+                    fetchData();
                     handleCloseDashboardModal(); // Close modal on success
+                    //toast.success("Selfie verification successful!");
                   } else {
                     setErrorMessage(
                       `Verification failed: ${response.data.message}`
@@ -520,6 +526,87 @@ export function DashboardModal({
         className="dashboard_modal_drawer"
       >
         <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
+          <div className="top c_flex">
+            <div className="header">
+              <h4>Face Verification</h4>
+            </div>
+            <div className="drawer_close_icon">
+              <span
+                onClick={handleCloseDashboardModal}
+                className="span_icon l_flex"
+              >
+                <CloseIcon className="icon" />
+              </span>
+            </div>
+          </div>
+          <div className="list">
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f1} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Ensure you are in a well-lit area</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Make sure you are in a well-lit environment and remove any
+                    headgear or glasses.
+                  </p>
+                </div>
+              </div>
+            </div>{" "}
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f2} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Position your Face well</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Please look directly at the camera and remain still while we
+                    capture your facial image.
+                  </p>
+                </div>
+              </div>
+            </div>{" "}
+            <div className="list_item f_flex">
+              <div className="left">
+                <img src={f3} alt="icon" />
+              </div>
+              <div className="right">
+                <div className="list_head">
+                  <h5>Follow the on-screen prompts</h5>
+                </div>
+                <div className="text">
+                  <p>
+                    Hold your device steady and keep your head still until the
+                    instruction prompts you to perform some certain poses.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="btn f_flex">
+            <button
+              onClick={() => handleDashboardOpenModal("webcam")}
+              className="main_btn"
+            >
+              <small>Continue</small>
+            </button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={currentDashboardModal === "webcam"}
+        onClose={handleCloseDashboardModal}
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+        className="dashboard_modal_drawer"
+      >
+        <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
           <div className="top web_top c_flex">
             <div className="drawer_close_icon">
               <span
@@ -553,7 +640,7 @@ export function DashboardModal({
                 <button
                   className="capture_btn"
                   onClick={capture}
-                  disabled={loading || isUploading}
+                  disabled={loading || isUploading || isVerified} // Disable when verified
                 >
                   {loading ? (
                     "Loading models..."
@@ -562,6 +649,10 @@ export function DashboardModal({
                       <i className="fa fa-spinner fa-spin"></i>
                       Uploading...
                     </span>
+                  ) : isVerified ? (
+                    <span className="green">
+                      Selfie verification successful!
+                    </span> // Success message
                   ) : (
                     <span className="red">No face detected</span>
                   )}

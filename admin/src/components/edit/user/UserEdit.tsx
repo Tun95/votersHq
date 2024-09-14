@@ -48,6 +48,8 @@ interface User {
   banner?: string;
   biography?: string;
   manifesto?: string;
+
+  selfieImage?: string;
 }
 
 // Reducer Action Types
@@ -385,6 +387,7 @@ function UserEdit() {
     }
   };
 
+  console.log("SELFIE:", user?.selfieImage);
   return (
     <div className="product_edit admin_page_all">
       <div className="">
@@ -445,48 +448,61 @@ function UserEdit() {
                         </div>
                       </div>
                     </div>
-
-                    <div className="user_party_img">
-                      <label htmlFor="">Party Logo:</label>
-                      <div className="drop_zone">
-                        <img
-                          src={partyImage ? partyImage : photo}
-                          alt="Election"
-                          className="images"
-                        />
-                        <div className="icon_bg l_flex">
-                          <label
-                            htmlFor="partyImage"
-                            className={
-                              loadingPartyImageUpload
-                                ? "upload_box disabled l_flex"
-                                : "upload_box l_flex"
-                            }
-                          >
-                            {loadingPartyImageUpload ? (
-                              <i className="fa fa-spinner fa-spin"></i>
-                            ) : (
-                              <label>
-                                <div className="inner">
-                                  <div className="icon_btn">
-                                    <CloudUploadIcon
-                                      className={
-                                        partyImage ? "icon white" : "icon"
-                                      }
-                                    />
+                    <div className="left_selfie_party">
+                      <div className=" a_flex">
+                        <div className="user_img">
+                          <label htmlFor="">Selfie:</label>
+                          <div className="drop_zone running_mate">
+                            <img
+                              src={user?.selfieImage}
+                              alt="Selfie"
+                              className="images"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="user_party_img">
+                        <label htmlFor="">Party Logo:</label>
+                        <div className="drop_zone">
+                          <img
+                            src={partyImage ? partyImage : photo}
+                            alt="Election"
+                            className="images"
+                          />
+                          <div className="icon_bg l_flex">
+                            <label
+                              htmlFor="partyImage"
+                              className={
+                                loadingPartyImageUpload
+                                  ? "upload_box disabled l_flex"
+                                  : "upload_box l_flex"
+                              }
+                            >
+                              {loadingPartyImageUpload ? (
+                                <i className="fa fa-spinner fa-spin"></i>
+                              ) : (
+                                <label>
+                                  <div className="inner">
+                                    <div className="icon_btn">
+                                      <CloudUploadIcon
+                                        className={
+                                          partyImage ? "icon white" : "icon"
+                                        }
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                                <input
-                                  style={{ display: "none" }}
-                                  type="file"
-                                  id="partyImage"
-                                  onChange={(e) =>
-                                    uploadFileHandler(e, "partyImage")
-                                  } // Pass the correct field
-                                />
-                              </label>
-                            )}
-                          </label>
+                                  <input
+                                    style={{ display: "none" }}
+                                    type="file"
+                                    id="partyImage"
+                                    onChange={(e) =>
+                                      uploadFileHandler(e, "partyImage")
+                                    } // Pass the correct field
+                                  />
+                                </label>
+                              )}
+                            </label>
+                          </div>
                         </div>
                       </div>
                     </div>

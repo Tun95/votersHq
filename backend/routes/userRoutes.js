@@ -29,7 +29,7 @@ userRouter.post(
   expressAsyncHandler(async (req, res) => {
     // AWS Rekognition setup
     const rekognitionClient = new RekognitionClient({
-      region: "us-east-1", // Default to a known working region
+      region: "us-east-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -51,12 +51,13 @@ userRouter.post(
           .json({ message: "Both selfie and ID image are required" });
       }
 
-      const selfieImage = req.files.selfieImage[0].buffer;
-      const idImage = req.files.idImage[0].buffer;
+      // Get the binary data (buffer) of the uploaded images
+      const selfieImageBuffer = req.files.selfieImage[0].buffer;
+      const idImageBuffer = req.files.idImage[0].buffer;
 
       const params = {
-        SourceImage: { Bytes: idImage },
-        TargetImage: { Bytes: selfieImage },
+        SourceImage: { Bytes: idImageBuffer },
+        TargetImage: { Bytes: selfieImageBuffer },
         SimilarityThreshold: 80,
       };
 
@@ -66,11 +67,13 @@ userRouter.post(
         data.FaceMatches.length > 0 ? data.FaceMatches[0].Similarity : 0;
 
       if (similarity >= 80) {
-        user.selfieImage = req.files.selfieImage[0].originalname;
-        user.idImage = req.files.idImage[0].originalname;
+        // Save the binary data (buffer) directly to MongoDB
+        user.selfieImage = selfieImageBuffer;
+        user.idImage = idImageBuffer;
         user.isIdentityVerified = true;
         user.faceMatchSimilarity = similarity;
         await user.save();
+
         return res
           .status(200)
           .json({ message: "Identity verified successfully", similarity });
@@ -785,7 +788,30 @@ userRouter.get(
       const user = await User.findById(req.params.id);
 
       if (user) {
-        res.send(user);
+        // Check if the user has a selfieImage or idImage saved in binary format (Buffer)
+        let selfieImageBase64 = null;
+        let idImageBase64 = null;
+
+        if (user.selfieImage) {
+          // Convert binary data (Buffer) to base64
+          selfieImageBase64 = user.selfieImage.toString("base64");
+        }
+
+        if (user.idImage) {
+          // Convert binary data (Buffer) to base64
+          idImageBase64 = user.idImage.toString("base64");
+        }
+
+        // Send user data along with the base64 encoded images
+        res.send({
+          ...user._doc, // All other user fields
+          selfieImage: selfieImageBase64
+            ? `data:image/jpeg;base64,${selfieImageBase64}`
+            : null, // Add base64 prefix if image exists
+          idImage: idImageBase64
+            ? `data:image/jpeg;base64,${idImageBase64}`
+            : null, // Add base64 prefix if image exists
+        });
       } else {
         res.status(404).send({ message: "User Not Found" });
       }
