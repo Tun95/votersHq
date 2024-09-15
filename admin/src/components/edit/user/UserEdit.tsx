@@ -672,12 +672,18 @@ function UserEdit() {
                       </div>{" "}
                       <div className="formInput">
                         <label htmlFor="">Gender</label>
-                        <input
-                          value={gender}
+                        <select
+                          className="select"
+                          name="gender"
+                          value={gender || ""}
                           onChange={(e) => setGender(e.target.value)}
-                          type="text"
-                          placeholder="male"
-                        />
+                        >
+                          <option value="" disabled>
+                            Select gender
+                          </option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                        </select>
                       </div>
                       <div className="formInput">
                         <label htmlFor="">Phone</label>

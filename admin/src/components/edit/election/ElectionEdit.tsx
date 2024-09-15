@@ -485,7 +485,10 @@ function ElectionsEdit() {
                             {/* CANDIDATE SELECTION */}
                             <div className="form-group">
                               <label htmlFor="candidate">Candidate</label>
-                              <FormControl className="mui_select_box">
+                              <FormControl
+                                className="mui_select_box"
+                                id="mui_select_box"
+                              >
                                 <Select
                                   labelId="demo-multiple-name-label"
                                   id="demo-multiple-name"

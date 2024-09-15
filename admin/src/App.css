@@ -154,9 +154,9 @@ input {
   font-size: 15px;
 }
 .select {
-  padding: 12px 15px;
+  padding: 10px 15px;
   outline: none;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-light-gray);
   border-radius: 8px;
   width: 100%;
   /* width: 100%; */
@@ -261,7 +261,10 @@ button:disabled {
   width: auto;
   outline: none !important;
 
-  max-width: 420px;
+  /* max-width: 420px; */
+}
+#mui_select_box {
+  width: 100%;
 }
 .mui_select {
   height: 40px;
