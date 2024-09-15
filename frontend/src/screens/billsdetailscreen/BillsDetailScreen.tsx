@@ -41,7 +41,7 @@ function BillsDetailScreen() {
   const { slug } = useParams<{ slug: string }>();
   const [state, dispatch] = useReducer(billReducer, billsDetailsInitialState);
   const { loading, error, bill } = state;
-
+  window.scrollTo(0, 0);
   useEffect(() => {
     if (slug) {
       fetchBill(slug); // Fetch bill based on slug from URL
@@ -97,6 +97,5 @@ function BillsDetailScreen() {
     </div>
   );
 }
-
 
 export default BillsDetailScreen;

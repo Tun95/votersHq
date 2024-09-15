@@ -43,7 +43,7 @@ function CandidateProfileViewScreen() {
   const { slug } = useParams<{ slug: string }>();
 
   const [{ candidate }, dispatch] = useReducer(reducer, candidateInitialState);
-
+  window.scrollTo(0, 0);
   // FETCH DATA
   const fetchData = async () => {
     try {

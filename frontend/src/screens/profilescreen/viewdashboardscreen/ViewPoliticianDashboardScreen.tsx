@@ -40,7 +40,7 @@ function ViewPoliticianDashboardScreen() {
   const { id: userId } = params;
 
   const [{ user }, dispatch] = useReducer(reducer, initialState);
-
+  window.scrollTo(0, 0);
   // FETCH DATA
   const fetchData = async () => {
     try {
