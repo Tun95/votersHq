@@ -4,6 +4,7 @@ import EmailMsg from "../models/emailMessaging.js";
 import SibApiV3Sdk from "sib-api-v3-sdk";
 import User from "../models/userModels.js";
 import { Termii } from "termii-nodejs";
+import axios from "axios";
 
 const sendEmailSmsRouter = express.Router();
 
@@ -277,10 +278,9 @@ sendEmailSmsRouter.post(
 sendEmailSmsRouter.post(
   "/send-sms",
   expressAsyncHandler(async (req, res) => {
-    // Initialize Termii
-    const termiiClient = new Termii({
-      api_key: process.env.TERMII_API, // Load API key from environment variable
-    });
+    const termiiApiKey = process.env.TERMII_API;
+    const termiiBaseUrl =
+      process.env.TERMII_BASE_URL || "https://v3.api.termii.com";
 
     try {
       // Fetch all users with smsNotification enabled
@@ -290,40 +290,80 @@ sendEmailSmsRouter.post(
       });
 
       if (!users.length) {
+        console.log("No users found with SMS notifications enabled.");
         return res
           .status(404)
           .json({ message: "No users with SMS notifications enabled." });
       }
 
-      // Prepare a message (You can customize this)
+      console.log(`Found ${users.length} users to send SMS to.`);
+
+      // Prepare the message
       const message =
         "This is a test message. Stay informed about the latest updates!";
 
-      // Iterate through users and send SMS
+      // Track whether any SMS was successfully sent
+      let smsSent = false;
+
       // Iterate through users and send SMS
       for (const user of users) {
         let phone = user.phone;
 
         // Convert local Nigerian numbers to international format
         if (/^0\d{10}$/.test(phone)) {
-          phone = phone.replace(/^0/, "+234");
+          phone = phone.replace(/^0/, "234");
         }
 
-        // Ensure phone number starts with +234 and is 13 digits long
-        if (/^\+234\d{10}$/.test(phone)) {
-          await termiiClient.sendMessage({
+        // Ensure phone number starts with '234' and has 13 digits, then add '+' in front
+        if (/^234\d{10}$/.test(phone)) {
+          phone = `+${phone}`; // Add the '+' prefix to the number
+          console.log(`Sending SMS to ${phone}...`);
+
+          // Send the SMS via Termii API
+          const data = {
+            sender_id: "votersHq",
             to: phone,
-            from: "YourAppName", // Use your business name or sender ID (if set up)
+            from: "votersHq", // Your sender ID or business name
             sms: message,
-            type: "plain", // 'plain' is a standard SMS
-            channel: "generic", // The SMS channel type, can be generic, dnd, etc.
-          });
+            type: "plain", // Standard SMS
+            channel: "generic", // The SMS channel type
+            api_key: termiiApiKey, // Add the API key here
+          };
+
+          try {
+            const response = await axios.post(
+              `${termiiBaseUrl}/api/sms/send/bulk`,
+              data,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            console.log(`SMS sent to ${phone}:`, response.data);
+            smsSent = true; // Set flag to true if at least one SMS was sent
+          } catch (error) {
+            console.error(
+              `Failed to send SMS to ${phone}:`,
+              error.response ? error.response.data : error.message
+            );
+          }
+        } else {
+          console.log(`Invalid phone format: ${phone}`);
         }
       }
 
-      res.status(200).json({ message: "SMS successfully sent to users." });
+      // If at least one SMS was sent, return success
+      if (smsSent) {
+        res.status(200).json({ message: "SMS successfully sent to users." });
+      } else {
+        res
+          .status(400)
+          .json({ message: "No valid phone numbers to send SMS." });
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error sending SMS: ", error.message);
       res.status(500).json({ message: "Error sending SMS" });
     }
   })
