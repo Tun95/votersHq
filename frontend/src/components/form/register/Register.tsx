@@ -44,6 +44,7 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
   );
   const [passwordIcon, setPasswordIcon] = useState<string>(eyeOff);
 
+  
   const [confirmPasswordType, setConfirmPasswordType] = useState<
     "password" | "text"
   >("password");
