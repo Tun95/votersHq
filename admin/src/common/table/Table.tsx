@@ -52,48 +52,51 @@ const TableData: React.FC = () => {
   }, [userInfo]);
 
   return (
-    <TableContainer component={Paper} className="table">
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell className="tableCell">ID</TableCell>
-            <TableCell className="tableCell">User</TableCell>
-            <TableCell className="tableCell">Date</TableCell>
-            <TableCell className="tableCell">Role</TableCell>
-            <TableCell className="tableCell">Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody className="tableCenter p_flex">
-          {error && <MessageBox>{error}</MessageBox>}
-          {users.length === 0 && (
-            <span className="product-not">
-              <MessageBox>No Users Found</MessageBox>
-            </span>
-          )}
-          {users.slice(0, 10).map((user, index) => (
-            <TableRow key={index}>
-              <TableCell className="tableCell">{user._id}</TableCell>
-              <TableCell className="tableCell">
-                {user.firstName && user.lastName
-                  ? `${user.firstName} ${user.lastName}`
-                  : "DELETED USER"}
-              </TableCell>
-              <TableCell className="tableCell">
-                {new Date(user.createdAt).toISOString().substring(0, 10)}
-              </TableCell>
-              <TableCell className="tableCell">{user.role}</TableCell>
-              <TableCell className="tableCell">
-                {user.isAccountVerified ? (
-                  <Button type="Verified" />
-                ) : (
-                  <Button type="Unverified" />
-                )}
-              </TableCell>
+    <>
+      <TableContainer component={Paper} className="table">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell className="tableCell">ID</TableCell>
+              <TableCell className="tableCell">User</TableCell>
+              <TableCell className="tableCell">Date</TableCell>
+              <TableCell className="tableCell">Role</TableCell>
+              <TableCell className="tableCell">Status</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody className="tableCenter p_flex">
+            {users.slice(0, 10).map((user, index) => (
+              <TableRow key={index}>
+                <TableCell className="tableCell">{user._id}</TableCell>
+                <TableCell className="tableCell">
+                  {user.firstName && user.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : "DELETED USER"}
+                </TableCell>
+                <TableCell className="tableCell">
+                  {new Date(user.createdAt).toISOString().substring(0, 10)}
+                </TableCell>
+                <TableCell className="tableCell">{user.role}</TableCell>
+                <TableCell className="tableCell">
+                  {user.isAccountVerified ? (
+                    <Button type="Verified" />
+                  ) : (
+                    <Button type="Unverified" />
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
+      ) : users.length === 0 ? (
+        <span className="product-not">
+          <MessageBox>No Users Found</MessageBox>
+        </span>
+      ) : null}
+    </>
   );
 };
 

@@ -234,45 +234,7 @@ sendEmailSmsRouter.post(
   })
 );
 
-// const termii = new Termii({
-//   api_key: process.env.TERMII_API,
-//   sender_id: "YourSenderID", // Replace with your actual sender ID
-// });
-// // Send SMS to Users with smsNotification enabled
-// sendEmailSmsRouter.post(
-//   "/send-sms",
-//   expressAsyncHandler(async (req, res) => {
-//     try {
-//       const { message } = req.body;
 
-//       if (!message) {
-//         return res
-//           .status(400)
-//           .send({ message: "Message content is required." });
-//       }
-
-//       // Find users with smsNotification enabled
-//       const users = await User.find({ smsNotification: true });
-
-//       // Send SMS to each user
-//       const smsPromises = users.map((user) => {
-//         if (user.phone) {
-//           return termii.sendMessage(user.phone, message);
-//         }
-//       });
-
-//       // Wait for all SMS to be sent
-//       await Promise.all(smsPromises);
-
-//       res.status(200).send({
-//         message:
-//           "SMS sent successfully to all users with smsNotification enabled.",
-//       });
-//     } catch (error) {
-//       res.status(500).send({ message: "Error sending SMS", error });
-//     }
-//   })
-// );
 
 // Send SMS to Users with smsNotification enabled
 sendEmailSmsRouter.post(

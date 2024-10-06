@@ -4,6 +4,12 @@ import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import HowToVoteOutlinedIcon from "@mui/icons-material/HowToVoteOutlined";
 import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
 
+// Format numbers with commas (e.g., 2,300,454)
+const formatNumberWithCommas = (num: number): string => {
+  const validNumber = isNaN(num) || num === null || num === undefined ? 0 : num; // Fallback to 0 if num is invalid
+  return validNumber.toLocaleString(); // Format the number with commas
+};
+
 interface WidgetProps {
   type: "user" | "bill" | "election" | "news";
   TotalUsers?: number;
@@ -109,8 +115,9 @@ const Widget: React.FC<WidgetProps> = ({
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">
-          {" "}
-          {data.isMoney ? `$${dataType.toLocaleString()}` : dataType}
+          {data.isMoney
+            ? `$${dataType.toLocaleString()}`
+            : formatNumberWithCommas(dataType)}
         </span>
         <span className="link">{data.link}</span>
       </div>

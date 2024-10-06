@@ -4,8 +4,8 @@ import { Helmet } from "react-helmet-async";
 import "./styles.scss";
 import axios from "axios";
 import Widget from "../../common/widget/Widget";
-import LoadingBox from "../../utilities/message loading/LoadingBox";
-import MessageBox from "../../utilities/message loading/MessageBox";
+//import LoadingBox from "../../utilities/message loading/LoadingBox";
+//import MessageBox from "../../utilities/message loading/MessageBox";
 import Chart from "../../common/chart/Chart";
 import {
   ErrorResponse,
@@ -78,7 +78,7 @@ function Dashboard() {
   const { userInfo } = appState;
 
   // Define initial state for the dashboard
-  const [{ loading, error, summary }, dispatch] = useReducer(reducer, {
+  const [{  summary }, dispatch] = useReducer(reducer, {
     loading: true,
     summary: {
       users: 0,
@@ -154,10 +154,10 @@ function Dashboard() {
     return null;
   };
 
-  const TotalUsers = formatShortNumber(summary.users);
-  const TotalBills = formatShortNumber(summary.bills);
-  const TotalElections = formatShortNumber(summary.elections);
-  const TotalNews = formatShortNumber(summary.news);
+  const TotalUsers = summary.users;
+  const TotalBills = summary.bills;
+  const TotalElections = summary.elections;
+  const TotalNews = summary.news;
 
   return (
     <div className="admin_page_all admin_page_screen">
@@ -166,17 +166,17 @@ function Dashboard() {
       </Helmet>
 
       <div className="home dashboard s_flex">
-        {loading ? (
+        {/* {loading ? (
           <LoadingBox></LoadingBox>
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
-        ) : (
+        ) : ( */}
           <>
             <div className="widgets">
-              <Widget TotalUsers={Number(TotalUsers)} type="user" />
-              <Widget TotalBills={Number(TotalBills)} type="bill" />
-              <Widget TotalElections={Number(TotalElections)} type="election" />
-              <Widget TotalNews={Number(TotalNews)} type="news" />
+              <Widget TotalUsers={TotalUsers} type="user" />
+              <Widget TotalBills={TotalBills} type="bill" />
+              <Widget TotalElections={TotalElections} type="election" />
+              <Widget TotalNews={TotalNews} type="news" />
             </div>
 
             <div className="chart_annoying">
@@ -197,7 +197,7 @@ function Dashboard() {
               <TableData />
             </div>
           </>
-        )}
+        {/* )} */}
       </div>
     </div>
   );
