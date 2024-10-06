@@ -1066,7 +1066,7 @@ userRouter.delete(
 userRouter.put(
   "/:id",
   isAuth,
-  // isAdmin,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {

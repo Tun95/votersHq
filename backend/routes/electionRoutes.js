@@ -498,8 +498,8 @@ electionRouter.get(
 //======================
 electionRouter.put(
   "/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const election = await Election.findById(req.params.id);
@@ -528,8 +528,8 @@ electionRouter.put(
 //======================
 electionRouter.delete(
   "/:id",
-  // isAuth,
-  // isAdmin,
+  isAuth,
+  isAdmin,
   expressAsyncHandler(async (req, res) => {
     try {
       const electionId = req.params.id;
