@@ -1492,7 +1492,6 @@ userRouter.post(
   })
 );
 
-
 //===============
 //Password Reset
 //===============
