@@ -15,6 +15,11 @@ function BillVoting({ fetchBill, bill }: BillsResponse) {
   const { state: appState } = useAppContext();
   const { userInfo } = appState;
 
+  // Check if the bill is expired
+  const isExpired = bill?.expirationDate
+    ? new Date(bill.expirationDate) < new Date()
+    : false;
+
   //MODAL TOGGLE
   const [currentBillsModal, setCurrentBillsModal] = useState<
     "auth" | "vote" | null
@@ -164,6 +169,7 @@ function BillVoting({ fetchBill, bill }: BillsResponse) {
                     handleBillsOpenModal(userInfo ? "vote" : "auth", "yea")
                   }
                   className="yea_btn a_flex"
+                  disabled={isExpired}
                 >
                   <i className="fa-solid yea_icon fa-thumbs-up"></i>
                   <p>Yea</p>
@@ -175,6 +181,7 @@ function BillVoting({ fetchBill, bill }: BillsResponse) {
                     handleBillsOpenModal(userInfo ? "vote" : "auth", "nay")
                   }
                   className="nay_btn a_flex"
+                  disabled={isExpired}
                 >
                   <i className="fa-solid nay_icon fa-thumbs-down"></i>
                   <p>Nay</p>

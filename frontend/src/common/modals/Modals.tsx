@@ -91,9 +91,9 @@ export function BillsModal({
         }
       );
       dispatch({ type: "VOTE_SUCCESS", message: response.data.message });
-      toast.success(response.data.message); // Notify user of success
+      toast.success(response.data.message);
       const slug = bill?.slug ?? ""; // Make sure slug is defined
-      await fetchBill(slug, false); // Trigger loading when fetching bill
+      await fetchBill(slug, false);
 
       handleCloseBillsModal(); // Close the modal after voting
     } catch (error) {
@@ -504,7 +504,7 @@ export function DashboardModal({
                     setHasCaptured(true); // Stop further captures
                     fetchData();
                     handleCloseDashboardModal(); // Close modal on success
-                    //toast.success("Selfie verification successful!");
+                    toast.success("Selfie verification successful!");
                   } else {
                     setErrorMessage(
                       `Verification failed: ${response.data.message}`
