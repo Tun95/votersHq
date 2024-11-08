@@ -35,6 +35,8 @@ function BillVoting({ fetchBill, bill }: BillsResponse) {
     setVoteType(voteType);
     setCurrentBillsModal(modal);
   };
+
+
   
   const handleCloseBillsModal = () => setCurrentBillsModal(null);
 

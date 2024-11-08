@@ -95,7 +95,7 @@ export function BillsModal({
       const slug = bill?.slug ?? ""; // Make sure slug is defined
       await fetchBill(slug, false);
 
-      handleCloseBillsModal(); // Close the modal after voting
+      handleCloseBillsModal();
     } catch (error) {
       dispatch({
         type: "VOTE_FAIL",
