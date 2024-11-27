@@ -1,7 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import { TabMainPanelProps } from "../../../types/profile/types";
 import { GlobalContext } from "../../../context/UserContext";
+import JoditEditor from "jodit-react";
+import parse from "html-react-parser";
 
 interface EditableSectionProps {
   title: string;
@@ -10,7 +12,7 @@ interface EditableSectionProps {
   onEditClick: () => void;
   onSaveClick: () => void;
   onCancelClick: () => void;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange: (newContent: string) => void;
   loading: boolean; // Add loading prop
 }
 
@@ -24,6 +26,7 @@ function EditableSection({
   onChange,
   loading, // Destructure loading
 }: EditableSectionProps) {
+  const editor = useRef(null);
   return (
     <div className="about bio_about">
       <div className="header c_flex">
@@ -51,12 +54,13 @@ function EditableSection({
           <div className="split_form">
             <div className="form_group">
               {!isEditing ? (
-                <small className="value">{content}</small>
+                <small className="value content_value">{parse(content)}</small>
               ) : (
-                <textarea
-                  className="value textarea"
+                <JoditEditor
+                  className="editor"
+                  ref={editor}
                   value={content}
-                  onChange={onChange}
+                  onBlur={(newContent) => onChange(newContent)} // preferred to use only this option to update the content for performance reasons
                 />
               )}
             </div>
@@ -154,7 +158,7 @@ function Biography({ loadingUpdate, submitHandler }: TabMainPanelProps) {
           onEditClick={() => setIsEditingEducation(true)}
           onSaveClick={() => handleSave("education")}
           onCancelClick={() => setIsEditingEducation(false)}
-          onChange={(e) => setEducationContent(e.target.value)}
+          onChange={(newContent) => setEducationContent(newContent)} // Handle JoditEditor updates
           loading={loadingUpdate && isEditingEducation} // Pass loading state
         />
         <EditableSection
@@ -164,7 +168,7 @@ function Biography({ loadingUpdate, submitHandler }: TabMainPanelProps) {
           onEditClick={() => setIsEditingAchievement(true)}
           onSaveClick={() => handleSave("achievement")}
           onCancelClick={() => setIsEditingAchievement(false)}
-          onChange={(e) => setAchievementContent(e.target.value)}
+          onChange={(newContent) => setAchievementContent(newContent)} // Handle JoditEditor updates
           loading={loadingUpdate && isEditingAchievement} // Pass loading state
         />
       </div>

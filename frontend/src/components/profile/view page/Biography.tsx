@@ -1,4 +1,5 @@
 import { CandidateProps } from "../../../types/candidate/types";
+import parse from "html-react-parser";
 
 function Biography({ candidate }: CandidateProps) {
   return (
@@ -9,7 +10,7 @@ function Biography({ candidate }: CandidateProps) {
             <h3>Background</h3>
           </div>
           <div className="text_content">
-            <p>{candidate?.about}</p>
+            <p>{parse(candidate?.about ?? "")}</p>
           </div>
         </div>
         <div className="education">
@@ -20,7 +21,7 @@ function Biography({ candidate }: CandidateProps) {
           </div>
           <div className="text_content">
             {" "}
-            <p>{candidate?.education}</p>
+            <p>{parse(candidate?.education ?? "")}</p>
           </div>
         </div>
         <div className="achievement">
@@ -28,7 +29,7 @@ function Biography({ candidate }: CandidateProps) {
             <h3>Achievement</h3>
           </div>
           <div className="text_content">
-            <p>{candidate?.achievement}</p>
+            <p>{parse(candidate?.achievement ?? "")}</p>
           </div>
         </div>
       </div>

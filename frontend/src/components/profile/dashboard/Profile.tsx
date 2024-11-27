@@ -5,12 +5,15 @@ import b3 from "../../../assets/profile/b3.png";
 import b4 from "../../../assets/profile/b4.png";
 import b5 from "../../../assets/profile/b5.png";
 import b6 from "../../../assets/profile/b6.png";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { TabMainPanelProps } from "../../../types/profile/types";
 import { GlobalContext } from "../../../context/UserContext";
+import JoditEditor from "jodit-react";
+import parse from "html-react-parser";
 
 function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
   const context = useContext(GlobalContext);
+  const editor = useRef(null);
 
   if (!context) {
     throw new Error("useContext must be used within a GlobalProvider");
@@ -58,8 +61,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
     setIsEditingAbout(false);
   };
   const handleCancelAboutClick = () => setIsEditingAbout(false);
-  const handleAboutChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setAboutContent(e.target.value);
+  const handleAboutChange = (newContent: string) => setAboutContent(newContent);
 
   // Handlers for the "Personal Info" section
   const handleEditPersonalInfoClick = () => setIsEditingPersonalInfo(true);
@@ -102,12 +104,18 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
               <div className="split_form">
                 <div className="form_group">
                   {!isEditingAbout ? (
-                    <small className="value">{aboutContent}</small>
+                    <small className="value">{parse(aboutContent)}</small>
                   ) : (
-                    <textarea
-                      className="value textarea"
+                    // <textarea
+                    //   className="value textarea"
+                    //   value={aboutContent}
+                    //   onChange={handleAboutChange}
+                    // />
+                    <JoditEditor
+                      className="editor"
+                      ref={editor}
                       value={aboutContent}
-                      onChange={handleAboutChange}
+                      onBlur={handleAboutChange}
                     />
                   )}
                 </div>

@@ -207,7 +207,7 @@
         width: 100%;
         .title_time {
           flex-wrap: wrap;
-          
+
           .title {
             font-size: 15px;
           }
@@ -288,6 +288,11 @@
             width: 100%;
             margin-bottom: 30px;
             text-align: left !important;
+            .content_value {
+              li {
+                list-style: unset;
+              }
+            }
             input {
               text-align: left;
               background-color: var(--color-white);
