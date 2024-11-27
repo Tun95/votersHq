@@ -1,4 +1,5 @@
 import { DetailsProps } from "./Details";
+import parse from "html-react-parser";
 
 function Profile({ user }: DetailsProps) {
   return (
@@ -17,7 +18,7 @@ function Profile({ user }: DetailsProps) {
               <div className="inner_form">
                 <div className="split_form">
                   <div className="form_group">
-                    <small className="value">{user?.about}</small>
+                    <small className="value">{parse(user?.about ?? "")}</small>
                   </div>
                 </div>
               </div>
@@ -36,7 +37,9 @@ function Profile({ user }: DetailsProps) {
               <div className="inner_form">
                 <div className="split_form">
                   <div className="form_group">
-                    <small className="value">{user?.education}</small>
+                    <small className="value">
+                      {parse(user?.education ?? "")}
+                    </small>
                   </div>
                 </div>
               </div>
@@ -55,7 +58,9 @@ function Profile({ user }: DetailsProps) {
               <div className="inner_form">
                 <div className="split_form">
                   <div className="form_group">
-                    <small className="value">{user?.achievement}</small>
+                    <small className="value">
+                      {parse(user?.achievement ?? "")}
+                    </small>
                   </div>
                 </div>
               </div>

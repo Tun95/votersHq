@@ -1,5 +1,6 @@
 import { DetailsProps } from "./Details";
 import "./styles.scss";
+import parse from "html-react-parser";
 
 function About({ user }: DetailsProps) {
   return (
@@ -20,7 +21,9 @@ function About({ user }: DetailsProps) {
                 <div className="inner_form">
                   <div className="split_form">
                     <div className="form_group">
-                      <small className="value">{user?.about}</small>
+                      <small className="value">
+                        {parse(user?.about ?? "")}
+                      </small>
                     </div>
                   </div>
                 </div>
