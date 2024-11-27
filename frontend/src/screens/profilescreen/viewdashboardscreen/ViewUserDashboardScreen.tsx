@@ -7,7 +7,11 @@ import Details from "../../../components/profile/view dashboard/user/Details";
 import About from "../../../components/profile/view dashboard/user/About";
 import Activities from "../../../components/profile/view dashboard/user/Activities";
 import "./styles.scss";
-import { ErrorResponse, getError } from "../../../utilities/utils/Utils";
+import {
+  ErrorResponse,
+  getError,
+  useAppContext,
+} from "../../../utilities/utils/Utils";
 import { useEffect, useReducer } from "react";
 import {
   Action,
@@ -41,6 +45,9 @@ function ViewUserDashboardScreen() {
   const params = useParams();
   const { id: userId } = params;
 
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
+
   const [{ user }, dispatch] = useReducer(reducer, initialState);
   window.scrollTo(0, 0);
   // FETCH DATA
@@ -65,6 +72,11 @@ function ViewUserDashboardScreen() {
 
   console.log(user?._id);
 
+  // Compute isFollowing after updating user.followers
+  const isFollowing = userInfo
+    ? user?.followers?.includes(userInfo._id)
+    : false;
+
   return (
     <div className="bill_detail_screen user_profile_view_screen">
       <Helmet>
@@ -84,7 +96,9 @@ function ViewUserDashboardScreen() {
               <Details user={user} fetchData={fetchData} />
               <div className="details_activity">
                 <About user={user} fetchData={fetchData} />
-                <Activities user={user} fetchData={fetchData} />
+                {isFollowing && (
+                  <Activities user={user} fetchData={fetchData} />
+                )}
               </div>
             </div>
           </div>
