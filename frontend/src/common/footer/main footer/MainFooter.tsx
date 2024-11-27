@@ -63,14 +63,9 @@ function MainFooter() {
                         <li>
                           <Link to="/faq">FAQs</Link>
                         </li>
-                        <li>
-                          <Link to="/comment">Comment</Link>
-                        </li>
+
                         <li>
                           <Link to="/news">News</Link>
-                        </li>
-                        <li>
-                          <Link to="/dispute">Dispute</Link>
                         </li>
                       </ul>
                     </div>

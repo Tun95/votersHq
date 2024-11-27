@@ -17,6 +17,8 @@ import {
   candidateInitialState,
   candidateState,
 } from "../../../types/candidate/types";
+import LoadingBox from "../../../utilities/message loading/LoadingBox";
+import MessageBox from "../../../utilities/message loading/MessageBox";
 
 const reducer = (
   state: candidateState,
@@ -42,7 +44,10 @@ const reducer = (
 function CandidateProfileViewScreen() {
   const { slug } = useParams<{ slug: string }>();
 
-  const [{ candidate }, dispatch] = useReducer(reducer, candidateInitialState);
+  const [{ loading, error, candidate }, dispatch] = useReducer(
+    reducer,
+    candidateInitialState
+  );
   window.scrollTo(0, 0);
   // FETCH DATA
   const fetchData = async () => {
@@ -71,19 +76,24 @@ function CandidateProfileViewScreen() {
       </Helmet>
       <MainNavBar />
 
-      <div className="container">
-        {candidate && <BannerDetails candidate={candidate} />}
-        {candidate && <CandidateDetails candidate={candidate} />}
-        <div className="bill_screen_content candidate_screen_content">
-          <div className="tab_panel_box_">
-            {candidate && <TabMainPanel candidate={candidate} />}
-          </div>
-          <div className="side_content">
-            {candidate && <PoliticalTime candidate={candidate} />}
+      {loading ? (
+        <LoadingBox></LoadingBox>
+      ) : error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
+      ) : (
+        <div className="container">
+          {candidate && <BannerDetails candidate={candidate} />}
+          {candidate && <CandidateDetails candidate={candidate} />}
+          <div className="bill_screen_content candidate_screen_content">
+            <div className="tab_panel_box_">
+              {candidate && <TabMainPanel candidate={candidate} />}
+            </div>
+            <div className="side_content">
+              {candidate && <PoliticalTime candidate={candidate} />}
+            </div>
           </div>
         </div>
-      </div>
-
+      )}
       <MainFooter />
     </div>
   );

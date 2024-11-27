@@ -7,8 +7,12 @@ import PoliticalNews from "../../components/home/political news/PoliticalNews";
 import Testimony from "../../components/home/testimonies/Testimony";
 import MainFooter from "../../common/footer/main footer/MainFooter";
 import Subscriber from "../../common/subscriber/Subscriber";
+import { useAppContext } from "../../utilities/utils/Utils";
 
 function HomeScreen() {
+  const { state: appState } = useAppContext();
+  const { userInfo } = appState;
+
   return (
     <div className="home_screen">
       <Helmet>
@@ -16,7 +20,7 @@ function HomeScreen() {
       </Helmet>
       <MainNavBar />
       <div className="content">
-        <IntroBanner />
+        {!userInfo && <IntroBanner />}
         <Featured />
         <Post />
         <PoliticalNews />

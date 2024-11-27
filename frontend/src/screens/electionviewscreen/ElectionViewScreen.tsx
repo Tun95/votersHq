@@ -20,6 +20,8 @@ import {
   ElectionViewAction,
   ElectionViewScreenState,
 } from "../../types/election/election details/types";
+import LoadingBox from "../../utilities/message loading/LoadingBox";
+import MessageBox from "../../utilities/message loading/MessageBox";
 
 const initialState: ElectionViewScreenState = {
   loading: true,
@@ -72,6 +74,8 @@ function ElectionViewScreen() {
   const { slug } = useParams<{ slug: string }>();
   const [state, dispatch] = useReducer(reducer, initialState);
   const {
+    loading,
+    error,
     election,
     countdown,
     totalVotes,
@@ -182,100 +186,108 @@ function ElectionViewScreen() {
         <title>Election Overview</title>
       </Helmet>
       <MainNavBar />
-      {election && (
-        <Banner
-          election={election}
-          totalVotes={totalVotes}
-          maleVotes={maleVotes}
-          femaleVotes={femaleVotes}
-          ageRangeDistribution={ageRangeDistribution}
-          leaderboardTop5={leaderboardTop5}
-          leaderboardTop3={leaderboardTop3}
-          fetchElection={fetchElection}
-        />
-      )}
-      <div className="container">
-        <div className="bill_screen_content election_screen_content">
+      {loading ? (
+        <LoadingBox></LoadingBox>
+      ) : error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
+      ) : (
+        <>
           {election && (
-            <>
-              {election.status === "ongoing" ||
-              election.status === "concluded" ? (
-                <div className="elec_banner">
-                  <EventTimer countdown={countdown} />{" "}
-                </div>
-              ) : (
-                ""
-              )}
-            </>
+            <Banner
+              election={election}
+              totalVotes={totalVotes}
+              maleVotes={maleVotes}
+              femaleVotes={femaleVotes}
+              ageRangeDistribution={ageRangeDistribution}
+              leaderboardTop5={leaderboardTop5}
+              leaderboardTop3={leaderboardTop3}
+              fetchElection={fetchElection}
+            />
           )}
+          <div className="container">
+            <div className="bill_screen_content election_screen_content">
+              {election && (
+                <>
+                  {election.status === "ongoing" ||
+                  election.status === "concluded" ? (
+                    <div className="elec_banner">
+                      <EventTimer countdown={countdown} />{" "}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
+              )}
 
-          <span id="poles_section">
-            {election && (
-              <PolesVotes
-                election={election}
-                totalVotes={totalVotes}
-                maleVotes={maleVotes}
-                femaleVotes={femaleVotes}
-                ageRangeDistribution={ageRangeDistribution}
-                leaderboardTop5={leaderboardTop5}
-                leaderboardTop3={leaderboardTop3}
-                fetchElection={fetchElection}
-              />
-            )}
-          </span>
-
-          <span className="tab_panel_box">
-            {election && (
-              <TabPanel
-                election={election}
-                totalVotes={totalVotes}
-                maleVotes={maleVotes}
-                femaleVotes={femaleVotes}
-                ageRangeDistribution={ageRangeDistribution}
-                leaderboardTop5={leaderboardTop5}
-                leaderboardTop3={leaderboardTop3}
-                fetchElection={fetchElection}
-              />
-            )}
-          </span>
-          <div className="side_content">
-            {election && (
-              <>
-                {election.status === "ongoing" ||
-                election.status === "concluded" ? (
-                  <EventTimer countdown={countdown} />
-                ) : (
-                  ""
+              <span id="poles_section">
+                {election && (
+                  <PolesVotes
+                    election={election}
+                    totalVotes={totalVotes}
+                    maleVotes={maleVotes}
+                    femaleVotes={femaleVotes}
+                    ageRangeDistribution={ageRangeDistribution}
+                    leaderboardTop5={leaderboardTop5}
+                    leaderboardTop3={leaderboardTop3}
+                    fetchElection={fetchElection}
+                  />
                 )}
-              </>
-            )}
-            {election && (
-              <PollLeaderBoard
-                election={election}
-                totalVotes={totalVotes}
-                maleVotes={maleVotes}
-                femaleVotes={femaleVotes}
-                ageRangeDistribution={ageRangeDistribution}
-                leaderboardTop5={leaderboardTop5}
-                leaderboardTop3={leaderboardTop3}
-                fetchElection={fetchElection}
-              />
-            )}
-            {election && (
-              <Comment
-                election={election}
-                totalVotes={totalVotes}
-                maleVotes={maleVotes}
-                femaleVotes={femaleVotes}
-                ageRangeDistribution={ageRangeDistribution}
-                leaderboardTop5={leaderboardTop5}
-                leaderboardTop3={leaderboardTop3}
-                fetchElection={fetchElection}
-              />
-            )}
+              </span>
+
+              <span className="tab_panel_box">
+                {election && (
+                  <TabPanel
+                    election={election}
+                    totalVotes={totalVotes}
+                    maleVotes={maleVotes}
+                    femaleVotes={femaleVotes}
+                    ageRangeDistribution={ageRangeDistribution}
+                    leaderboardTop5={leaderboardTop5}
+                    leaderboardTop3={leaderboardTop3}
+                    fetchElection={fetchElection}
+                  />
+                )}
+              </span>
+              <div className="side_content">
+                {election && (
+                  <>
+                    {election.status === "ongoing" ||
+                    election.status === "concluded" ? (
+                      <EventTimer countdown={countdown} />
+                    ) : (
+                      ""
+                    )}
+                  </>
+                )}
+                {election && (
+                  <PollLeaderBoard
+                    election={election}
+                    totalVotes={totalVotes}
+                    maleVotes={maleVotes}
+                    femaleVotes={femaleVotes}
+                    ageRangeDistribution={ageRangeDistribution}
+                    leaderboardTop5={leaderboardTop5}
+                    leaderboardTop3={leaderboardTop3}
+                    fetchElection={fetchElection}
+                  />
+                )}
+                {election && (
+                  <Comment
+                    election={election}
+                    totalVotes={totalVotes}
+                    maleVotes={maleVotes}
+                    femaleVotes={femaleVotes}
+                    ageRangeDistribution={ageRangeDistribution}
+                    leaderboardTop5={leaderboardTop5}
+                    leaderboardTop3={leaderboardTop3}
+                    fetchElection={fetchElection}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
       <MainFooter />
     </div>
   );

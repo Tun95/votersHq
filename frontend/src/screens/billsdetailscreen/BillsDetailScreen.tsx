@@ -71,7 +71,7 @@ function BillsDetailScreen() {
       <MainNavBar />
       <div className="container">
         {loading ? (
-          <LoadingBox />
+          <LoadingBox></LoadingBox>
         ) : error ? (
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
