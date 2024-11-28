@@ -6,41 +6,9 @@
   .content {
     .list {
       margin-top: 50px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2%;
-
-      .cards {
-        background-color: var(--color-white);
-        color: var(--color-dark);
-        border-radius: 10px;
-        padding: 20px 35px;
-        gap: 15px;
-        .img {
-          img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
-        }
-        .top {
-          margin-bottom: 5px;
-          gap: 5px;
-          flex-wrap: wrap;
-          .name {
-            text-wrap: nowrap;
-          }
-          .premium {
-            position: relative;
-            top: 3px;
-          }
-        }
-      }
-      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
-      @media screen and (max-width: 620px) {
-        grid-template-columns: 1fr;
-        gap: 20px;
+      .selfCenter {
+        flex-wrap: wrap;
+       
       }
     }
     .read_more {

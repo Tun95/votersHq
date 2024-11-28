@@ -70,6 +70,7 @@ app.use("/api/models", express.static(path.join(__dirname, "facemodels")));
 app.use("/api/upload", uploadRouter);
 app.use("/api/generals", generalRouter);
 
+
 app.use("/api/message", sendEmailSmsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/political-news", politicalNewsRouter);
