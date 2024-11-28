@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+//import { useEffect, useState } from "react";
 import "./styles.scss";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import { TwitterTweetEmbed } from "react-twitter-embed";
+//import { TwitterTweetEmbed } from "react-twitter-embed";
 
 function Testimony() {
-  const [isClient, setIsClient] = useState(false);
+  // const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    // Set to true once the component is mounted on the client-side
-    setIsClient(true);
-  }, []);
+  // useEffect(() => {
+  //   // Set to true once the component is mounted on the client-side
+  //   setIsClient(true);
+  // }, []);
   return (
     <div className="testimony">
       <div className="container">
@@ -22,7 +22,7 @@ function Testimony() {
           <div className="list">
             <div className="centerContent">
               <div className="selfCenter d_flex">
-                {isClient && (
+                {/* {isClient && (
                   <>
                     <TwitterTweetEmbed
                       onLoad={function noRefCheck() {}}
@@ -49,7 +49,7 @@ function Testimony() {
                       options={{ height: 200, width: "100%" }}
                     />
                   </>
-                )}
+                )} */}
               </div>
             </div>
           </div>
