@@ -1,6 +1,6 @@
 import "./styles.scss";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import { TwitterTweetEmbed } from "react-twitter-embed";
+//import { TwitterTweetEmbed } from "react-twitter-embed";
 
 function Testimony() {
   return (
@@ -14,7 +14,7 @@ function Testimony() {
           </div>
           <div className="list">
             <div className="centerContent">
-              <div className="selfCenter d_flex">
+              {/* <div className="selfCenter d_flex">
                 <TwitterTweetEmbed
                   onLoad={function noRefCheck() {}}
                   tweetId="1861104262282887297"
@@ -39,7 +39,7 @@ function Testimony() {
                   placeholder="Loading..."
                   options={{ height: 200, width: "100%" }}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
           {/* REDIRECT TO TWEETS */}
