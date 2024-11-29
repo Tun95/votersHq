@@ -1,15 +1,8 @@
-//import { useEffect, useState } from "react";
 import "./styles.scss";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-//import { TwitterTweetEmbed } from "react-twitter-embed";
+import { Tweet } from "react-tweet";
 
 function Testimony() {
-  // const [isClient, setIsClient] = useState(false);
-
-  // useEffect(() => {
-  //   // Set to true once the component is mounted on the client-side
-  //   setIsClient(true);
-  // }, []);
   return (
     <div className="testimony">
       <div className="container">
@@ -22,34 +15,8 @@ function Testimony() {
           <div className="list">
             <div className="centerContent">
               <div className="selfCenter d_flex">
-                {/* {isClient && (
-                  <>
-                    <TwitterTweetEmbed
-                      onLoad={function noRefCheck() {}}
-                      tweetId="1861104262282887297"
-                      placeholder="Loading..."
-                      options={{ height: 200, width: "100%" }}
-                    />{" "}
-                    <TwitterTweetEmbed
-                      onLoad={function noRefCheck() {}}
-                      tweetId="1083592734038929408"
-                      placeholder="Loading..."
-                      options={{ height: 200, width: "100%" }}
-                    />{" "}
-                    <TwitterTweetEmbed
-                      onLoad={function noRefCheck() {}}
-                      tweetId="1083592734038929408"
-                      placeholder="Loading..."
-                      options={{ height: 200, width: "100%" }}
-                    />{" "}
-                    <TwitterTweetEmbed
-                      onLoad={function noRefCheck() {}}
-                      tweetId="1083592734038929408"
-                      placeholder="Loading..."
-                      options={{ height: 200, width: "100%" }}
-                    />
-                  </>
-                )} */}
+                <Tweet id="1083592734038929408" />
+                <Tweet id="1083592734038929408" />{" "}
               </div>
             </div>
           </div>

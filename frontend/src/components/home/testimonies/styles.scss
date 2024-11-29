@@ -7,8 +7,12 @@
     .list {
       margin-top: 50px;
       .selfCenter {
-        flex-wrap: wrap;
-       
+        // flex-wrap: wrap;
+        gap: 20px;
+        /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+        @media screen and (max-width: 600px) {
+          flex-direction: column;
+        }
       }
     }
     .read_more {
