@@ -4,6 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 import { isAdmin, isAuth } from "../utils.js";
 import User from "../models/userModels.js";
 import UserActivity from "../models/userActivitiesModels.js";
+import { redisClient } from "../server.js";
 
 const billsRouter = express.Router();
 
@@ -90,6 +91,15 @@ billsRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
+      // Attempt to fetch data from Redis cache
+      const cacheKey = "bills:all";
+      const cachedData = await redisClient.get(cacheKey);
+
+      if (cachedData) {
+        console.log("Serving from cache");
+        return res.send(JSON.parse(cachedData));
+      }
+
       const bills = await Bills.find({})
         .populate("user") // Populates the user who created the bill
         .populate({
@@ -97,6 +107,9 @@ billsRouter.get(
           model: "User", // Specifies the model to populate from
         })
         .sort({ createdAt: -1 }); // Sort by latest (most recent first)
+
+      // Store data in Redis cache for subsequent requests
+      await redisClient.set(cacheKey, JSON.stringify(bills), { EX: 3600 }); // Cache for 1 hour
       res.send(bills);
     } catch (error) {
       res.status(500).send({ message: error.message });
@@ -170,7 +183,26 @@ billsRouter.get(
       }
     })();
 
+    const cacheKey = `bills:filter:${JSON.stringify({
+      searchQuery,
+      sortType,
+      sortStatus,
+      sortCategory,
+      sortState,
+      order,
+      pageSize,
+      page,
+    })}`;
+
     try {
+      // Check Redis cache
+      const cachedData = await redisClient.get(cacheKey);
+
+      if (cachedData) {
+        console.log("Serving filtered results from cache");
+        return res.send(JSON.parse(cachedData));
+      }
+
       const bills = await Bills.aggregate([
         { $match: filters },
         {
@@ -306,12 +338,17 @@ billsRouter.get(
 
       const countBills = await Bills.countDocuments(filters);
 
-      res.send({
+      const result = {
         bills,
         countBills,
         page,
         pages: Math.ceil(countBills / pageSize),
-      });
+      };
+
+      // Store filtered data in Redis
+      await redisClient.set(cacheKey, JSON.stringify(result), { EX: 3600 }); // Cache for 1 hour
+
+      res.send(result);
     } catch (error) {
       console.error("Error fetching bills:", error);
       res.status(500).json({ message: "Internal Server Error" });

@@ -1,3 +1,4 @@
+import { createClient } from "redis";
 import mongoose from "mongoose";
 import cors from "cors";
 import express from "express";
@@ -6,6 +7,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { fileURLToPath } from "url";
+
 import userRouter from "./routes/userRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
 import politicalNewsRouter from "./routes/politicalNewsRoutes.js";
@@ -13,7 +16,7 @@ import electionRouter from "./routes/electionRoutes.js";
 import Election from "./models/electionModels.js";
 import billsRouter from "./routes/billsRoutes.js";
 import generalRouter from "./routes/generalRoutes.js";
-import { fileURLToPath } from "url";
+
 import sendEmailSmsRouter from "./routes/emailMsgRoutes.js";
 
 // Get the equivalent of __dirname
@@ -70,7 +73,6 @@ app.use("/api/models", express.static(path.join(__dirname, "facemodels")));
 app.use("/api/upload", uploadRouter);
 app.use("/api/generals", generalRouter);
 
-
 app.use("/api/message", sendEmailSmsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/political-news", politicalNewsRouter);
@@ -86,6 +88,23 @@ app.get("*", (req, res) =>
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });
+
+// Initialize Redis client
+const redisClient = createClient();
+
+// Handle connection events
+redisClient.on("connect", () => {
+  console.log("Connected to Redis");
+});
+
+redisClient.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+
+// Connect to Redis
+await redisClient.connect();
+
+export { redisClient };
 
 const server = createServer(app);
 const io = new Server(server, {

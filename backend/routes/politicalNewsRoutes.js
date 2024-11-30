@@ -2,8 +2,11 @@ import express from "express";
 import { isAuth, isAdmin } from "../utils.js";
 import PoliticalNews from "../models/politicalNewsModels.js";
 import expressAsyncHandler from "express-async-handler";
+import { redisClient } from "../server.js";
 
 const politicalNewsRouter = express.Router();
+
+
 
 //=====================================
 // Create a new political news article
@@ -22,6 +25,10 @@ politicalNewsRouter.post(
         user: req.user._id,
       });
       const createdNews = await politicalNews.save();
+
+      // Invalidate cache
+      await redisClient.del("politicalNews:all");
+
       res
         .status(201)
         .send({ message: "Political News Created", news: createdNews });
@@ -32,16 +39,28 @@ politicalNewsRouter.post(
 );
 
 //=====================================
-// Fetch all political news articles (latest first)
+// Fetch all political news articles (latest first) with caching
 //=====================================
 politicalNewsRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
+      const cacheKey = "politicalNews:all";
+      const cachedNews = await redisClient.get(cacheKey);
+
+      if (cachedNews) {
+        // Return cached response
+        return res.json(JSON.parse(cachedNews));
+      }
+
       const news = await PoliticalNews.find({})
         .sort({ createdAt: -1 }) // Sort by createdAt in descending order
         .populate("user", "firstName lastName email"); // Populate user with selected fields
-      res.send(news);
+
+      // Cache the response for 10 minutes
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(news));
+
+      res.json(news);
     } catch (error) {
       res.status(500).send({ message: error.message });
     }
@@ -49,17 +68,32 @@ politicalNewsRouter.get(
 );
 
 //=====================================
-// Fetch latest 8 political news articles
+// Fetch latest 8 political news articles with caching
 //=====================================
 politicalNewsRouter.get(
   "/latest",
   expressAsyncHandler(async (req, res) => {
     try {
+      const cacheKey = "politicalNews:latest";
+
+      // Check if the latest news is cached
+      const cachedNews = await redisClient.get(cacheKey);
+
+      if (cachedNews) {
+        // Return cached response
+        return res.json(JSON.parse(cachedNews));
+      }
+
+      // Fetch the latest 8 political news articles from MongoDB
       const news = await PoliticalNews.find({})
         .sort({ createdAt: -1 }) // Sort by createdAt in descending order
         .limit(8) // Limit the results to 8 articles
         .populate("user", "firstName lastName email"); // Populate user with selected fields
-      res.send(news);
+
+      // Cache the result for 10 minutes (600 seconds)
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(news));
+
+      res.json(news);
     } catch (error) {
       res.status(500).send({ message: error.message });
     }
@@ -101,18 +135,29 @@ politicalNewsRouter.get(
 );
 
 //=====================================
-// Fetch political news article by ID (populate user)
+// Fetch political news article by ID (populate user) with caching
 //=====================================
 politicalNewsRouter.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     try {
+      const cacheKey = `politicalNews:${req.params.id}`;
+      const cachedNews = await redisClient.get(cacheKey);
+
+      if (cachedNews) {
+        // Return cached response
+        return res.json(JSON.parse(cachedNews));
+      }
+
       const news = await PoliticalNews.findById(req.params.id).populate(
         "user",
         "firstName lastName email"
-      ); // Populate user with selected fields
+      );
+
       if (news) {
-        res.send(news);
+        // Cache the response for 10 minutes
+        await redisClient.setEx(cacheKey, 600, JSON.stringify(news));
+        res.json(news);
       } else {
         res.status(404).send({ message: "Political News Not Found" });
       }
@@ -158,6 +203,11 @@ politicalNewsRouter.put(
         news.image = req.body.image || news.image;
         news.description = req.body.description || news.description;
         const updatedNews = await news.save();
+
+        // Invalidate cache
+        await redisClient.del(`politicalNews:${req.params.id}`);
+        await redisClient.del("politicalNews:all");
+
         res.send({ message: "Political News Updated", news: updatedNews });
       } else {
         res.status(404).send({ message: "Political News Not Found" });
@@ -180,6 +230,11 @@ politicalNewsRouter.delete(
       const news = await PoliticalNews.findById(req.params.id);
       if (news) {
         await news.deleteOne();
+
+        // Invalidate cache
+        await redisClient.del(`politicalNews:${req.params.id}`);
+        await redisClient.del("politicalNews:all");
+
         res.send({ message: "Political News Deleted" });
       } else {
         res.status(404).send({ message: "Political News Not Found" });
