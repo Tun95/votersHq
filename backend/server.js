@@ -90,7 +90,9 @@ app.use((err, req, res, next) => {
 });
 
 // Initialize Redis client
-const redisClient = createClient();
+const redisClient = createClient({
+  url: "redis://127.0.0.1:6379", // Use explicit IPv4 address
+});
 
 // Handle connection events
 redisClient.on("connect", () => {
@@ -102,7 +104,11 @@ redisClient.on("error", (err) => {
 });
 
 // Connect to Redis
-await redisClient.connect();
+try {
+  await redisClient.connect();
+} catch (err) {
+  console.error("Failed to connect to Redis:", err);
+}
 
 export { redisClient };
 
