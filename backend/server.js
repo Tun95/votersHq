@@ -1,4 +1,3 @@
-import { createClient } from "redis";
 import mongoose from "mongoose";
 import cors from "cors";
 import express from "express";
@@ -89,28 +88,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });
 
-// Initialize Redis client
-const redisClient = createClient({
-  url: "redis://127.0.0.1:6379", // Use explicit IPv4 address
-});
 
-// Handle connection events
-redisClient.on("connect", () => {
-  console.log("Connected to Redis");
-});
-
-redisClient.on("error", (err) => {
-  console.error("Redis error:", err);
-});
-
-// Connect to Redis
-try {
-  await redisClient.connect();
-} catch (err) {
-  console.error("Failed to connect to Redis:", err);
-}
-
-export { redisClient };
 
 const server = createServer(app);
 const io = new Server(server, {
