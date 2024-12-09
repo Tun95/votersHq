@@ -126,6 +126,7 @@
     }
 
     .party {
+      gap: 5px;
       .party_img_text {
         gap: 5px;
         .img {
@@ -164,7 +165,7 @@
   }
   ol {
     li {
-       list-style: decimal;
+      list-style: decimal;
     }
   }
   .manifest_header {
