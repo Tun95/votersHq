@@ -1,0 +1,43 @@
+.about_con {
+  .banner {
+    margin-top: 35px;
+    padding: 0px 20px;
+    margin-bottom: 10px;
+    .img {
+      img {
+        width: 100%;
+        border-radius: 10px;
+        height: 350px;
+        object-fit: cover;
+      }
+    }
+  }
+  .sub_sections {
+    padding: 20px 0px;
+    &.mb {
+      margin-bottom: 50px;
+    }
+    .header {
+      flex-direction: column;
+      width: 85%;
+      text-align: center;
+    }
+  }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 900px) {
+    .banner {
+      padding: 0px;
+      margin-top: 30px;
+      .img {
+        img {
+          height: 300px;
+        }
+      }
+    }
+    .sub_sections {
+      .header {
+        width: 100%;
+      }
+    }
+  }
+}

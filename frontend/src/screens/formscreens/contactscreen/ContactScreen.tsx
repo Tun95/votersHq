@@ -4,11 +4,9 @@ import ContactComponent from "../../../components/form/contact/Contact";
 import FaqComponent from "../../../common/faq/Faq";
 import MainFooter from "../../../common/footer/main footer/MainFooter";
 import MainNavBar from "../../../common/nav bar/main navbar/MainNavBar";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 function ContactScreen() {
-  const faqRef = useRef<HTMLDivElement>(null);
-
   // Scroll to the top of the page when the component is loaded
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,14 +32,14 @@ function ContactScreen() {
           </div>
           <div className="main_body_content">
             <ContactComponent />
-            <div ref={faqRef} id="faq" className="faq_section">
+            <div id="faq" className="faq_section">
               <FaqComponent />
             </div>
           </div>
         </div>
       </div>
       <div className="footer_section">
-        <MainFooter faqRef={faqRef} />
+        <MainFooter />
       </div>
     </div>
   );

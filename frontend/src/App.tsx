@@ -19,6 +19,7 @@ import { GradientDefs } from "./utilities/component/Component";
 import { AuthFlowMenu } from "./common/menus/Menus";
 import ProtectedRoute from "./utilities/protectedRoute/ProtectedRoute";
 import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
+import AboutScreen from "./screens/aboutscreen/AboutScreen";
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
           <Route path="/bills/:slug" element={<BillsDetailScreen />} />
           <Route path="/elections" element={<ElectionScreen />} />
           <Route path="/elections/:slug" element={<ElectionViewScreen />} />
+
+          <Route path="/about" element={<AboutScreen />} />
 
           {/* FORMS */}
           <Route path="/contact" element={<ContactScreen />} />
