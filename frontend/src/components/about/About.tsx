@@ -2,6 +2,7 @@ import "./styles.scss";
 import banner from "../../assets/others/banner.png";
 
 function About() {
+    
   return (
     <div className="about_con">
       <div className="container">
