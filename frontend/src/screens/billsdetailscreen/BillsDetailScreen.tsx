@@ -48,10 +48,10 @@ function BillsDetailScreen() {
     }
   }, [slug]); // Depend on `slug` so it updates when URL changes
 
-  const fetchBill = async (slug: string, triggerLoading = false) => {
-    if (triggerLoading) {
-      dispatch({ type: "FETCH_REQUEST" });
-    }
+  const fetchBill = async (slug: string) => {
+    // if (triggerLoading) {
+    dispatch({ type: "FETCH_REQUEST" });
+    // }
     try {
       const { data } = await axios.get(`${request}/api/bills/slug/${slug}`);
       dispatch({ type: "FETCH_SUCCESS", payload: data });
