@@ -109,7 +109,7 @@ const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
                       </div>
                       <div className="name">
                         <span className="cursor">
-                          <TruncateMarkup lines={2}>
+                          <TruncateMarkup lines={1}>
                             <h4
                               onClick={() =>
                                 bill?.slug && handleLinkClick(bill.slug)
@@ -123,7 +123,7 @@ const MoreRelatedCards: React.FC<BillsResponse> = ({ fetchBill, bill }) => {
 
                       <div className="past_card">
                         <div className="description">
-                          <TruncateMarkup lines={3}>
+                          <TruncateMarkup lines={1}>
                             <p>{parse(bill?.description ?? "")}</p>
                           </TruncateMarkup>
                         </div>
