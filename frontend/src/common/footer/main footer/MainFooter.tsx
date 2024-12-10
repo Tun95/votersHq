@@ -4,10 +4,28 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import "./styles.scss";
-import { Link } from "react-router-dom";
-import BalanceIcon from "@mui/icons-material/Balance";
+import { Link, useNavigate } from "react-router-dom";
+import logo1 from "../../../assets/logo/logo1.png";
 
-function MainFooter() {
+interface MainFooterProps {
+  faqRef: React.RefObject<HTMLDivElement>; // Explicitly type faqRef as a ref to an HTML div element
+}
+
+function MainFooter({ faqRef }: MainFooterProps) {
+  const navigate = useNavigate();
+
+  const handleFaqClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Prevent default link behavior
+    navigate("/contact"); // Navigate to the ContactScreen
+
+    // Scroll to FAQ after navigation
+    setTimeout(() => {
+      if (faqRef && faqRef.current) {
+        faqRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100); // Add a small delay to ensure navigation completes before scrolling
+  };
+
   return (
     <div className="main_footer">
       <footer className="landing_footer">
@@ -17,10 +35,10 @@ function MainFooter() {
               <div className="left">
                 <div className="logo_text a_flex">
                   <div className="logo">
-                    <BalanceIcon className="icon" />
+                    <img src={logo1} alt="votersHq" />
                   </div>
                   <div className="text">
-                    <h1>VotersHQ</h1>
+                    <h1>votersHQ</h1>
                   </div>
                 </div>
               </div>
@@ -61,7 +79,9 @@ function MainFooter() {
                           <Link to="/contact">Help Center</Link>
                         </li>
                         <li>
-                          <Link to="/faq">FAQs</Link>
+                          <a href="#faq" onClick={handleFaqClick}>
+                            FAQs
+                          </a>
                         </li>
 
                         <li>

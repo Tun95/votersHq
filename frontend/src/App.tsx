@@ -18,12 +18,12 @@ import ViewPoliticianDashboardScreen from "./screens/profilescreen/viewdashboard
 import { GradientDefs } from "./utilities/component/Component";
 import { AuthFlowMenu } from "./common/menus/Menus";
 import ProtectedRoute from "./utilities/protectedRoute/ProtectedRoute";
+import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
 
 function App() {
   return (
     <>
       <div className="app">
-       
         <ToastContainer position="bottom-center" limit={1} />
         <GradientDefs />
         <AuthFlowMenu />
@@ -35,6 +35,10 @@ function App() {
           <Route path="/bills/:slug" element={<BillsDetailScreen />} />
           <Route path="/elections" element={<ElectionScreen />} />
           <Route path="/elections/:slug" element={<ElectionViewScreen />} />
+
+          {/* FORMS */}
+          <Route path="/contact" element={<ContactScreen />} />
+          {/* FORMS */}
 
           {/* PROFILE */}
           <Route

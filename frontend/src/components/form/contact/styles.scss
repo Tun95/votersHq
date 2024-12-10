@@ -1,0 +1,86 @@
+.contact_component {
+  margin-top: 80px;
+  .content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10%;
+
+    .left {
+      .form_box {
+        .form_group {
+          flex-direction: column;
+          width: 100%;
+          margin-bottom: 20px;
+          gap: 3px;
+          label {
+            font-size: 15px;
+          }
+          input {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--color-background);
+          }
+          textarea {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--color-background);
+            min-height: 200px;
+          }
+          .btn {
+            .main_btn {
+              width: 100%;
+              padding: 12px;
+            }
+          }
+        }
+      }
+    }
+    .right {
+      color: var(--color-dark-gray);
+      small {
+        color: var(--color-gray);
+      }
+      .list {
+        margin-top: 10px;
+        position: relative;
+        left: 15px;
+
+        li {
+          column-gap: 10px;
+          margin-bottom: 15px;
+          .icon {
+            font-size: 17px;
+          }
+          a {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--color-dark-gray);
+            border-bottom: 1px solid var(--color-dark-gray);
+          }
+        }
+      }
+
+      .chat_with_us {
+        margin-top: 40px;
+      }
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 900px) {
+      grid-template-columns: 1fr;
+      gap: 4%;
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 545px) {
+      .right {
+        margin-bottom: 60px;
+        text-align: center;
+        .list {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          left: 0px;
+        }
+      }
+    }
+  }
+}

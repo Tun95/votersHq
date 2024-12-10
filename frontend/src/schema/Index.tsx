@@ -102,3 +102,15 @@ export const timelineSchema = yup.object({
   timelineTitle: yup.string().required("Title is required"),
   timelineDetails: yup.string().required("Details are required"),
 });
+
+
+// CONTACT
+// Validation schema using yup
+export const contactSchema = yup.object().shape({
+  name: yup.string().required("Full Name is required"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email Address is required"),
+  message: yup.string().required("Message is required"),
+});

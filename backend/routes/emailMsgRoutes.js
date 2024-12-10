@@ -473,4 +473,55 @@ sendEmailSmsRouter.post(
   })
 );
 
+//==============
+// Contact Admin
+//==============
+sendEmailSmsRouter.post(
+  "/contact",
+  expressAsyncHandler(async (req, res) => {
+    const { email, name, message } = req.body;
+
+    // Configure Sendinblue API key
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications["api-key"];
+    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
+
+    try {
+      // Construct the email content (optional HTML can be used if required)
+      const emailMessage = `
+        <html>
+        <body>
+          <h2>New Contact Us Message</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        </body>
+        </html>
+      `;
+
+      // Send email using Sendinblue
+      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+      // Set the email details
+      sendSmtpEmail.to = [{ email: process.env.EMAIL_ADDRESS }];
+      sendSmtpEmail.sender = {
+        email, // The sender's email comes from the form submission
+        name, // The sender's name comes from the form submission
+      };
+      sendSmtpEmail.subject = "Contact Us - New Message";
+      sendSmtpEmail.htmlContent = emailMessage; // Use HTML content for the message
+
+      // Send the email
+      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+
+      res.status(200).json({ message: "Email sent successfully" });
+    } catch (error) {
+      console.error("Email sending error:", error);
+      res.status(500).json({ message: "Failed to send email" });
+    }
+  })
+);
+
 export default sendEmailSmsRouter;
