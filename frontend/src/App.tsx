@@ -21,6 +21,7 @@ import ProtectedRoute from "./utilities/protectedRoute/ProtectedRoute";
 import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
 import AboutScreen from "./screens/aboutscreen/AboutScreen";
 import PoliticalNewsListScreen from "./screens/politicalnewscreen/politicalnewslist/PoliticalNewsListScreen";
+import PoliticalNewsDetailScreen from "./screens/politicalnewscreen/politicalnewsdetails/PoliticalNewsDetailScreen";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/elections" element={<ElectionScreen />} />
           <Route path="/elections/:slug" element={<ElectionViewScreen />} />
           <Route path="/news" element={<PoliticalNewsListScreen />} />
+          <Route path="/news/:slug" element={<PoliticalNewsDetailScreen />} />
 
           <Route path="/about" element={<AboutScreen />} />
 

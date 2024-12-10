@@ -52,6 +52,7 @@ export interface PoliticalNews {
   title: string;
   slug?: string;
   image: string;
+  user: User;
   description: string;
   createdAt: string;
   updatedAt: string;
@@ -90,3 +91,28 @@ export interface PoliticalCardsProps {
   };
   index: number;
 }
+
+//NEWS DETAILS
+export interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface NewsDetailsState {
+  loading: boolean;
+  error: string | null;
+  news: PoliticalNews | null;
+}
+
+export type NewsDetailsAction =
+  | { type: "FETCH_REQUEST" }
+  | { type: "FETCH_SUCCESS"; payload: PoliticalNews }
+  | { type: "FETCH_FAIL"; payload: string };
+
+export const newsDetailsInitialState: NewsDetailsState = {
+  loading: false,
+  error: null,
+  news: null,
+};
