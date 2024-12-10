@@ -40,4 +40,21 @@
       }
     }
   }
+  /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+  @media screen and (max-width: 520px) {
+    .banner {
+      .img {
+        img {
+          height: 240px;
+        }
+      }
+    }
+    .sub_sections {
+      .header {
+        h1 {
+          font-size: 25px;
+        }
+      }
+    }
+  }
 }

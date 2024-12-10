@@ -82,6 +82,11 @@
   /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
   @media screen and (max-width: 450px) {
     .content {
+      .banner {
+        img {
+          max-height: 200px;
+        }
+      }
       .candidate_running_mate {
         text-wrap: wrap;
         .name {
@@ -98,7 +103,7 @@
           .candidate_img {
             max-height: 100px;
             max-width: 100px;
-            top: 80px;
+            top: 60px;
           }
         }
       }
