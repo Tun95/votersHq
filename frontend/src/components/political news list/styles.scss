@@ -1,12 +1,24 @@
 .political_news_list {
-    margin-top: 40px;
+  margin-top: 40px;
   .news_list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-
+    .political_cards {
+      .details {
+        height: auto;
+        .description {
+          p {
+            background: transparent !important;
+          }
+        }
+      }
+    }
     /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
     @media screen and (max-width: 900px) {
       grid-template-columns: repeat(2, 1fr);
+    } /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 520px) {
+      grid-template-columns: 1fr;
     }
   }
 }

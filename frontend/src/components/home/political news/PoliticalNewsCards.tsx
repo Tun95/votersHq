@@ -10,7 +10,7 @@ const PoliticalNewsCards: FC<PoliticalNewsCardsProps> = ({ item, index }) => {
   return (
     <div className="political_cards" key={index}>
       <div className="img">
-        <Link to="">
+        <Link to={`/news/${item.slug}`}>
           <img src={item.image} alt={item.title} />
         </Link>
       </div>
@@ -22,9 +22,9 @@ const PoliticalNewsCards: FC<PoliticalNewsCardsProps> = ({ item, index }) => {
           </small>
         </div>
         <div className="title">
-          <TruncateMarkup lines={2}>
+          <TruncateMarkup lines={1}>
             <h3>
-              <Link to="">{item.title}</Link>
+              <Link to={`/news/${item.slug}`}>{item.title}</Link>
             </h3>
           </TruncateMarkup>
         </div>
@@ -34,7 +34,7 @@ const PoliticalNewsCards: FC<PoliticalNewsCardsProps> = ({ item, index }) => {
           </TruncateMarkup>
         </div>
         <div className="read_more">
-          <Link to="">Read More</Link>
+          <Link to={`/news/${item.slug}`}>Read More</Link>
         </div>
       </div>
     </div>

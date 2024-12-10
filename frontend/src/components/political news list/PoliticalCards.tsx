@@ -22,7 +22,7 @@ const PoliticalCards: FC<PoliticalCardsProps> = ({ item, index }) => {
           </small>
         </div>
         <div className="title">
-          <TruncateMarkup lines={2}>
+          <TruncateMarkup lines={1}>
             <h3>
               <Link to={`/news/${item.slug}`}>{item.title}</Link>
             </h3>
@@ -34,7 +34,7 @@ const PoliticalCards: FC<PoliticalCardsProps> = ({ item, index }) => {
           </TruncateMarkup>
         </div>
         <div className="read_more">
-          <Link to="">Read More</Link>
+          <Link to={`/news/${item.slug}`}>Read More</Link>
         </div>
       </div>
     </div>
