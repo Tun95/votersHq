@@ -4,6 +4,12 @@
   padding: 60px 30px;
   padding-bottom: 30px;
   .content {
+    .head {
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 745px) {
+        width: 100%;
+      }
+    }
     .list {
       margin-top: 50px;
       .selfCenter {
