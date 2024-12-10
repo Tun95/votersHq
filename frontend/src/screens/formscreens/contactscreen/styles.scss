@@ -4,6 +4,13 @@
     .header {
       text-align: center;
       flex-direction: column;
+
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 520px) {
+        h1 {
+          font-size: 24px;
+        }
+      }
     }
   }
 }

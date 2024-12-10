@@ -12,6 +12,19 @@
         width: 100%;
       }
     }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    @media screen and (max-width: 520px) {
+      .name {
+        h2 {
+          font-size: 22px;
+        }
+      }
+      .title {
+        h1 {
+          font-size: 19px;
+        }
+      }
+    }
   }
 }
 .faq_questions {
