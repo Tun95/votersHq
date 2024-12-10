@@ -23,7 +23,6 @@ export interface State {
   errorUpload?: string;
 }
 
-
 export interface Action {
   type:
     | "FETCH_REQUEST"
@@ -40,11 +39,54 @@ export interface Action {
     | "UPLOAD_FAIL";
   payload?: PoliticalSlideItem[] | string; // Allow the payload to be an array
 }
-
-
 export const initialState: State = {
   loading: true,
   error: "",
   loadingUpdate: false,
   loadingUpload: false,
 };
+
+//NEWS LIST
+export interface PoliticalNews {
+  id: string;
+  title: string;
+  slug?: string;
+  image: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginatedPoliticalNews {
+  politicalNews: PoliticalNews[];
+  page: number;
+  pages: number;
+  totalPages: number;
+}
+
+export interface NewsState {
+  loading: boolean;
+  error: string;
+  politicalNews: PoliticalNews[];
+  page: number;
+  pages: number;
+  totalPages: number;
+}
+
+export type NewsAction =
+  | { type: "FETCH_REQUEST" }
+  | { type: "FETCH_SUCCESS"; payload: PaginatedPoliticalNews }
+  | { type: "FETCH_FAIL"; payload: string };
+
+export interface PoliticalCardsProps {
+  item: {
+    id: string;
+    title: string;
+    slug?: string;
+    image: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  index: number;
+}

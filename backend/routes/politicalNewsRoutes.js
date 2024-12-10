@@ -41,13 +41,29 @@ politicalNewsRouter.get(
   "/",
   expressAsyncHandler(async (req, res) => {
     try {
-      const news = await PoliticalNews.find({})
-        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
-        .populate("user", "firstName lastName email"); // Populate user with selected fields
+      const page = parseInt(req.query.page) || 1; // Parse the page number from the query, default to 1
+      const limit = 12;
+      const skip = (page - 1) * limit; // Calculate the number of documents to skip
 
-      res.json(news);
+      // Sort the news by createdAt in descending order to get the latest first
+      const news = await PoliticalNews.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("user", "firstName lastName email") // Populate user with selected fields
+        .exec();
+
+      const totalNews = await PoliticalNews.countDocuments(); // Get the total number of news articles
+      const totalPages = Math.ceil(totalNews / limit);
+
+      res.json({
+        news,
+        totalNews,
+        currentPage: page,
+        totalPages,
+      });
     } catch (error) {
-      res.status(500).send({ message: error.message });
+      res.status(500).json({ message: "Internal Server Error" });
     }
   })
 );

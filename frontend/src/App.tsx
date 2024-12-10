@@ -20,6 +20,7 @@ import { AuthFlowMenu } from "./common/menus/Menus";
 import ProtectedRoute from "./utilities/protectedRoute/ProtectedRoute";
 import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
 import AboutScreen from "./screens/aboutscreen/AboutScreen";
+import PoliticalNewsListScreen from "./screens/politicalnewscreen/politicalnewslist/PoliticalNewsListScreen";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/bills/:slug" element={<BillsDetailScreen />} />
           <Route path="/elections" element={<ElectionScreen />} />
           <Route path="/elections/:slug" element={<ElectionViewScreen />} />
+          <Route path="/news" element={<PoliticalNewsListScreen />} />
 
           <Route path="/about" element={<AboutScreen />} />
 
