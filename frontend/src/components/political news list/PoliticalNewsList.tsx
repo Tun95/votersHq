@@ -71,6 +71,7 @@ function PoliticalNewsList() {
             totalPages: data.totalPages,
           },
         });
+        window.scrollTo(0, 0);
       } catch (err) {
         dispatch({
           type: "FETCH_FAIL",

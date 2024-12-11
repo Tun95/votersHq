@@ -18,79 +18,161 @@ const data = {
   // title: "Frequently Asked Questions",
   rows: [
     {
-      title: (
-        <h4 className="faq_questions">What is the Ondo State Youth Retreat?</h4>
-      ),
+      title: <h4 className="faq_questions">What is VotersHQ?</h4>,
       content: (
         <p className="faq_answers">
-          The Ondo State Youth Retreat is an annual gathering aimed at
-          empowering the youth through various interactive sessions, workshops,
-          networking opportunities, and competitions. The 2024 edition, themed
-          "Shaping The Future: Harnessing Our Potentials Through The Youth,"
-          will bring together young leaders, entrepreneurs, creatives, and
-          professionals to explore opportunities for personal growth and
-          societal impact.
+          VotersHQ is an AI-powered platform that simplifies governance by
+          providing clear, concise summaries of legislative bills, policies, and
+          issues. It empowers citizens to participate in decision-making through
+          voting, sharing opinions, and holding officials accountable.
         </p>
       ),
     },
     {
-      title: <h4 className="faq_questions">Who can attend the retreat?</h4>,
+      title: <h4 className="faq_questions">Who can use VotersHQ?</h4>,
       content: (
         <p className="faq_answers">
-          The retreat is open to individuals aged 18-45 who are residents or
-          indigenes of Ondo State.
-        </p>
-      ),
-    },
-    {
-      title: (
-        <h4 className="faq_questions">How can I register for the retreat?</h4>
-      ),
-      content: (
-        <p className="faq_answers">
-          You can register online by filling out the form on the official event
-          website.
-        </p>
-      ),
-    },
-    {
-      title: <h4 className="faq_questions">Is there a registration fee?</h4>,
-      content: (
-        <p className="faq_answers">No, registration for the retreat is free.</p>
-      ),
-    },
-    {
-      title: (
-        <h4 className="faq_questions">
-          What activities are included in the retreat?
-        </h4>
-      ),
-      content: (
-        <p className="faq_answers">
-          The retreat includes keynote speeches, panel sessions, workshops,
-          competitions, cultural displays, and networking opportunities.
-        </p>
-      ),
-    },
-    {
-      title: <h4 className="faq_questions">Where will the event be held?</h4>,
-      content: (
-        <p className="faq_answers">
-          The event will be held at Nibanola Resort, Km 7 Ore - Ondo Road,
-          Igbado, Ondo State.
+          Any citizen who wants to stay informed and actively participate in
+          governance can use VotersHQ. You just need to sign up using your valid
+          identification.
         </p>
       ),
     },
     {
       title: (
         <h4 className="faq_questions">
-          Will accommodation and meals be provided?
+          Is VotersHQ affiliated with the government?
         </h4>
       ),
       content: (
         <p className="faq_answers">
-          Yes, participants will be provided with accommodation and three meals
-          daily for the duration of the retreat.
+          No, VotersHQ is an independent platform designed to promote
+          transparency and citizen participation.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">How do I vote on bills or issues?</h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          Once logged in, you can browse bills, policies, or issues on the
+          platform. Each item includes a summary, and you can cast your vote
+          (Yea or Nay) directly on the page.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          What are election opinion polls on VotersHQ?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          Our opinion polls allow citizens to express their preferences for
+          candidates or policies before the actual elections. This helps gauge
+          public sentiment.
+        </p>
+      ),
+    },
+    {
+      title: <h4 className="faq_questions">Can I see how others voted?</h4>,
+      content: (
+        <p className="faq_answers">
+          Yes, after you cast your vote, you can view aggregated results showing
+          how others voted on the same bill or issue.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          How does VotersHQ hold officials accountable?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          After an elected official votes on a bill, we compare their vote to
+          how their constituents wanted them to vote. This generates a
+          compatibility score that helps citizens evaluate their representation.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          Can I contact my elected officials through VotersHQ?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          Yes, VotersHQ provides tools to send your voting preferences and
+          feedback to your elected officials directly.{" "}
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          Is VotersHQ available on mobile devices?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          For now, VotersHQ is only available as a web platform. A mobile app
+          will be introduced in future updates.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">Is my personal information secure?</h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          Yes, we prioritize your privacy and ensure all data is encrypted and
+          securely stored in compliance with data protection regulations.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          How do I get updates on new bills or issues?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          You can subscribe to notifications based on your preferences, such as
+          by state, category, or specific topics of interest.
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          How do I report an issue or provide feedback?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+         You can contact us through the "Contact Us" page or email us at
+          contact@voterhq.com
+        </p>
+      ),
+    },
+    {
+      title: (
+        <h4 className="faq_questions">
+          How can I suggest new features for VotersHQ?
+        </h4>
+      ),
+      content: (
+        <p className="faq_answers">
+          We welcome suggestions! Send your ideas through the feedback form on
+          our website or email us.
         </p>
       ),
     },
