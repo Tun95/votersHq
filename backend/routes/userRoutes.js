@@ -249,114 +249,6 @@ userRouter.post(
 //===========
 //USER SIGNUP
 //===========
-// userRouter.post(
-//   "/signup",
-//   expressAsyncHandler(async (req, res) => {
-//     const {
-//       firstName,
-//       lastName,
-//       email,
-//       phone,
-//       ninNumber,
-//       identificationType,
-//       stateOfOrigin,
-//       stateOfResidence,
-//       region,
-//       password,
-//     } = req.body;
-
-//     // Check if the user already exists
-//     const userExists = await User.findOne({ email });
-//     if (userExists) {
-//       return res.status(400).json({ message: "User already exists" });
-//     }
-
-//     try {
-//       // Call Dojah's API to verify NIN and fetch user details
-//       const response = await axios.get(
-//         `${process.env.DOJAH_BASE_URL}/api/v1/kyc/nin`,
-//         {
-//           params: {
-//             nin: ninNumber, // Pass NIN as a query parameter
-//           },
-//           headers: {
-//             Authorization: process.env.DOJAH_SANDBOX_PRIVATE_KEY,
-//             AppId: process.env.DOJAH_APP_ID,
-//           },
-//         }
-//       );
-
-//       // Check if the verification was successful
-//       const { data } = response;
-//       if (!data || !data.entity) {
-//         return res
-//           .status(400)
-//           .json({ message: "NIN verification failed", details: data });
-//       }
-
-//       // Extract details from Dojah's response
-//       const { date_of_birth, gender } = data.entity;
-//       const age =
-//         new Date().getFullYear() - new Date(date_of_birth).getFullYear();
-//       const formattedGender = gender.toLowerCase();
-
-//       // Create a new user
-//       const newUser = new User({
-//         firstName,
-//         lastName,
-//         email,
-//         phone,
-//         identificationType,
-//         ninNumber,
-//         stateOfOrigin,
-//         stateOfResidence,
-//         region,
-//         age,
-//         gender: formattedGender,
-//         password: bcrypt.hashSync(password),
-//         isAdmin: false,
-//         role: "user",
-//       });
-
-//       const user = await newUser.save();
-
-//       // Respond with user details and token
-//       res.status(201).send({
-//         _id: user._id,
-//         firstName: user.firstName,
-//         lastName: user.lastName,
-//         email: user.email,
-//         phone: user.phone,
-//         age: user.age,
-//         gender: user.gender,
-//         region: user.region,
-//         role: user.role,
-//         token: generateToken(user),
-//       });
-//     } catch (error) {
-//       console.error(error); // Log the full error for debugging purposes
-
-//       // If the error is from Dojah's response
-//       if (error.response) {
-//         // Extract the error details from the response
-//         const dojahError =
-//           error.response.data?.error || "Unknown error from Dojah";
-
-//         // Return the extracted error message to the frontend
-//         return res.status(error.response.status || 500).json({
-//           message: "NIN verification failed",
-//           error: dojahError,
-//         });
-//       }
-
-//       // If the error is not from Dojah's response
-//       res.status(500).json({
-//         message: "An error occurred while verifying NIN",
-//         error: error.message || "Unknown error",
-//       });
-//     }
-//   })
-// );
 userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
@@ -406,7 +298,14 @@ userRouter.post(
       const { date_of_birth, gender } = data.entity;
       const age =
         new Date().getFullYear() - new Date(date_of_birth).getFullYear();
-      const formattedGender = gender.toLowerCase();
+
+      // Map gender to full words
+      const genderMapping = {
+        m: "male",
+        f: "female",
+      };
+      const formattedGender =
+        genderMapping[gender.toLowerCase()] || gender.toLowerCase();
 
       // Create a new user
       const newUser = new User({
