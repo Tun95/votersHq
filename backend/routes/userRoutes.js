@@ -803,6 +803,7 @@ userRouter.get(
   })
 );
 
+
 //===============
 // FETCHING USER ACTIVITIES BY USER ID
 //===============
