@@ -1,5 +1,13 @@
 .political_news_list {
   margin-top: 40px;
+  .header_text {
+    .header {
+      /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+      @media screen and (max-width: 520px) {
+        margin-bottom: -10px;
+      }
+    }
+  }
   .news_list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -16,9 +24,14 @@
     /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
     @media screen and (max-width: 900px) {
       grid-template-columns: repeat(2, 1fr);
-    } /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
+    }
+    /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
     @media screen and (max-width: 520px) {
       grid-template-columns: 1fr;
+      gap: 20px;
+      .political_cards {
+        margin: 0;
+      }
     }
   }
 }
