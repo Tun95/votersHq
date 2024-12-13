@@ -280,7 +280,7 @@ userRouter.post(
             nin: ninNumber,
           },
           headers: {
-            Authorization: process.env.DOJAH_SANDBOX_PRIVATE_KEY,
+            Authorization: process.env.DOJAH_PRIVATE_KEY,
             AppId: process.env.DOJAH_APP_ID,
           },
         }
