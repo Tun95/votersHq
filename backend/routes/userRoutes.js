@@ -3,16 +3,15 @@ import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModels.js";
 import { generateToken, isAdmin, isAuth } from "../utils.js";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
 import UserActivity from "../models/userActivitiesModels.js";
-import SibApiV3Sdk from "sib-api-v3-sdk";
 import {
   RekognitionClient,
   CompareFacesCommand,
 } from "@aws-sdk/client-rekognition";
 import multer from "multer";
 import axios from "axios";
+import { SendMailClient } from "zeptomail";
 
 const userRouter = express.Router();
 
@@ -370,6 +369,11 @@ userRouter.post(
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     // Extract environment variables
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
@@ -515,25 +519,24 @@ userRouter.post(
       </html>
     `;
 
-    // Configure Sendinblue
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
     try {
-      // Send email using Sendinblue
-      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      sendSmtpEmail.to = [{ email: createdUser.email }];
-      sendSmtpEmail.sender = {
-        email: process.env.EMAIL_ADDRESS,
-        name: process.env.WEB_NAME,
-      };
-      sendSmtpEmail.subject = "Account Verification";
-      sendSmtpEmail.htmlContent = emailMessage;
-
-      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+      // Send email via ZeptoMail
+      await client.sendMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: process.env.WEB_NAME,
+        },
+        to: [
+          {
+            email_address: {
+              address: email,
+              name: createdUser.firstName,
+            },
+          },
+        ],
+        subject: "Account Verification",
+        htmlbody: emailMessage,
+      });
 
       res.status(201).send({
         message: "User created. Verification email sent.",
@@ -553,9 +556,10 @@ userRouter.post(
   "/otp-verification",
   expressAsyncHandler(async (req, res) => {
     // Configure Sendinblue
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
 
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
@@ -676,19 +680,23 @@ userRouter.post(
         </html>
       `;
 
-      // Send email using Sendinblue
-      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      sendSmtpEmail.to = [{ email: user.email }];
-      sendSmtpEmail.sender = {
-        email: process.env.EMAIL_ADDRESS,
-        name: process.env.WEB_NAME,
-      };
-      sendSmtpEmail.subject = "Verify your email address";
-      sendSmtpEmail.htmlContent = emailMessage;
-
-      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+      // Send email via ZeptoMail
+      await client.sendMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: process.env.WEB_NAME,
+        },
+        to: [
+          {
+            email_address: {
+              address: user.email,
+              name: user.firstName,
+            },
+          },
+        ],
+        subject: "Verify your email address",
+        htmlbody: emailMessage,
+      });
 
       res.status(200).json({ message: "Verification email sent successfully" });
     } catch (error) {
@@ -1430,133 +1438,114 @@ userRouter.put(
 userRouter.post(
   "/password-token",
   expressAsyncHandler(async (req, res) => {
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;
 
     const { email } = req.body;
     const user = await User.findOne({ email });
-    if (!user) throw new Error("User not Found");
+
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
     try {
       const token = await user.createPasswordResetToken();
-      await user.save();
 
-      // HTML message
+      // Generate HTML message
       const resetURL = `
       <html>
-          <head>
-            <style>
-                .footer_info {
-                  color: #666;
-                  margin: 10px 0;
-                }
-                 
-               .footer {
-                  margin-top: 20px;
-                  
-                }
-                .social-icons {
-                  margin-top: 10px;
-                  display: flex;
-                  align-items: center;
-                }
-                .social-icon {
-                  margin: 0 5px;
-                  font-size: 24px;
-                  color: #333;
-                  text-decoration: none;
-                }
-                .icons{
-                  width:25px;
-                  height: 25px;
-                }
-                 .instagram{
-                  margin-top:2px;
-                  width:22px;
-                  height: 22px;
-                  }
-                .tik{
-                  width: 27px;
-                  height: 27px;
-                  }
-            </style>
-          </head>
+        <head>
+          <style>
+            .footer_info {
+              color: #666;
+              margin: 10px 0;
+            }
+
+            .footer {
+              margin-top: 20px;
+            }
+            .social-icons {
+              margin-top: 10px;
+              display: flex;
+              align-items: center;
+            }
+            .social-icon {
+              margin: 0 5px;
+              font-size: 24px;
+              color: #333;
+              text-decoration: none;
+            }
+            .icons {
+              width: 25px;
+              height: 25px;
+            }
+            .instagram {
+              margin-top: 2px;
+              width: 22px;
+              height: 22px;
+            }
+            .tik {
+              width: 27px;
+              height: 27px;
+            }
+          </style>
+        </head>
         <body>
-        <p>Hello ${user.firstName},</p>
-          <p>We received a request to reset your password for your account at ${
-            process.env.WEB_NAME
-          }. If you did not request this, please ignore this email.</p>
+          <p>Hello ${user.firstName},</p>
+          <p>We received a request to reset your password for your account at ${process.env.WEB_NAME}. If you did not request this, please ignore this email.</p>
           <p>To reset your password, click the button below:</p>
-          <a href=${`${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}`} style="display: inline-block; margin: 10px 0; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;">Reset Password</a>
+          <a href="${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}" style="display: inline-block; margin: 10px 0; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px;">Reset Password</a>
           <p style="color: #777; font-size: 14px;">Please note that this link will expire in 10 minutes for security reasons.</p>
           <p>If the button above doesn't work, you can also copy and paste the following URL into your web browser:</p>
-          <p>${`${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}`}</p>
-          <p>If you have any questions or need further assistance, please contact our support team at ${
-            process.env.EMAIL_ADDRESS
-          }.</p>
+          <p>${process.env.SUB_DOMAIN}/${user.id}/new-password/${token}</p>
+          <p>If you have any questions or need further assistance, please contact our support team at ${process.env.EMAIL_ADDRESS}.</p>
           <p>Best regards,<br/>${process.env.WEB_NAME} Team</p>
-          <hr/>
+          <hr />
           <div class="footer">
             <p class="footer_info">For more information, visit our website:</p>
-            <p class="footer_info url_link"><a href="${
-              process.env.SUB_DOMAIN
-            }">${process.env.SUB_DOMAIN}</a></p>
+            <p class="footer_info url_link"><a href="${process.env.SUB_DOMAIN}">${process.env.SUB_DOMAIN}</a></p>
             <div class="social-icons">
-            <a href=${facebook} class="social-icon">
-              <img
-                class="icons"
-                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png"
-                alt="Facebook"
-              />
-            </a>
-            <a href=${instagram} class="social-icon">
-              <img
-                class="icons instagram"
-                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681997/instagram_iznt7t.png"
-                alt="Instagram"
-              />
-            </a>
-            <a href=${tiktok} class="social-icon">
-              <img
-                class="icons tik"
-                src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681756/tiktok_y8dkwy.png"
-                alt="Tiktok"
-              />
-            </a>
-          </div>
+              <a href="${facebook}" class="social-icon">
+                <img class="icons" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1693399098/facebook_e2bdv6.png" alt="Facebook" />
+              </a>
+              <a href="${instagram}" class="social-icon">
+                <img class="icons instagram" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681997/instagram_iznt7t.png" alt="Instagram" />
+              </a>
+              <a href="${tiktok}" class="social-icon">
+                <img class="icons tik" src="https://res.cloudinary.com/dstj5eqcd/image/upload/v1715681756/tiktok_y8dkwy.png" alt="Tiktok" />
+              </a>
+            </div>
           </div>
         </body>
-     </html>     
-      `;
+      </html>`;
 
-      const smtpTransport = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICE,
-        auth: {
-          user: process.env.EMAIL_ADDRESS,
-          pass: process.env.GMAIL_PASS,
+      await client.sendMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: process.env.WEB_NAME,
         },
+        to: [
+          {
+            email_address: {
+              address: user.email,
+              name: user.firstName,
+            },
+          },
+        ],
+        subject: "Reset Password",
+        htmlbody: resetURL,
       });
 
-      const mailOptions = {
-        from: `${process.env.WEB_NAME} ${process.env.EMAIL_ADDRESS}`,
-        to: email,
-        subject: "Reset Password",
-        html: resetURL,
-      };
-      // Send the email
-      smtpTransport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          res.status(500).json({ message: "Failed to send email" });
-        } else {
-          console.log("Email sent: " + info.response);
-          res.status(200).json({
-            message: `A verification email has been successfully sent to ${user?.email}. Reset now within 10 minutes.`,
-          });
-        }
-      });
+      await user.save();
     } catch (error) {
-      res.send(error);
+      res.status(500).json({ message: error.message });
     }
   })
 );

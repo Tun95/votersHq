@@ -123,6 +123,8 @@ const Messages: React.FC = () => {
     }
   };
 
+ 
+
   return (
     <div className="admin_page_all admin_page_screen">
       <div className="">
@@ -161,7 +163,7 @@ const Messages: React.FC = () => {
               </div>
             </form>
           </div>
-					
+
           <div className="light_shadow">
             <h4>Send Email Message</h4>
             <form className="settingsForm" onSubmit={submitHandler}>
@@ -169,7 +171,7 @@ const Messages: React.FC = () => {
                 <input
                   type="text"
                   className="input_box"
-                  placeholder="Subject e.g. newsletter"
+                  placeholder="Subject e.g. message"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                 />
@@ -199,6 +201,8 @@ const Messages: React.FC = () => {
               </div>
             </form>
           </div>
+
+         
         </div>
       </div>
     </div>

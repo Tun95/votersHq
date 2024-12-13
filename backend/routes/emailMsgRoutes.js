@@ -1,10 +1,9 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import EmailMsg from "../models/emailMessaging.js";
-import SibApiV3Sdk from "sib-api-v3-sdk";
 import User from "../models/userModels.js";
-import { Termii } from "termii-nodejs";
 import axios from "axios";
+import { SendMailClient } from "zeptomail";
 
 const sendEmailSmsRouter = express.Router();
 
@@ -103,15 +102,15 @@ sendEmailSmsRouter.post(
   expressAsyncHandler(async (req, res) => {
     const { subject, message } = req.body;
 
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;
     const webName = process.env.WEB_NAME;
-
-    // Configure Sendinblue
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
 
     try {
       // Retrieve all email addresses from the database
@@ -122,8 +121,16 @@ sendEmailSmsRouter.post(
         return res.status(400).json({ message: "No subscribers found" });
       }
 
-      // Extract email addresses into an array
-      const mailList = allUsers.map((user) => user.email);
+      // Map users to ZeptoMail `to` array format
+      const toRecipients = allUsers.map((user) => ({
+        email_address: {
+          address: user.email,
+          name: "Subscriber",
+        },
+        merge_info: {
+          name: "Subscriber",
+        },
+      }));
 
       // Create the email template with unsubscribe and social links
       const emailMessageWithUnsubscribe = `
@@ -202,29 +209,20 @@ sendEmailSmsRouter.post(
         </html>
       `;
 
-      // Define the BCC recipients separately
-      const bccRecipients = mailList.map((email) => ({ email }));
+      // Send email using ZeptoMail
+      await client.sendBatchMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: webName,
+        },
+        to: toRecipients,
+        subject: subject,
+        htmlbody: emailMessageWithUnsubscribe,
+        track_clicks: true,
+        track_opens: true,
+      });
 
-      // Prepare the Sendinblue email payload
-      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      // Set sender, subject, content, and BCC recipients
-      sendSmtpEmail.sender = {
-        email: process.env.EMAIL_ADDRESS,
-        name: webName,
-      };
-      sendSmtpEmail.subject = subject;
-      sendSmtpEmail.htmlContent = emailMessageWithUnsubscribe;
-      sendSmtpEmail.bcc = bccRecipients; // Add BCC recipients here
-
-      // Send the email
-      const sendResponse = await emailApiInstance.sendTransacEmail(
-        sendSmtpEmail
-      );
-      console.log("Email sent successfully:", sendResponse);
-
-      res.send("Mail sent to " + mailList.join(", "));
+      res.send("Mail sent to " + toRecipients.join(", "));
     } catch (err) {
       console.error("Error sending email:", err);
       res.status(500).json({
@@ -233,8 +231,6 @@ sendEmailSmsRouter.post(
     }
   })
 );
-
-
 
 // Send SMS to Users with smsNotification enabled
 sendEmailSmsRouter.post(
@@ -331,21 +327,23 @@ sendEmailSmsRouter.post(
   })
 );
 
+//==============
 // Send Email to Users with emailNotification enabled
+//==============
 sendEmailSmsRouter.post(
   "/send-email",
   expressAsyncHandler(async (req, res) => {
     const { subject, message } = req.body;
 
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;
     const webName = process.env.WEB_NAME;
-
-    // Configure Sendinblue
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
 
     try {
       // Retrieve all users with emailNotification enabled
@@ -360,13 +358,21 @@ sendEmailSmsRouter.post(
           .json({ message: "No users with email notifications enabled." });
       }
 
-      // Extract email addresses into an array
-      const mailList = usersWithEmailNotification.map((user) => user.email);
+      // Map users to ZeptoMail `to` array format
+      const toRecipients = usersWithEmailNotification.map((user) => ({
+        email_address: {
+          address: user.email,
+          name: user.firstName || "User",
+        },
+        merge_info: {
+          name: user.firstName || "User",
+        },
+      }));
 
       // Create the email template with unsubscribe and social links
       const emailMessageWithUnsubscribe = `
         <html>
-         <head>
+        <head>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -441,29 +447,20 @@ sendEmailSmsRouter.post(
         </html>
       `;
 
-      // Define the BCC recipients separately
-      const bccRecipients = mailList.map((email) => ({ email }));
+      // Send email using ZeptoMail
+      await client.sendBatchMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: webName,
+        },
+        to: toRecipients,
+        subject: subject,
+        htmlbody: emailMessageWithUnsubscribe,
+        track_clicks: true,
+        track_opens: true,
+      });
 
-      // Prepare the Sendinblue email payload
-      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      // Set sender, subject, content, and BCC recipients
-      sendSmtpEmail.sender = {
-        email: process.env.EMAIL_ADDRESS,
-        name: webName,
-      };
-      sendSmtpEmail.subject = subject;
-      sendSmtpEmail.htmlContent = emailMessageWithUnsubscribe;
-      sendSmtpEmail.bcc = bccRecipients; // Add BCC recipients here
-
-      // Send the email
-      const sendResponse = await emailApiInstance.sendTransacEmail(
-        sendSmtpEmail
-      );
-      console.log("Email sent successfully:", sendResponse);
-
-      res.send("Mail sent to " + mailList.join(", "));
+      res.send("Mail sent to " + toRecipients.join(", "));
     } catch (err) {
       console.error("Error sending email:", err);
       res.status(500).json({
@@ -479,15 +476,15 @@ sendEmailSmsRouter.post(
 sendEmailSmsRouter.post(
   "/contact",
   expressAsyncHandler(async (req, res) => {
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     const { email, name, message } = req.body;
 
-    // Configure Sendinblue API key
-    const defaultClient = SibApiV3Sdk.ApiClient.instance;
-    const apiKey = defaultClient.authentications["api-key"];
-    apiKey.apiKey = process.env.SEND_IN_BLUE_API_KEY;
-
     try {
-      // Construct the email content (optional HTML can be used if required)
+      // Construct the email content
       const emailMessage = `
         <html>
         <body>
@@ -500,21 +497,23 @@ sendEmailSmsRouter.post(
         </html>
       `;
 
-      // Send email using Sendinblue
-      const emailApiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-
-      // Set the email details
-      sendSmtpEmail.to = [{ email: process.env.EMAIL_ADDRESS }];
-      sendSmtpEmail.sender = {
-        email, // The sender's email comes from the form submission
-        name, // The sender's name comes from the form submission
-      };
-      sendSmtpEmail.subject = "Contact Us - New Message";
-      sendSmtpEmail.htmlContent = emailMessage; // Use HTML content for the message
-
-      // Send the email
-      await emailApiInstance.sendTransacEmail(sendSmtpEmail);
+      // Send email using ZeptoMail
+      await client.sendMail({
+        from: {
+          address: process.env.CONTACT_EMAIL,
+          name: "Contact",
+        },
+        to: [
+          {
+            email_address: {
+              address: process.env.HELLO_EMAIL,
+              name: "VotersHq",
+            },
+          },
+        ],
+        subject: "Contact Us - New Message",
+        htmlbody: emailMessage,
+      });
 
       res.status(200).json({ message: "Email sent successfully" });
     } catch (error) {
