@@ -44,7 +44,6 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
   );
   const [passwordIcon, setPasswordIcon] = useState<string>(eyeOff);
 
-  
   const [confirmPasswordType, setConfirmPasswordType] = useState<
     "password" | "text"
   >("password");
@@ -283,7 +282,7 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
                             value="NIN"
                             label="NIN (National Identity Number)"
                           />
-                          <option value="Voter's Card" label="Voter's Card" />
+                          {/* <option value="Voter's Card" label="Voter's Card" /> */}
                         </Field>
                         <ErrorMessage
                           name="identificationType"
@@ -303,6 +302,7 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
                           type="text"
                           id="ninNumber"
                           name="ninNumber"
+                          maxlength={11}
                           placeholder="Enter your NIN number 0/11"
                           className={`input_box ${
                             touched.ninNumber && errors.ninNumber

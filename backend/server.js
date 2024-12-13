@@ -88,8 +88,6 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });
 
-
-
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -102,8 +100,6 @@ const io = new Server(server, {
 const electionsNamespace = io.of("/elections");
 electionsNamespace.on("connection", (socket) => {
   console.log("A user connected to elections namespace");
-
-  // Handle events and initial data loading if necessary
 });
 
 // Handle Expiration Date in Real-time
@@ -125,12 +121,10 @@ const handleExpiredElections = async () => {
         electionsNamespace.emit("electionUpdate", { election });
       } catch (saveError) {
         console.error("Error saving election:", saveError);
-        // Optionally, implement a retry mechanism here
       }
     }
   } catch (error) {
     console.error("Error handling expired elections:", error);
-    // Optionally, implement a retry mechanism here
   }
 };
 
@@ -153,12 +147,10 @@ const handleUpcomingElections = async () => {
         electionsNamespace.emit("electionUpdate", { election });
       } catch (saveError) {
         console.error("Error saving election:", saveError);
-        // Optionally, implement a retry mechanism here
       }
     }
   } catch (error) {
     console.error("Error handling upcoming elections:", error);
-    // Optionally, implement a retry mechanism here
   }
 };
 

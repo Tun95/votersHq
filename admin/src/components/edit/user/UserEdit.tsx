@@ -172,6 +172,7 @@ function UserEdit() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [ninNumber, setNinNumber] = useState("");
   const [phone, setPhone] = useState("");
   const [stateOfOrigin, setStateOfOrigin] = useState("");
   const [stateOfResidence, setStateOfResidence] = useState("");
@@ -209,6 +210,7 @@ function UserEdit() {
       setFirstName(data.firstName);
       setLastName(data.lastName);
       setEmail(data.email);
+      setNinNumber(data.ninNumber || "");
       setPhone(data.phone || ""); // Ensure phone is optional
       setStateOfOrigin(data.stateOfOrigin || "");
       setStateOfResidence(data.stateOfResidence || "");
@@ -259,6 +261,7 @@ function UserEdit() {
           firstName,
           lastName,
           email,
+          ninNumber,
           phone,
           stateOfOrigin,
           stateOfResidence,
@@ -641,6 +644,16 @@ function UserEdit() {
                           onChange={(e) => setEmail(e.target.value)}
                           type="email"
                           placeholder="tunji@gmail.com"
+                        />
+                      </div>
+                      <div className="formInput">
+                        <label htmlFor="">NIN</label>
+                        <input
+                          value={ninNumber}
+                          onChange={(e) => setNinNumber(e.target.value)}
+                          type="text"
+                          maxLength={11}
+                          placeholder="70123456789"
                         />
                       </div>
                       <div className="formInput">

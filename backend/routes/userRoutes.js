@@ -10,8 +10,9 @@ import SibApiV3Sdk from "sib-api-v3-sdk";
 import {
   RekognitionClient,
   CompareFacesCommand,
-} from "@aws-sdk/client-rekognition"; // AWS SDK v3
+} from "@aws-sdk/client-rekognition";
 import multer from "multer";
+import axios from "axios";
 
 const userRouter = express.Router();
 
@@ -148,6 +149,7 @@ userRouter.post(
     res.status(401).send({ message: "Invalid email/phone or password" });
   })
 );
+
 //===========
 //ADMIN SIGNUP
 //===========
@@ -247,46 +249,217 @@ userRouter.post(
 //===========
 //USER SIGNUP
 //===========
+// userRouter.post(
+//   "/signup",
+//   expressAsyncHandler(async (req, res) => {
+//     const {
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       ninNumber,
+//       identificationType,
+//       stateOfOrigin,
+//       stateOfResidence,
+//       region,
+//       password,
+//     } = req.body;
+
+//     // Check if the user already exists
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     try {
+//       // Call Dojah's API to verify NIN and fetch user details
+//       const response = await axios.get(
+//         `${process.env.DOJAH_BASE_URL}/api/v1/kyc/nin`,
+//         {
+//           params: {
+//             nin: ninNumber, // Pass NIN as a query parameter
+//           },
+//           headers: {
+//             Authorization: process.env.DOJAH_SANDBOX_PRIVATE_KEY,
+//             AppId: process.env.DOJAH_APP_ID,
+//           },
+//         }
+//       );
+
+//       // Check if the verification was successful
+//       const { data } = response;
+//       if (!data || !data.entity) {
+//         return res
+//           .status(400)
+//           .json({ message: "NIN verification failed", details: data });
+//       }
+
+//       // Extract details from Dojah's response
+//       const { date_of_birth, gender } = data.entity;
+//       const age =
+//         new Date().getFullYear() - new Date(date_of_birth).getFullYear();
+//       const formattedGender = gender.toLowerCase();
+
+//       // Create a new user
+//       const newUser = new User({
+//         firstName,
+//         lastName,
+//         email,
+//         phone,
+//         identificationType,
+//         ninNumber,
+//         stateOfOrigin,
+//         stateOfResidence,
+//         region,
+//         age,
+//         gender: formattedGender,
+//         password: bcrypt.hashSync(password),
+//         isAdmin: false,
+//         role: "user",
+//       });
+
+//       const user = await newUser.save();
+
+//       // Respond with user details and token
+//       res.status(201).send({
+//         _id: user._id,
+//         firstName: user.firstName,
+//         lastName: user.lastName,
+//         email: user.email,
+//         phone: user.phone,
+//         age: user.age,
+//         gender: user.gender,
+//         region: user.region,
+//         role: user.role,
+//         token: generateToken(user),
+//       });
+//     } catch (error) {
+//       console.error(error); // Log the full error for debugging purposes
+
+//       // If the error is from Dojah's response
+//       if (error.response) {
+//         // Extract the error details from the response
+//         const dojahError =
+//           error.response.data?.error || "Unknown error from Dojah";
+
+//         // Return the extracted error message to the frontend
+//         return res.status(error.response.status || 500).json({
+//           message: "NIN verification failed",
+//           error: dojahError,
+//         });
+//       }
+
+//       // If the error is not from Dojah's response
+//       res.status(500).json({
+//         message: "An error occurred while verifying NIN",
+//         error: error.message || "Unknown error",
+//       });
+//     }
+//   })
+// );
 userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
-    const userCount = await User.countDocuments();
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      ninNumber,
+      identificationType,
+      stateOfOrigin,
+      stateOfResidence,
+      region,
+      password,
+    } = req.body;
 
-    const userExists = await User.findOne({ email: req.body?.email });
+    // Check if the user already exists
+    const userExists = await User.findOne({ email });
     if (userExists) {
-      throw new Error("User already exists");
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const newUser = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      phone: req.body.phone,
-      identificationType: req.body.identificationType,
-      ninNumber: req.body.ninNumber,
-      stateOfOrigin: req.body.stateOfOrigin,
-      stateOfResidence: req.body.stateOfResidence,
-      region: req.body.region,
-      password: bcrypt.hashSync(req.body.password),
-      isAdmin: false, // Ensure that new users are not admins
-      role: req.body.role || "user", // Set role, defaulting to "user"
-    });
+    try {
+      // Call Dojah's API to verify NIN and fetch user details
+      const response = await axios.get(
+        `${process.env.DOJAH_BASE_URL}/api/v1/kyc/nin`,
+        {
+          params: {
+            nin: ninNumber,
+          },
+          headers: {
+            Authorization: process.env.DOJAH_SANDBOX_PRIVATE_KEY,
+            AppId: process.env.DOJAH_APP_ID,
+          },
+        }
+      );
 
-    const user = await newUser.save();
-    res.send({
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      image: user.image,
-      email: user.email,
-      phone: user.phone,
-      isAdmin: user.isAdmin,
-      isBlocked: user.isBlocked,
-      region: user.region,
-      isAccountVerified: user.isAccountVerified,
-      role: user.role, // Include the role in the response
-      token: generateToken(user),
-    });
+      // Check if the verification was successful
+      const { data } = response;
+      if (!data || !data.entity) {
+        return res
+          .status(400)
+          .json({ message: "NIN verification failed", details: data });
+      }
+
+      // Extract details from Dojah's response
+      const { date_of_birth, gender } = data.entity;
+      const age =
+        new Date().getFullYear() - new Date(date_of_birth).getFullYear();
+      const formattedGender = gender.toLowerCase();
+
+      // Create a new user
+      const newUser = new User({
+        firstName,
+        lastName,
+        email,
+        phone,
+        identificationType,
+        ninNumber,
+        stateOfOrigin,
+        stateOfResidence,
+        region,
+        age,
+        gender: formattedGender,
+        password: bcrypt.hashSync(password),
+        isAdmin: false,
+        role: "user",
+      });
+
+      const user = await newUser.save();
+
+      // Respond with user details and token
+      res.status(201).send({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        age: user.age,
+        gender: user.gender,
+        region: user.region,
+        role: user.role,
+        token: generateToken(user),
+      });
+    } catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        // Handle Dojah-specific error
+        const dojahError =
+          error.response.data?.error || "Unknown error from Dojah";
+        return res.status(error.response.status || 500).json({
+          message: dojahError,
+          error: dojahError,
+        });
+      }
+
+      // Handle other errors
+      res.status(500).json({
+        message: "An error occurred while verifying NIN",
+        error: error.message || "Unknown error",
+      });
+    }
   })
 );
 
@@ -1534,6 +1707,5 @@ userRouter.put(
     res.status(200).json({ message: "Password reset successful" });
   })
 );
-
 
 export default userRouter;
