@@ -567,7 +567,7 @@ userRouter.post(
 
     try {
       // Get user information from the registration request
-      const { email, phone } = req.body; // Adjust this based on your registration request structure
+      const { email, phone } = req.body;
 
       // Find the user by email in the database
       const user = await User.findOne({ email });
