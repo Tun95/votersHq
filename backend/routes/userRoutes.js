@@ -803,7 +803,6 @@ userRouter.get(
   })
 );
 
-
 //===============
 // FETCHING USER ACTIVITIES BY USER ID
 //===============
@@ -812,8 +811,8 @@ userRouter.get(
   expressAsyncHandler(async (req, res) => {
     try {
       const activities = await UserActivity.find({ user: req.params.userId })
-        .sort({ timestamp: -1 }) // Sort by the most recent
-        .limit(10); // Limit to the last 10 activities
+        .sort({ timestamp: -1 })
+        .limit(10);
 
       if (!activities || activities.length === 0) {
         return res
@@ -1393,11 +1392,11 @@ userRouter.put(
 // NOTIFICATION UPDATE
 //================
 userRouter.put(
-  "/update-notifications/:id", // Add ':id' to the route
+  "/update-notifications/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     try {
-      const user = await User.findById(req.params.id); // Use req.params.id instead of req.user._id
+      const user = await User.findById(req.params.id);
 
       if (user) {
         // Update email and SMS notification settings
@@ -1431,9 +1430,6 @@ userRouter.put(
 userRouter.post(
   "/password-token",
   expressAsyncHandler(async (req, res) => {
-    // const settings = await Settings.findOne({});
-    // const { facebook, twitter, whatsapp } = settings || {};
-
     const facebook = process.env.FACEBOOK_PROFILE_LINK;
     const instagram = process.env.INSTAGRAM_PROFILE_LINK;
     const tiktok = process.env.TIKTOK_PROFILE_LINK;

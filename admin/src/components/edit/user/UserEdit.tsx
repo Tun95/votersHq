@@ -740,106 +740,117 @@ function UserEdit() {
                         </span>
                       </div>
                     </div>
-                    <div className="form_group politician">
-                      <div className="formInput">
-                        <label htmlFor="title">Position</label>
-                        <input
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          type="text"
-                          placeholder="Senator"
-                          id="title"
-                        />
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="partyName">Party</label>
-                        <input
-                          value={partyName}
-                          onChange={(e) => setPartyName(e.target.value)}
-                          type="text"
-                          placeholder="PDP"
-                          id="partyName"
-                        />
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="contestingFor">Contesting For</label>
-                        <input
-                          value={contestingFor}
-                          onChange={(e) => setContestingFor(e.target.value)}
-                          type="text"
-                          placeholder="Governor"
-                          id="contestingFor"
-                        />
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="runningMateName">
-                          Running Mate Name
-                        </label>
-                        <input
-                          value={runningMateName}
-                          onChange={(e) => setRunningMateName(e.target.value)}
-                          type="text"
-                          placeholder="Governor"
-                          id="runningMateName"
-                        />
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="runningMateTitle">
-                          Running Mate Position
-                        </label>
-                        <input
-                          value={runningMateTitle}
-                          onChange={(e) => setRunningMateTitle(e.target.value)}
-                          type="text"
-                          placeholder="Governor"
-                          id="runningMateTitle"
-                        />
-                      </div>
-                    </div>
-                    <div className="form_group_jodit">
-                      <div className="formInput">
-                        <label htmlFor="about">About:</label>
-                        <textarea
-                          name="text"
-                          id="about"
-                          className="textarea"
-                          value={about}
-                          onChange={(e) => setAbout(e.target.value)}
-                          placeholder="about user..."
-                        ></textarea>
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="education">Education:</label>
-                        <textarea
-                          name="text"
-                          id="education"
-                          className="textarea"
-                          value={education}
-                          onChange={(e) => setEducation(e.target.value)}
-                          placeholder="education status..."
-                        ></textarea>
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="achievement">Achievement:</label>
-                        <textarea
-                          name="text"
-                          id="achievement"
-                          className="textarea"
-                          value={achievement}
-                          onChange={(e) => setAchievement(e.target.value)}
-                          placeholder="achievement..."
-                        ></textarea>
-                      </div>
-                      <div className="formInput">
-                        <label htmlFor="manifesto">Manifesto:</label>
-                        <JoditEditor
-                          className="editor"
-                          ref={editor}
-                          value={manifesto}
-                          onBlur={(newContent) => setManifesto(newContent)} // preferred to use only this option to update the content for performance reasons
-                        />
-                      </div>
-                    </div>
+
+                    {user?.role === "politician" && (
+                      <>
+                        <div className="form_group politician">
+                          <div className="formInput">
+                            <label htmlFor="title">Position</label>
+                            <input
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                              type="text"
+                              placeholder="Senator"
+                              id="title"
+                            />
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="partyName">Party</label>
+                            <input
+                              value={partyName}
+                              onChange={(e) => setPartyName(e.target.value)}
+                              type="text"
+                              placeholder="PDP"
+                              id="partyName"
+                            />
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="contestingFor">
+                              Contesting For
+                            </label>
+                            <input
+                              value={contestingFor}
+                              onChange={(e) => setContestingFor(e.target.value)}
+                              type="text"
+                              placeholder="Governor"
+                              id="contestingFor"
+                            />
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="runningMateName">
+                              Running Mate Name
+                            </label>
+                            <input
+                              value={runningMateName}
+                              onChange={(e) =>
+                                setRunningMateName(e.target.value)
+                              }
+                              type="text"
+                              placeholder="Governor"
+                              id="runningMateName"
+                            />
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="runningMateTitle">
+                              Running Mate Position
+                            </label>
+                            <input
+                              value={runningMateTitle}
+                              onChange={(e) =>
+                                setRunningMateTitle(e.target.value)
+                              }
+                              type="text"
+                              placeholder="Governor"
+                              id="runningMateTitle"
+                            />
+                          </div>
+                        </div>
+                        <div className="form_group_jodit">
+                          <div className="formInput">
+                            <label htmlFor="about">About:</label>
+                            <textarea
+                              name="text"
+                              id="about"
+                              className="textarea"
+                              value={about}
+                              onChange={(e) => setAbout(e.target.value)}
+                              placeholder="about user..."
+                            ></textarea>
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="education">Education:</label>
+                            <textarea
+                              name="text"
+                              id="education"
+                              className="textarea"
+                              value={education}
+                              onChange={(e) => setEducation(e.target.value)}
+                              placeholder="education status..."
+                            ></textarea>
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="achievement">Achievement:</label>
+                            <textarea
+                              name="text"
+                              id="achievement"
+                              className="textarea"
+                              value={achievement}
+                              onChange={(e) => setAchievement(e.target.value)}
+                              placeholder="achievement..."
+                            ></textarea>
+                          </div>
+                          <div className="formInput">
+                            <label htmlFor="manifesto">Manifesto:</label>
+                            <JoditEditor
+                              className="editor"
+                              ref={editor}
+                              value={manifesto}
+                              onBlur={(newContent) => setManifesto(newContent)} // preferred to use only this option to update the content for performance reasons
+                            />
+                          </div>
+                        </div>{" "}
+                      </>
+                    )}
                     <div className="bottom_btn a_flex">
                       {" "}
                       <button
