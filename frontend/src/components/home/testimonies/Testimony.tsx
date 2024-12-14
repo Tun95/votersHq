@@ -9,7 +9,7 @@ function Testimony() {
         <div className="content">
           <div className="head">
             {/* NUMBER OF TWEET ABOUT */}
-            <p>1,048 Nigerians have tweeted about us</p>
+            {/* <p>1,048 Nigerians have tweeted about us</p> */}
             <h1>What Nigerians are saying about this platform</h1>
           </div>
           <div className="list">
