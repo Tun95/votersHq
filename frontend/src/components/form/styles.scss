@@ -196,6 +196,36 @@
         }
       }
     }
+    @media (max-width: 900px) {
+      display: flex;
+
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
+    @media (max-width: 350px) {
+      .img_width {
+        .img {
+          width: 100%;
+        }
+      }
+      .form_box {
+        .inner_form {
+          .form_group {
+            input {
+              width: 30px !important;
+              padding: 9px 10px;
+            }
+            .input_span {
+              padding: 5px;
+              &:nth-child(6) {
+                padding: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 

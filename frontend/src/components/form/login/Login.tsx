@@ -86,8 +86,7 @@ function LoginDropDownMenu({ onClose, setMenu }: LoginDropDownMenuProps) {
             <div className="left">
               <h2>Log In</h2>
               <small>
-                Enter your registered email address, phone number, and National
-                Identification Number (NIN) to log in.
+                Enter your registered email address or phone number to log in.
               </small>
             </div>
           </div>

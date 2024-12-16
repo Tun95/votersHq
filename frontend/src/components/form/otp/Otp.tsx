@@ -196,7 +196,7 @@ function OtpVerificationDropDownMenu({
           <small>Close</small>
         </span>
       </div>
-      <div className="otp_created_pending_login header_box">
+      <div className="otp_created_pending_login header_box ">
         <div className="img_width l_flex">
           {" "}
           <div className="img">
