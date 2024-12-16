@@ -126,7 +126,7 @@ export function BillsModal({
         aria-describedby="auth-modal-description"
         className="bill_modal_drawer"
       >
-        <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
+        <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
             <span onClick={handleCloseBillsModal} className="span_icon l_flex">
               <CloseIcon className="icon" />
@@ -165,7 +165,7 @@ export function BillsModal({
         aria-describedby="yea-modal-description"
         className="bill_modal_drawer"
       >
-        <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
+        <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
             <span onClick={handleCloseBillsModal} className="span_icon l_flex">
               <CloseIcon className="icon" />
@@ -273,12 +273,12 @@ export function ElectionModal({
         slotProps={{
           backdrop: {
             style: {
-              backgroundColor: "rgba(0, 0, 0, 0.2)", // Example of semi-transparent black
+              backgroundColor: "rgba(0, 0, 0, 0.3)", // Example of semi-transparent black
             },
           },
         }}
       >
-        <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
+        <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
             <span
               onClick={handleCloseElectionModal}
@@ -322,12 +322,12 @@ export function ElectionModal({
         slotProps={{
           backdrop: {
             style: {
-              backgroundColor: "rgba(0, 0, 0, 0.2)", // Example of semi-transparent black
+              backgroundColor: "rgba(0, 0, 0, 0.3)", // Example of semi-transparent black
             },
           },
         }}
       >
-        <Box className="bills_menu_modal drawer_modal otp_menu login_menu">
+        <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
             <span
               onClick={handleCloseElectionModal}

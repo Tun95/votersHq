@@ -45,7 +45,7 @@ function Sidebar() {
 
   //Login Menu
   const navigateToLogin = () => {
-    setMenu("created");
+    setMenu("login");
     showDrawer();
     setState({ ...state, left: false, right: false });
   };

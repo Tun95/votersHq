@@ -667,6 +667,7 @@
   }
   /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
   @media screen and (max-width: 900px) {
+    margin-top: -30px;
     .tabs {
       margin: 0px;
     }
