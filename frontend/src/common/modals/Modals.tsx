@@ -125,6 +125,13 @@ export function BillsModal({
         aria-labelledby="auth-modal-title"
         aria-describedby="auth-modal-description"
         className="bill_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+            },
+          },
+        }}
       >
         <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
@@ -164,6 +171,13 @@ export function BillsModal({
         aria-labelledby="yea-modal-title"
         aria-describedby="yea-modal-description"
         className="bill_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+            },
+          },
+        }}
       >
         <Box className="bills_menu_modal drawer_modal">
           <div className="drawer_close_icon">
@@ -273,7 +287,7 @@ export function ElectionModal({
         slotProps={{
           backdrop: {
             style: {
-              backgroundColor: "rgba(0, 0, 0, 0.3)", // Example of semi-transparent black
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
             },
           },
         }}
@@ -322,7 +336,7 @@ export function ElectionModal({
         slotProps={{
           backdrop: {
             style: {
-              backgroundColor: "rgba(0, 0, 0, 0.3)", // Example of semi-transparent black
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
             },
           },
         }}
@@ -543,6 +557,13 @@ export function DashboardModal({
         aria-labelledby="auth-modal-title"
         aria-describedby="auth-modal-description"
         className="dashboard_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+            },
+          },
+        }}
       >
         <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
           <div className="top c_flex">
@@ -624,6 +645,13 @@ export function DashboardModal({
         aria-labelledby="auth-modal-title"
         aria-describedby="auth-modal-description"
         className="dashboard_modal_drawer"
+        slotProps={{
+          backdrop: {
+            style: {
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+            },
+          },
+        }}
       >
         <Box className="dashboard_menu_modal drawer_modal otp_menu login_menu">
           <div className="top web_top c_flex">
