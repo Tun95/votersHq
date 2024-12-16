@@ -270,6 +270,14 @@ userRouter.post(
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // Check if the ninNumber already exists
+    const ninExists = await User.findOne({ ninNumber });
+    if (ninExists) {
+      return res
+        .status(400)
+        .json({ message: "User with this NIN already exists" });
+    }
+
     try {
       // Call Dojah's API to verify NIN and fetch user details
       const response = await axios.get(
