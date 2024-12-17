@@ -6,7 +6,14 @@ import "../styles.scss";
 
 interface PendingAccountDropDownMenuProps {
   setMenu: (
-    menu: "register" | "otp" | "kyc" | "created" | "pending" | "login"
+    menu:
+      | "register"
+      | "otp"
+      | "verifyKyc"
+      | "submitKyc"
+      | "created"
+      | "pending"
+      | "login"
   ) => void;
   onClose: () => void;
 }

@@ -5,7 +5,16 @@ import "../styles.scss";
 
 interface CreatedAccountDropDownMenuProps {
   onClose: () => void;
-  setMenu: (menu: "register" | "otp" |"kyc"| "created" | "pending" | "login") => void;
+  setMenu: (
+    menu:
+      | "register"
+      | "otp"
+      | "verifyKyc"
+      | "submitKyc"
+      | "created"
+      | "pending"
+      | "login"
+  ) => void;
 }
 function CreatedAccountDropDownMenu({
   onClose,

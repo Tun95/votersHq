@@ -48,7 +48,23 @@ export const registerSchema = yup.object().shape({
     .required("Confirm Password is required"),
 });
 
-export const kycSchema = yup.object().shape({
+export const kycVerifySchema = yup.object().shape({
+  //FIRST TO OPEN
+  ninNumber: yup
+    .string()
+    .matches(/^[0-9]{11}$/, "NIN Number must be exactly 11 digits")
+    .required("NIN Number is required"),
+  dob: yup
+    .date()
+    .required("Date of birth is required")
+    .test("age", "You must be at least 18 years old", (value) => {
+      if (!value) return false;
+      const age = differenceInYears(new Date(), new Date(value));
+      return age >= 18;
+    }),
+});
+
+export const kycSbmitSchema = yup.object().shape({
   //FIRST TO OPEN
   ninNumber: yup
     .string()

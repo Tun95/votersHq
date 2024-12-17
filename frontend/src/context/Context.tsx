@@ -3,7 +3,14 @@ import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export type MenuType = "register" | "otp" |"kyc"| "created" | "pending" | "login";
+export type MenuType =
+  | "register"
+  | "otp"
+  | "verifyKyc"
+  | "submitKyc"
+  | "created"
+  | "pending"
+  | "login";
 
 export interface ContextProps {
   state: State;

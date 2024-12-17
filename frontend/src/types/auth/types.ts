@@ -9,9 +9,15 @@ export interface RegisterValues {
 }
 
 //KYC
-export interface KycValues {
+export interface VerifyKycValues {
   ninNumber: string;
   dob: string;
+}
+
+export interface SubmitKycValues {
+  ninNumber: string;
+  dob: string;
+  gender: string;
   firstName: string;
   lastName: string;
   stateOfOrigin: string;

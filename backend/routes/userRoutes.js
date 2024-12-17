@@ -312,8 +312,8 @@ userRouter.post(
 
     try {
       // Parse dob from DD/MM/YYYY to ISO format (YYYY-MM-DD)
-      const [day, month, year] = dob.split("/"); // Split by '/'
-      const formattedDob = `${year}-${month}-${day}`; // Rearrange to YYYY-MM-DD
+      const [day, month, year] = dob.split("/");
+      const formattedDob = `${year}-${month}-${day}`;
 
       // Call Dojah's API to verify NIN and fetch user details
       const response = await axios.get(
@@ -337,7 +337,7 @@ userRouter.post(
           .json({ message: "Verification failed or incomplete data" });
       }
 
-      const { date_of_birth, first_name, last_name, state_of_origin } =
+      const { date_of_birth, first_name, last_name, gender, state_of_origin } =
         data.entity;
 
       // Compare DOB
@@ -347,12 +347,17 @@ userRouter.post(
         });
       }
 
+      // Format gender
+      const formattedGender = gender ? gender.toLowerCase() : null;
+
       // Respond with verified user details
       res.status(200).json({
         message: "Verification successful",
         userData: {
+          ninNumber, // Include the NIN number
           firstName: first_name,
           lastName: last_name,
+          gender: formattedGender, // Include formatted gender
           ...(state_of_origin && { state: state_of_origin }),
           dob: date_of_birth,
         },
@@ -373,6 +378,102 @@ userRouter.post(
       // Handle other errors
       res.status(500).json({
         message: "An error occurred during verification",
+        error: error.message || "Unknown error",
+      });
+    }
+  })
+);
+
+//===========
+// KYC SUBMISSION
+//===========
+userRouter.post(
+  "/kyc/:userId", // Dynamic user ID in the URL
+  expressAsyncHandler(async (req, res) => {
+    const { userId } = req.params; // Get the user ID from the URL
+    const {
+      ninNumber,
+      dob,
+      gender,
+      firstName,
+      lastName,
+      stateOfOrigin,
+      stateOfResidence,
+      region,
+    } = req.body;
+
+    // Validate required fields
+    if (
+      !ninNumber ||
+      !dob ||
+      !gender ||
+      !firstName ||
+      !lastName ||
+      !stateOfOrigin ||
+      !stateOfResidence ||
+      !region
+    ) {
+      return res.status(400).json({
+        message:
+          "All fields (NIN, DOB, first name, last name, state of origin, state of residence, region) are required",
+      });
+    }
+
+    try {
+      // Calculate age from the date of birth (DOB)
+      const dobDate = new Date(dob); // Convert DOB to Date object
+      const today = new Date();
+      let age = today.getFullYear() - dobDate.getFullYear();
+      const month = today.getMonth();
+      const day = today.getDate();
+
+      // If the birthday hasn't occurred yet this year, subtract one year
+      if (
+        month < dobDate.getMonth() ||
+        (month === dobDate.getMonth() && day < dobDate.getDate())
+      ) {
+        age--;
+      }
+
+      // Find the user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update user with KYC details and calculated age
+      user.ninNumber = ninNumber;
+      user.dob = dob;
+      user.gender = gender;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.stateOfOrigin = stateOfOrigin;
+      user.stateOfResidence = stateOfResidence;
+      user.region = region;
+      user.age = age;
+
+      // Save the updated user data
+      await user.save();
+
+      // Respond with the updated user data
+      res.status(200).json({
+        message: "KYC submitted successfully",
+        userData: {
+          ninNumber,
+          firstName,
+          lastName,
+          stateOfOrigin,
+          stateOfResidence,
+          region,
+          dob,
+          gender,
+          age,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "An error occurred during KYC submission",
         error: error.message || "Unknown error",
       });
     }

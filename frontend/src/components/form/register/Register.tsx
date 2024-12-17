@@ -24,7 +24,16 @@ const initialRegisterValues = {
 
 interface RegisterDropDownMenuProps {
   onClose: () => void;
-  setMenu: (menu: "register" | "otp" |"kyc"| "created" | "pending" | "login") => void;
+  setMenu: (
+    menu:
+      | "register"
+      | "otp"
+      | "verifyKyc"
+      | "submitKyc"
+      | "created"
+      | "pending"
+      | "login"
+  ) => void;
 }
 function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
   // Toggle password visibility
@@ -263,11 +272,15 @@ function RegisterDropDownMenu({ onClose, setMenu }: RegisterDropDownMenuProps) {
                       <div className="text_details">
                         <small className="">
                           By clicking register, you agree to our &nbsp;
-                          <Link to="" className="green">
+                          <Link onClick={onClose} to="/terms" className="green">
                             Terms of Service
                           </Link>
                           &nbsp; and &nbsp;
-                          <Link to="" className="green">
+                          <Link
+                            onClick={onClose}
+                            to="/policy"
+                            className="green"
+                          >
                             Privacy Policy.
                           </Link>
                         </small>

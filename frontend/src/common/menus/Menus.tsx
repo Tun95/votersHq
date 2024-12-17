@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import VerifyKycDropDownMenu from "../../components/form/kyc/VerifyKyc";
+import SubmitKycDropDownMenu from "../../components/form/kyc/SubmitKyc";
 
 export function AuthFlowMenu() {
   const { open, onClose, currentMenu, setMenu } = useAppContext();
@@ -31,10 +32,10 @@ export function AuthFlowMenu() {
         return (
           <OtpVerificationDropDownMenu onClose={onClose} setMenu={setMenu} />
         );
-      case "kyc":
-        return (
-          <VerifyKycDropDownMenu onClose={onClose} setMenu={setMenu} />
-        );
+      case "verifyKyc":
+        return <VerifyKycDropDownMenu onClose={onClose} setMenu={setMenu} />;
+      case "submitKyc":
+        return <SubmitKycDropDownMenu onClose={onClose} setMenu={setMenu} />;
       case "created":
         return (
           <CreatedAccountDropDownMenu onClose={onClose} setMenu={setMenu} />
