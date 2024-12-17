@@ -24,8 +24,19 @@ import PoliticalNewsListScreen from "./screens/politicalnewscreen/politicalnewsl
 import PoliticalNewsDetailScreen from "./screens/politicalnewscreen/politicalnewsdetails/PoliticalNewsDetailScreen";
 import PrivacyScreen from "./screens/privacyscreen/PrivacyScreen";
 import TermScreen from "./screens/termscreen/TermScreen";
+import ReactGA from "react-ga4";
+import { useEffect } from "react";
 
 function App() {
+  ReactGA.initialize(import.meta.env.VITE_REACT_APP_GOOGLE_TRACKING, {
+    gaOptions: {
+      userId: 123,
+    },
+  });
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  }, []);
   return (
     <>
       <div className="app">
