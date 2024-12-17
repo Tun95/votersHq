@@ -367,6 +367,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                           <input
                             className="value"
                             name="stateOfOrigin"
+                            disabled
                             value={personalInfo.stateOfOrigin}
                             onChange={handlePersonalInfoChange}
                           />
