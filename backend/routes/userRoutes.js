@@ -1151,30 +1151,6 @@ userRouter.delete(
 //=================
 //ADMIN USER UPDATE
 //=================
-// userRouter.put(
-//   "/:id",
-//   isAuth,
-//   isAdmin,
-//   expressAsyncHandler(async (req, res) => {
-//     const user = await User.findById(req.params.id);
-//     if (user) {
-//       // Loop through the keys in req.body and update user fields
-//       Object.keys(req.body).forEach((key) => {
-//         if (key in user) {
-//           user[key] = req.body[key];
-//         }
-//       });
-
-//       const updatedUser = await user.save();
-//       res.send({
-//         message: "User Updated Successfully",
-//         user: updatedUser,
-//       });
-//     } else {
-//       res.status(404).send({ message: "User Not Found" });
-//     }
-//   })
-// );
 userRouter.put(
   "/:id",
   isAuth,
@@ -1216,8 +1192,8 @@ userRouter.put(
               </p>
               <p>
                 For any assistance, feel free to contact our support team at 
-                <a href="mailto:${process.env.CONTACT_EMAIL}">${
-          process.env.CONTACT_EMAIL
+                <a href="mailto:${process.env.HELLO_EMAIL}">${
+          process.env.HELLO_EMAIL
         }</a>.
               </p>
               <br>
@@ -1314,8 +1290,8 @@ userRouter.put(
             </p>
             <p>
               If you have any urgent inquiries, please do not hesitate to contact our support team at 
-              <a href="mailto:${process.env.CONTACT_EMAIL}">${
-        process.env.CONTACT_EMAIL
+              <a href="mailto:${process.env.HELLO_EMAIL}">${
+        process.env.HELLO_EMAIL
       }</a>.
             </p>
             <p>Thank you for your patience and interest in becoming a politician on our platform.</p>
