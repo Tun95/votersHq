@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { differenceInYears } from "date-fns";
 
 //SUBSCRIBER
 export const validationSchema = yup.object({
@@ -53,7 +54,14 @@ export const kycSchema = yup.object().shape({
     .string()
     .matches(/^[0-9]{11}$/, "NIN Number must be exactly 11 digits")
     .required("NIN Number is required"),
-  dob: yup.date().required("Date of birth is required"),
+  dob: yup
+    .date()
+    .required("Date of birth is required")
+    .test("age", "You must be at least 18 years old", (value) => {
+      if (!value) return false;
+      const age = differenceInYears(new Date(), new Date(value));
+      return age >= 18;
+    }),
 
   //SECOND FIELDS AUTO FILL BY NIN DATA
   firstName: yup
