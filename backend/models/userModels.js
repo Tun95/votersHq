@@ -40,6 +40,11 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "politician", "admin"],
       default: "user",
     },
+    isPoliticianRequest: {
+      type: String,
+      enum: ["", "pending", "approved"],
+      default: "",
+    },
 
     selfieImage: { type: Buffer }, // Store the binary data of the selfie image
     idImage: { type: Buffer }, // Store the binary data of the ID image
@@ -85,6 +90,16 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+//Politician Request Approval Status update
+userSchema.pre("save", function (next) {
+  if (this.role === "politician" && this.isPoliticianRequest !== "approved") {
+    return next(new Error("isPoliticianRequest must be 'approved' to set role as 'politician'"));
+  }
+  next();
+});
+
+
 
 // Create the slug before saving the user
 userSchema.pre("save", async function (next) {

@@ -21,6 +21,7 @@ import { GlobalContext } from "../../../context/UserContext";
 import axios from "axios";
 import { request } from "../../../base url/BaseUrl";
 import { toast } from "react-toastify";
+import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
 
 export interface DetailsProps {
   user: User;
@@ -120,7 +121,9 @@ function Details({
       );
       if (response.status === 200) {
         dispatch({ type: "UPGRADE_SUCCESS", payload: response.data.user });
-        toast.success("User upgraded to politician successfully");
+        toast.success(
+          "Politician upgrade request submitted. An email has been sent to you."
+        );
         fetchData();
       }
     } catch (error) {
@@ -242,7 +245,7 @@ function Details({
                 <small>Verification</small>
               </button>
             )}
-            {user.role === "user" ? (
+            {user.role === "user" && user.isPoliticianRequest === "" ? (
               <button
                 className="main_btn l_flex"
                 onClick={handleUpgradeClick}
@@ -253,12 +256,18 @@ function Details({
                   {state.loadingUpgrade ? (
                     <span className="a_flex">
                       <i className="fa fa-spinner fa-spin"></i>
-                      Upgrading...
+                      Requesting...
                     </span>
                   ) : (
                     "Upgrade account"
                   )}
                 </small>
+              </button>
+            ) : user.role === "user" &&
+              user.isPoliticianRequest === "pending" ? (
+              <button className="main_btn pending_btn l_flex">
+                <PendingOutlinedIcon className="icon" />
+                <small>Pending approval</small>
               </button>
             ) : null}
             {user.role === "politician" && !user.isAccountVerified ? (

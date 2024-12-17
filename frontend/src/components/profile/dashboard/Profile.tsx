@@ -104,13 +104,8 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
               <div className="split_form">
                 <div className="form_group">
                   {!isEditingAbout ? (
-                    <small className="value">{parse(aboutContent)}</small>
+                    <small className="value">{parse(aboutContent || "")}</small>
                   ) : (
-                    // <textarea
-                    //   className="value textarea"
-                    //   value={aboutContent}
-                    //   onChange={handleAboutChange}
-                    // />
                     <JoditEditor
                       className="editor"
                       ref={editor}
@@ -334,6 +329,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                           <input
                             className="value"
                             name="ninNumber"
+                            disabled
                             type="number"
                             maxLength={11}
                             value={personalInfo.ninNumber}
@@ -408,6 +404,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                             className="value"
                             name="age"
                             type="number"
+                            disabled
                             value={personalInfo.age}
                             onChange={(e) => {
                               const value = e.target.value;
@@ -447,6 +444,7 @@ function Profile({ loadingUpdate, submitHandler }: TabMainPanelProps) {
                             <select
                               className="select"
                               name="gender"
+                              disabled
                               value={personalInfo.gender || ""}
                               onChange={handlePersonalInfoChange}
                             >

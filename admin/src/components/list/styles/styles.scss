@@ -56,6 +56,10 @@
 
       background-color: rgba(0, 128, 0, 0.151);
     }
+    &.approved {
+      color: green;
+      background-color: rgba(0, 128, 0, 0.151);
+    }
 
     &.pending {
       color: goldenrod;

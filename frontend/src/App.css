@@ -236,6 +236,14 @@ button:disabled {
 .main_btn:hover:not(:disabled) {
   background-color: var(--color-light-green);
 }
+.pending_btn {
+  background-color: var(--color-yellow);
+  color: var(--color-white);
+  cursor: default;
+}
+.pending_btn:hover:not(:disabled) {
+  background-color: var(--color-yellow);
+}
 
 [type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;

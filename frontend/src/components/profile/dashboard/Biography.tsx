@@ -54,7 +54,7 @@ function EditableSection({
           <div className="split_form">
             <div className="form_group">
               {!isEditing ? (
-                <small className="value content_value">{parse(content)}</small>
+                <small className="value content_value">{parse(content || "")}</small>
               ) : (
                 <JoditEditor
                   className="editor"

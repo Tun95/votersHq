@@ -73,11 +73,25 @@ const columns: GridColDef[] = [
       </div>
     ),
   },
-  { field: "role", headerName: "Role", width: 120 },
+  { field: "role", headerName: "Role", width: 80 },
+  {
+    field: "isPoliticianRequest",
+    headerName: "Account Upgrade",
+    width: 140,
+    renderCell: (params) => (
+      <div className={`cellWithStatus ${params.row.isPoliticianRequest}`}>
+        {params.row.isPoliticianRequest === "pending" ? (
+          <span className="pending">pending</span>
+        ) : params.row.isPoliticianRequest === "approved" && (
+          <span className="approved">Approved</span>
+        )}
+      </div>
+    ),
+  },
   {
     field: "status",
     headerName: "Account Status",
-    width: 160,
+    width: 140,
     renderCell: (params) => (
       <div className={`cellWithStatus ${params.row.isBlocked}`}>
         {params.row.isBlocked ? (
@@ -91,7 +105,7 @@ const columns: GridColDef[] = [
   {
     field: "isAccountVerified",
     headerName: "Verification Status",
-    width: 160,
+    width: 140,
     renderCell: (params) => (
       <div className={`cellWithStatus ${!params.row.isAccountVerified}`}>
         {!params.row.isAccountVerified ? (

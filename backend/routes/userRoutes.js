@@ -563,7 +563,7 @@ userRouter.post(
 userRouter.post(
   "/otp-verification",
   expressAsyncHandler(async (req, res) => {
-    // Configure Sendinblue
+    // Configure Zeptomail
     const client = new SendMailClient({
       url: "api.zeptomail.com/",
       token: process.env.ZEPTOMAIL_API_KEY,
@@ -1151,6 +1151,30 @@ userRouter.delete(
 //=================
 //ADMIN USER UPDATE
 //=================
+// userRouter.put(
+//   "/:id",
+//   isAuth,
+//   isAdmin,
+//   expressAsyncHandler(async (req, res) => {
+//     const user = await User.findById(req.params.id);
+//     if (user) {
+//       // Loop through the keys in req.body and update user fields
+//       Object.keys(req.body).forEach((key) => {
+//         if (key in user) {
+//           user[key] = req.body[key];
+//         }
+//       });
+
+//       const updatedUser = await user.save();
+//       res.send({
+//         message: "User Updated Successfully",
+//         user: updatedUser,
+//       });
+//     } else {
+//       res.status(404).send({ message: "User Not Found" });
+//     }
+//   })
+// );
 userRouter.put(
   "/:id",
   isAuth,
@@ -1158,13 +1182,74 @@ userRouter.put(
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
-      // Loop through the keys in req.body and update user fields
+      const wasPoliticianRequestPending =
+        user.isPoliticianRequest === "pending";
+
+      // Update user fields based on request body
       Object.keys(req.body).forEach((key) => {
         if (key in user) {
           user[key] = req.body[key];
         }
       });
 
+      // If the role is set to "politician", ensure isPoliticianRequest is "approved"
+      if (user.role === "politician" && wasPoliticianRequestPending) {
+        user.isPoliticianRequest = "approved";
+
+        // Send email notification only if transitioning from "pending" to "approved"
+        const client = new SendMailClient({
+          url: "api.zeptomail.com/",
+          token: process.env.ZEPTOMAIL_API_KEY,
+        });
+
+        const emailTemplate = `
+          <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+              <h1 style="color: #0078D4;">Congratulations, Politician Upgrade Approved!</h1>
+              <p>Dear ${user.firstName || "User"},</p>
+              <p>
+                We are pleased to inform you that your request to upgrade your account to a politician profile has been approved.
+              </p>
+              <p>
+                You now have access to all politician-specific features on our platform. We encourage you to update your profile 
+                and start engaging with your supporters.
+              </p>
+              <p>
+                For any assistance, feel free to contact our support team at 
+                <a href="mailto:${process.env.CONTACT_EMAIL}">${
+          process.env.CONTACT_EMAIL
+        }</a>.
+              </p>
+              <br>
+              <p>Best regards,</p>
+              <p><strong>${process.env.WEB_NAME} Team</strong></p>
+            </body>
+          </html>
+        `;
+
+        try {
+          await client.sendMail({
+            from: {
+              address: process.env.EMAIL_ADDRESS,
+              name: process.env.WEB_NAME,
+            },
+            to: [
+              {
+                email_address: {
+                  address: user.email,
+                  name: user.firstName,
+                },
+              },
+            ],
+            subject: "Your Politician Upgrade Has Been Approved!",
+            htmlbody: emailTemplate,
+          });
+        } catch (emailError) {
+          console.error("Error sending email:", emailError.message);
+        }
+      }
+
+      // Save the updated user
       const updatedUser = await user.save();
       res.send({
         message: "User Updated Successfully",
@@ -1182,6 +1267,12 @@ userRouter.put(
 userRouter.put(
   "/upgrade/:userId",
   expressAsyncHandler(async (req, res) => {
+    // Configure Zeptomail
+    const client = new SendMailClient({
+      url: "api.zeptomail.com/",
+      token: process.env.ZEPTOMAIL_API_KEY,
+    });
+
     try {
       const { userId } = req.params;
       const user = await User.findById(userId);
@@ -1204,13 +1295,60 @@ userRouter.put(
           .json({ message: "User is already a politician" });
       }
 
-      // Update user role to politician
-      user.role = "politician";
+      // Set isPoliticianRequest to pending
+      user.isPoliticianRequest = "pending";
       await user.save();
 
-      res
-        .status(200)
-        .json({ message: "User successfully upgraded to politician", user });
+      const emailTemplate = `
+        <html>
+          <body style="font-family: Arial, sans-serif; color: #333;">
+            <h1 style="color: #0078D4;">Request Received: Politician Upgrade</h1>
+            <p>Dear ${user.firstName || "User"},</p>
+            <p>
+              We have received your request to upgrade your account to a politician profile. 
+              Our team is currently reviewing your request and will notify you once a decision has been made.
+            </p>
+            <p>
+              This process may take up to <strong>48 hours</strong>. If we need any additional information, 
+              we will reach out to you via this email address.
+            </p>
+            <p>
+              If you have any urgent inquiries, please do not hesitate to contact our support team at 
+              <a href="mailto:${process.env.CONTACT_EMAIL}">${
+        process.env.CONTACT_EMAIL
+      }</a>.
+            </p>
+            <p>Thank you for your patience and interest in becoming a politician on our platform.</p>
+            <br>
+            <p>Best regards,</p>
+            <p><strong>${process.env.WEB_NAME} Team</strong></p>
+          </body>
+        </html>
+      `;
+
+      // Send email via ZeptoMail
+      await client.sendMail({
+        from: {
+          address: process.env.EMAIL_ADDRESS,
+          name: process.env.WEB_NAME,
+        },
+        to: [
+          {
+            email_address: {
+              address: user.email,
+              name: user.firstName,
+            },
+          },
+        ],
+        subject: "Your Politician Upgrade Request",
+        htmlbody: emailTemplate,
+      });
+
+      res.status(200).json({
+        message:
+          "Politician upgrade request submitted. An email has been sent to you.",
+        user,
+      });
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });
     }

@@ -6,6 +6,7 @@ export interface UserList {
   email: string;
   createdAt: string;
   role: string;
+  isPoliticianRequest: string;
   isAccountVerified: boolean;
   isBlocked: boolean;
   isAdmin: boolean;

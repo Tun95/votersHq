@@ -20,6 +20,7 @@ export interface User {
   stateOfOrigin: string;
   stateOfResidence: string;
   role: string;
+  isPoliticianRequest: string;
   emailNotification: boolean;
   smsNotification: boolean;
   twoStepVerification: boolean;
