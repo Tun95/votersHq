@@ -251,18 +251,7 @@ userRouter.post(
 userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      ninNumber,
-      identificationType,
-      stateOfOrigin,
-      stateOfResidence,
-      region,
-      password,
-    } = req.body;
+    const { email, phone, password } = req.body;
 
     // Check if the user already exists
     const userExists = await User.findOne({ email });
@@ -270,63 +259,11 @@ userRouter.post(
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Check if the ninNumber already exists
-    const ninExists = await User.findOne({ ninNumber });
-    if (ninExists) {
-      return res
-        .status(400)
-        .json({ message: "User with this NIN already exists" });
-    }
-
     try {
-      // Call Dojah's API to verify NIN and fetch user details
-      const response = await axios.get(
-        `${process.env.DOJAH_BASE_URL}/api/v1/kyc/nin`,
-        {
-          params: {
-            nin: ninNumber,
-          },
-          headers: {
-            Authorization: process.env.DOJAH_PRIVATE_KEY,
-            AppId: process.env.DOJAH_APP_ID,
-          },
-        }
-      );
-
-      // Check if the verification was successful
-      const { data } = response;
-      if (!data || !data.entity) {
-        return res
-          .status(400)
-          .json({ message: "NIN verification failed", details: data });
-      }
-
-      // Extract details from Dojah's response
-      const { date_of_birth, gender } = data.entity;
-      const age =
-        new Date().getFullYear() - new Date(date_of_birth).getFullYear();
-
-      // Map gender to full words
-      const genderMapping = {
-        m: "male",
-        f: "female",
-      };
-      const formattedGender =
-        genderMapping[gender.toLowerCase()] || gender.toLowerCase();
-
       // Create a new user
       const newUser = new User({
-        firstName,
-        lastName,
         email,
         phone,
-        identificationType,
-        ninNumber,
-        stateOfOrigin,
-        stateOfResidence,
-        region,
-        age,
-        gender: formattedGender,
         password: bcrypt.hashSync(password),
         isAdmin: false,
         role: "user",
@@ -350,19 +287,92 @@ userRouter.post(
     } catch (error) {
       console.error(error);
 
+      // Handle other errors
+      res.status(500).json({
+        message: error.message || "An error occurred while signing up",
+        error: error.message || "Unknown error",
+      });
+    }
+  })
+);
+
+//===========
+// VERIFY NIN AND FETCH USER DATA
+//===========
+userRouter.post(
+  "/verify-nin",
+  expressAsyncHandler(async (req, res) => {
+    const { ninNumber, dob } = req.body;
+
+    if (!ninNumber || !dob) {
+      return res
+        .status(400)
+        .json({ message: "NIN number and date of birth are required" });
+    }
+
+    try {
+      // Parse dob from DD/MM/YYYY to ISO format (YYYY-MM-DD)
+      const [day, month, year] = dob.split("/"); // Split by '/'
+      const formattedDob = `${year}-${month}-${day}`; // Rearrange to YYYY-MM-DD
+
+      // Call Dojah's API to verify NIN and fetch user details
+      const response = await axios.get(
+        `${process.env.DOJAH_BASE_URL}/api/v1/kyc/nin`,
+        {
+          params: {
+            nin: ninNumber,
+          },
+          headers: {
+            Authorization: process.env.DOJAH_PRIVATE_KEY,
+            AppId: process.env.DOJAH_APP_ID,
+          },
+        }
+      );
+
+      // Handle response from Dojah
+      const { data } = response;
+      if (!data || !data.entity || !data.entity.date_of_birth) {
+        return res
+          .status(400)
+          .json({ message: "Verification failed or incomplete data" });
+      }
+
+      const { date_of_birth, first_name, last_name, state_of_origin } =
+        data.entity;
+
+      // Compare DOB
+      if (formattedDob !== date_of_birth) {
+        return res.status(400).json({
+          message: "Date of birth does not match Dojah records",
+        });
+      }
+
+      // Respond with verified user details
+      res.status(200).json({
+        message: "Verification successful",
+        userData: {
+          firstName: first_name,
+          lastName: last_name,
+          ...(state_of_origin && { state: state_of_origin }),
+          dob: date_of_birth,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+
       if (error.response) {
         // Handle Dojah-specific error
         const dojahError =
           error.response.data?.error || "Unknown error from Dojah";
         return res.status(error.response.status || 500).json({
-          message: dojahError,
-          error: dojahError,
+          message: "Error from Dojah",
+          details: dojahError,
         });
       }
 
       // Handle other errors
       res.status(500).json({
-        message: "An error occurred while verifying NIN",
+        message: "An error occurred during verification",
         error: error.message || "Unknown error",
       });
     }
@@ -649,7 +659,7 @@ userRouter.post(
         </head>
         <body>
           <h1>Email Verification</h1>
-          <p>Hello ${user.firstName},</p>
+          <p>Hello,</p>
           <p>You have received this email because you have been requested to verify your account.</p>
           <p>Your verification code is: <strong>${verificationOtp}</strong></p>
           <p>If you did not request this verification, you can safely ignore this email.</p>
@@ -698,7 +708,7 @@ userRouter.post(
           {
             email_address: {
               address: user.email,
-              name: user.firstName,
+              name: user.firstName || "User",
             },
           },
         ],

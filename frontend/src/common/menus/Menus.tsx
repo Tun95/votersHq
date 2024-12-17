@@ -18,6 +18,7 @@ import p1 from "../../assets/nav/p.png";
 import { Link } from "react-router-dom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import VerifyKycDropDownMenu from "../../components/form/kyc/VerifyKyc";
 
 export function AuthFlowMenu() {
   const { open, onClose, currentMenu, setMenu } = useAppContext();
@@ -29,6 +30,10 @@ export function AuthFlowMenu() {
       case "otp":
         return (
           <OtpVerificationDropDownMenu onClose={onClose} setMenu={setMenu} />
+        );
+      case "kyc":
+        return (
+          <VerifyKycDropDownMenu onClose={onClose} setMenu={setMenu} />
         );
       case "created":
         return (

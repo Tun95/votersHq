@@ -90,10 +90,22 @@
               border: 1px solid var(--color-border);
               color: var(--color-dark-gray);
             }
+            .date_box {
+              padding: 13.5px 15px;
+            }
             .select {
               padding: 15px;
               color: var(--color-dark-gray);
               background-color: var(--color-background);
+            }
+            .btn {
+              padding-top: 15px;
+              padding-bottom: 10px;
+              width: 100%;
+              .main_btn {
+                width: 90%;
+                padding: 14px 20px;
+              }
             }
             /*======= MEDIA QUERIES (SMALL DEVICES) =======*/
             @media (max-width: 745px) {

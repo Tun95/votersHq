@@ -50,7 +50,9 @@ const formatTime = (seconds: number) => {
 
 interface OtpVerificationDropDownMenuProps {
   onClose: () => void;
-  setMenu: (menu: "register" | "otp" | "created" | "pending" | "login") => void;
+  setMenu: (
+    menu: "register" | "otp" | "kyc" | "created" | "pending" | "login"
+  ) => void;
 }
 function OtpVerificationDropDownMenu({
   onClose,
@@ -100,7 +102,7 @@ function OtpVerificationDropDownMenu({
     );
     temporaryUserInfo.isAccountVerified = isAccountVerified;
 
-    localStorage.removeItem("temporaryUserInfo");
+    //localStorage.removeItem("temporaryUserInfo");
   };
 
   //=============
@@ -138,7 +140,7 @@ function OtpVerificationDropDownMenu({
 
       // Call the function here and pass the isAccountVerified value
       handleVerifiedOTP(data.isAccountVerified);
-      setMenu("created");
+      setMenu("kyc");
     } catch (err) {
       dispatch({
         type: "SUBMIT_FAIL",

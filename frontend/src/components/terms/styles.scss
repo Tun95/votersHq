@@ -1,0 +1,54 @@
+.terms_conditions {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+
+  .container {
+    .content {
+      h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .effective-date {
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        margin-top: 20px;
+        color: #333;
+      }
+
+      p {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 10px;
+      }
+
+      ul {
+        margin: 10px 0;
+        list-style-type: disc;
+        margin-left: 20px;
+
+        li {
+          font-size: 1rem;
+          color: #555;
+        }
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

@@ -25,16 +25,6 @@ export const passwordValidationSchema = yup.object().shape({
 });
 
 export const registerSchema = yup.object().shape({
-  firstName: yup
-    .string()
-    .min(2, "First name is too short!")
-    .max(50, "First name is too long!")
-    .required("First name is required"),
-  lastName: yup
-    .string()
-    .min(2, "Last name is too short!")
-    .max(50, "Last name is too long!")
-    .required("Last name is required"),
   email: yup
     .string()
     .email("Invalid email address")
@@ -43,13 +33,6 @@ export const registerSchema = yup.object().shape({
     .string()
     .matches(/^(\+234|0)[789]\d{9}$/, "Phone number must be in a valid format")
     .required("Phone number is required"),
-  identificationType: yup.string().required("Identification type is required"),
-  ninNumber: yup
-    .string()
-    .matches(/^[0-9]{11}$/, "NIN Number must be exactly 11 digits")
-    .required("NIN Number is required"),
-  stateOfOrigin: yup.string().required("State of Origin is required"),
-  stateOfResidence: yup.string().required("State of Residence is required"),
   password: yup
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -62,6 +45,30 @@ export const registerSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), undefined], "Passwords must match")
     .required("Confirm Password is required"),
+});
+
+export const kycSchema = yup.object().shape({
+  //FIRST TO OPEN
+  ninNumber: yup
+    .string()
+    .matches(/^[0-9]{11}$/, "NIN Number must be exactly 11 digits")
+    .required("NIN Number is required"),
+  dob: yup.date().required("Date of birth is required"),
+
+  //SECOND FIELDS AUTO FILL BY NIN DATA
+  firstName: yup
+    .string()
+    .min(2, "First name is too short!")
+    .max(50, "First name is too long!")
+    .required("First name is required"),
+  lastName: yup
+    .string()
+    .min(2, "Last name is too short!")
+    .max(50, "Last name is too long!")
+    .required("Last name is required"),
+
+  stateOfOrigin: yup.string().required("State of Origin is required"),
+  stateOfResidence: yup.string().required("State of Residence is required"),
 });
 
 export const otpSchema = yup.object().shape({
@@ -102,7 +109,6 @@ export const timelineSchema = yup.object({
   timelineTitle: yup.string().required("Title is required"),
   timelineDetails: yup.string().required("Details are required"),
 });
-
 
 // CONTACT
 // Validation schema using yup

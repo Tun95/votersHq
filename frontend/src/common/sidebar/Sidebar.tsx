@@ -45,7 +45,7 @@ function Sidebar() {
 
   //Login Menu
   const navigateToLogin = () => {
-    setMenu("login");
+    setMenu("kyc");
     showDrawer();
     setState({ ...state, left: false, right: false });
   };

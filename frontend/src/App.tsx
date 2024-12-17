@@ -22,6 +22,8 @@ import ContactScreen from "./screens/formscreens/contactscreen/ContactScreen";
 import AboutScreen from "./screens/aboutscreen/AboutScreen";
 import PoliticalNewsListScreen from "./screens/politicalnewscreen/politicalnewslist/PoliticalNewsListScreen";
 import PoliticalNewsDetailScreen from "./screens/politicalnewscreen/politicalnewsdetails/PoliticalNewsDetailScreen";
+import PrivacyScreen from "./screens/privacyscreen/PrivacyScreen";
+import TermScreen from "./screens/termscreen/TermScreen";
 
 function App() {
   return (
@@ -42,6 +44,9 @@ function App() {
           <Route path="/news/:slug" element={<PoliticalNewsDetailScreen />} />
 
           <Route path="/about" element={<AboutScreen />} />
+
+          <Route path="/policy" element={<PrivacyScreen />} />
+          <Route path="/terms" element={<TermScreen />} />
 
           {/* FORMS */}
           <Route path="/contact" element={<ContactScreen />} />

@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 import "../styles.scss";
 
 interface PendingAccountDropDownMenuProps {
-  setMenu: (menu: "register" | "otp" | "created" | "pending" | "login") => void;
+  setMenu: (
+    menu: "register" | "otp" | "kyc" | "created" | "pending" | "login"
+  ) => void;
   onClose: () => void;
 }
 function PendingAccountDropDownMenu({

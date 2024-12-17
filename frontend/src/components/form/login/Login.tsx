@@ -25,7 +25,7 @@ const initialLoginValues: LoginValues = {
 };
 interface LoginDropDownMenuProps {
   onClose: () => void;
-  setMenu: (menu: "register" | "otp" | "created" | "pending" | "login") => void;
+  setMenu: (menu: "register" | "otp" |"kyc"| "created" | "pending" | "login") => void;
 }
 
 function LoginDropDownMenu({ onClose, setMenu }: LoginDropDownMenuProps) {

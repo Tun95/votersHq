@@ -19,13 +19,14 @@ const politicalTimeline = new mongoose.Schema(
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    firstName: { type: String },
+    lastName: { type: String },
     slug: { type: String },
     email: { type: String, required: true, unique: true },
     phone: { type: String },
     identificationType: { type: String },
     ninNumber: { type: Number },
+    dob: { type: Date },
     age: { type: Number },
     gender: { type: String },
     stateOfOrigin: { type: String },
@@ -94,12 +95,14 @@ const userSchema = new mongoose.Schema(
 //Politician Request Approval Status update
 userSchema.pre("save", function (next) {
   if (this.role === "politician" && this.isPoliticianRequest !== "approved") {
-    return next(new Error("isPoliticianRequest must be 'approved' to set role as 'politician'"));
+    return next(
+      new Error(
+        "isPoliticianRequest must be 'approved' to set role as 'politician'"
+      )
+    );
   }
   next();
 });
-
-
 
 // Create the slug before saving the user
 userSchema.pre("save", async function (next) {

@@ -2,16 +2,29 @@
 
 //REGISTER
 export interface RegisterValues {
-  firstName: string;
-  lastName: string;
   email: string;
   phone: string;
-  identificationType: string;
-  ninNumber: string;
-  stateOfOrigin: string;
-  stateOfResidence: string;
   password: string;
   confirmPassword: string;
+}
+
+//KYC
+export interface KycValues {
+  ninNumber: string;
+  dob: string;
+  firstName: string;
+  lastName: string;
+  stateOfOrigin: string;
+  stateOfResidence: string;
+}
+
+export interface FetchedKYCData {
+  userData: {
+    firstName: string;
+    lastName: string;
+    stateOfOrigin: string;
+    stateOfResidence: string;
+  };
 }
 
 //OTP
@@ -24,5 +37,3 @@ export interface LoginValues {
   emailOrPhone: string;
   password: string;
 }
-
-
