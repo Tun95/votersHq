@@ -22,7 +22,6 @@ billsRouter.post(
         banner,
         description,
         featured,
-        location,
         sortType,
         sortStatus,
         sortCategory,
@@ -37,7 +36,6 @@ billsRouter.post(
         !image ||
         !banner ||
         !description ||
-        !location ||
         !sortType ||
         !sortStatus ||
         !sortCategory ||
@@ -63,7 +61,6 @@ billsRouter.post(
         banner,
         description,
         featured,
-        location,
         sortType,
         sortStatus,
         sortCategory,

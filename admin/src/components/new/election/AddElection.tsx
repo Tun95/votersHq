@@ -24,6 +24,7 @@ import {
   SelectChangeEvent,
   Chip,
 } from "@mui/material";
+import { RegionDropdown } from "react-country-region-selector";
 
 //DON'T CHANGE THIS LIST
 const sortTypeList = [
@@ -316,12 +317,14 @@ function AddElection() {
                             </div>
                             <div className="form-group">
                               <label htmlFor="location">Location</label>
-                              <input
-                                type="text"
+
+                              <RegionDropdown
+                                country="Nigeria"
                                 id="location"
+                                name="location"
                                 value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                placeholder="e.g Lagos"
+                                onChange={(value: string) => setLocation(value)}
+                                classes="select"
                               />
                             </div>
                             <div className="form-group">
@@ -461,7 +464,7 @@ function AddElection() {
                             </div>
                             {/* STATUS */}
                             <div className="form-group">
-                              <label htmlFor="status">Status</label>
+                              <label htmlFor="status">Election Status</label>
                               <select
                                 name="status"
                                 id="status"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BillsFilterParams } from "../../types/bills/types";
+import { RegionDropdown } from "react-country-region-selector";
 
 const sortType = [
   { name: "All types", value: "all" },
@@ -23,13 +24,6 @@ const sortStatus = [
 
 const sortCategory = [
   { name: "All categories", value: "all" },
-  { name: "Bills", value: "bills" },
-  { name: "Policies", value: "policies" },
-  { name: "Issues", value: "issues" },
-];
-
-const sortState = [
-  { name: "All states", value: "all" },
   { name: "Bills", value: "bills" },
   { name: "Policies", value: "policies" },
   { name: "Issues", value: "issues" },
@@ -131,15 +125,15 @@ function BillsFilters({ getFilterUrl }: BillsProps) {
     );
   };
 
-  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedState(event.target.value);
+  const handleStateChange = (val: string) => {
+    setSelectedState(val); // Use the first parameter for the selected value
     navigate(
       getFilterUrl({
         searchQuery,
         sortType: selectedType,
         sortStatus: selectedStatus,
         sortCategory: selectedCategory,
-        sortState: event.target.value,
+        sortState: val, // Use the selected value here
         sortOrder: selectedViewOption,
       })
     );
@@ -246,19 +240,15 @@ function BillsFilters({ getFilterUrl }: BillsProps) {
           <h4>
             <span className="sort_by">Sort by</span> State:{" "}
           </h4>
-          <select
-            name="sortState"
-            id="sortState"
-            className="select"
+          <RegionDropdown
+            country="Nigeria"
+            id="selectedState"
+            name="selectedState"
             value={selectedState}
             onChange={handleStateChange}
-          >
-            {sortState.map((item, index) => (
-              <option value={item.value} key={index}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            classes="select region_drop_down"
+            defaultOptionLabel="Select a state"
+          />
         </div>
       </div>
 

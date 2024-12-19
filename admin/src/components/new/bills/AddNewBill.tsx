@@ -11,6 +11,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { request } from "../../../base url/BaseUrl";
 import photo from "../../../assets/others/photo.jpg";
+import { RegionDropdown } from "react-country-region-selector";
 
 import {
   ErrorResponse,
@@ -37,12 +38,6 @@ const sortStatusList = [
 ];
 
 const sortCategoryList = [
-  { name: "Bills", value: "bills" },
-  { name: "Policies", value: "policies" },
-  { name: "Issues", value: "issues" },
-];
-
-const sortStateList = [
   { name: "Bills", value: "bills" },
   { name: "Policies", value: "policies" },
   { name: "Issues", value: "issues" },
@@ -123,7 +118,6 @@ function AddNewBill() {
   const [banner, setBanner] = useState("");
   const [description, setDescription] = useState("");
   const [featured, setFeatured] = useState(false);
-  const [location, setLocation] = useState("");
   const [sortType, setSortType] = useState("");
   const [sortStatus, setSortStatus] = useState("");
   const [sortCategory, setSortCategory] = useState("");
@@ -158,7 +152,6 @@ function AddNewBill() {
         title,
         description,
         featured,
-        location,
         sortType,
         sortStatus,
         sortCategory,
@@ -239,9 +232,7 @@ function AddNewBill() {
         <div className="">
           <div className=" ">
             <div className="productTitleContainer">
-              <h3 className="productTitle light_shadow uppercase">
-                Add Bill
-              </h3>
+              <h3 className="productTitle light_shadow uppercase">Add Bill</h3>
             </div>
             <div className="productBottom mtb">
               <form action="" onSubmit={submitHandler}>
@@ -288,7 +279,7 @@ function AddNewBill() {
                                 placeholder="Bill title"
                               />
                             </div>
-                            <div className="form-group">
+                            {/* <div className="form-group">
                               <label htmlFor="location">Location</label>
                               <input
                                 type="text"
@@ -297,7 +288,7 @@ function AddNewBill() {
                                 onChange={(e) => setLocation(e.target.value)}
                                 placeholder="e.g Lagos"
                               />
-                            </div>
+                            </div> */}
                             <div className="form-group">
                               <label htmlFor="expirationDate">
                                 Expiration Date
@@ -390,24 +381,21 @@ function AddNewBill() {
                                 ))}
                               </select>
                             </div>
+
                             {/* STATE */}
                             <div className="form-group">
                               <label htmlFor="sortState">State</label>
-                              <select
-                                name="sortState"
+
+                              <RegionDropdown
+                                country="Nigeria"
                                 id="sortState"
+                                name="sortState"
                                 value={sortState}
-                                onChange={(e) => setSortState(e.target.value)}
-                              >
-                                <option value="" disabled>
-                                  Select State
-                                </option>
-                                {sortStateList.map((item, index) => (
-                                  <option value={item.value} key={index}>
-                                    {item.name}
-                                  </option>
-                                ))}
-                              </select>
+                                onChange={(value: string) =>
+                                  setSortState(value)
+                                }
+                                classes="select"
+                              />
                             </div>
 
                             {/* FEATURED */}

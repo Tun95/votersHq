@@ -18,6 +18,7 @@ import {
   getError,
   useAppContext,
 } from "../../../utilities/utils/Utils";
+import { RegionDropdown } from "react-country-region-selector";
 
 //DON'T CHANGE THIS LIST
 const sortTypeList = [
@@ -37,12 +38,6 @@ const sortStatusList = [
 ];
 
 const sortCategoryList = [
-  { name: "Bills", value: "bills" },
-  { name: "Policies", value: "policies" },
-  { name: "Issues", value: "issues" },
-];
-
-const sortStateList = [
   { name: "Bills", value: "bills" },
   { name: "Policies", value: "policies" },
   { name: "Issues", value: "issues" },
@@ -159,7 +154,6 @@ function BillsEdit() {
   const [banner, setBanner] = useState("");
   const [description, setDescription] = useState("");
   const [featured, setFeatured] = useState(false);
-  const [location, setLocation] = useState("");
   const [sortType, setSortType] = useState("");
   const [sortStatus, setSortStatus] = useState("");
   const [sortCategory, setSortCategory] = useState("");
@@ -176,7 +170,6 @@ function BillsEdit() {
         setTitle(data.title);
         setDescription(data.description);
         setFeatured(data.featured);
-        setLocation(data.location);
         setSortType(data.sortType);
         setSortStatus(data.sortStatus);
         setSortCategory(data.sortCategory);
@@ -223,7 +216,6 @@ function BillsEdit() {
         title,
         description,
         featured,
-        location,
         sortType,
         sortStatus,
         sortCategory,
@@ -398,16 +390,6 @@ function BillsEdit() {
                               />
                             </div>
                             <div className="form-group">
-                              <label htmlFor="location">Location</label>
-                              <input
-                                type="text"
-                                id="location"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                placeholder="e.g Lagos"
-                              />
-                            </div>
-                            <div className="form-group">
                               <label htmlFor="expirationDate">
                                 Expiration Date
                               </label>
@@ -502,7 +484,7 @@ function BillsEdit() {
                             {/* STATE */}
                             <div className="form-group">
                               <label htmlFor="sortState">State</label>
-                              <select
+                              {/* <select
                                 name="sortState"
                                 id="sortState"
                                 value={sortState}
@@ -516,7 +498,17 @@ function BillsEdit() {
                                     {item.name}
                                   </option>
                                 ))}
-                              </select>
+                              </select> */}
+                              <RegionDropdown
+                                country="Nigeria"
+                                id="sortState"
+                                name="sortState"
+                                value={sortState}
+                                onChange={(value: string) =>
+                                  setSortState(value)
+                                }
+                                classes="select"
+                              />
                             </div>
 
                             {/* FEATURED */}

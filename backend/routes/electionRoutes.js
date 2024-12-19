@@ -54,7 +54,6 @@ electionRouter.post(
         !image ||
         !banner ||
         !pollOverview ||
-        !location ||
         !sortType ||
         !sortStatus ||
         !sortCategory ||
