@@ -560,59 +560,68 @@ electionRouter.post(
   expressAsyncHandler(async (req, res) => {
     try {
       const election = await Election.findById(req.params.id);
-      if (election) {
-        // Check if the user's gender and age are set
-        const user = await User.findById(req.user._id);
-        if (!user.gender || !user.age) {
-          return res.status(400).send({
-            message:
-              "Please update your profile with your gender and age before voting.",
-          });
-        }
 
-        // Check if the user has already voted in this election
-        const existingVote = election.votes.find(
-          (vote) => vote.voterId.toString() === req.user._id.toString()
-        );
-
-        if (existingVote) {
-          return res
-            .status(400)
-            .send({ message: "You have already voted in this election." });
-        }
-
-        const candidate = election.candidates.find(
-          (c) => c._id.toString() === req.params.candidateId
-        );
-
-        if (candidate) {
-          // Add the vote to the election's votes array with the user's age
-          election.votes.push({
-            voterId: req.user._id,
-            candidateId: candidate._id,
-            age: user.age, // Include the user's age
-          });
-          await election.save();
-
-          // Broadcast the updated election to connected clients
-          io.emit("electionUpdate", { election });
-
-          // Log the activity
-          const activity = new UserActivity({
-            user: req.user._id,
-            activityType: "Voted in an Election",
-            activityDetails: `You cast your vote in the "${election.title}".`,
-            relatedId: election._id,
-            relatedModel: "Election",
-          });
-          await activity.save();
-          res.send(election);
-        } else {
-          res.status(404).send({ message: "Candidate not found" });
-        }
-      } else {
-        res.status(404).send({ message: "Election not found" });
+      if (!election) {
+        return res.status(404).send({ message: "Election not found" });
       }
+
+      const user = await User.findById(req.user._id);
+
+      // Check if user profile is complete and meets voting criteria
+      if (!user.gender || !user.age || !user.ninNumber) {
+        return res.status(400).send({
+          message:
+            "Please update your profile with your gender, age, and NIN before voting.",
+        });
+      }
+
+      if (user.age < 18) {
+        return res.status(400).send({
+          message: "You must be at least 18 years old to vote.",
+        });
+      }
+
+      // Check if the user has already voted in this election
+      const existingVote = election.votes.find(
+        (vote) => vote.voterId.toString() === req.user._id.toString()
+      );
+
+      if (existingVote) {
+        return res
+          .status(400)
+          .send({ message: "You have already voted in this election." });
+      }
+
+      const candidate = election.candidates.find(
+        (c) => c._id.toString() === req.params.candidateId
+      );
+
+      if (!candidate) {
+        return res.status(404).send({ message: "Candidate not found" });
+      }
+
+      // Add the vote to the election's votes array with the user's age
+      election.votes.push({
+        voterId: req.user._id,
+        candidateId: candidate._id,
+        age: user.age, // Include the user's age
+      });
+      await election.save();
+
+      // Broadcast the updated election to connected clients
+      io.emit("electionUpdate", { election });
+
+      // Log the activity
+      const activity = new UserActivity({
+        user: req.user._id,
+        activityType: "Voted in an Election",
+        activityDetails: `You cast your vote in the "${election.title}".`,
+        relatedId: election._id,
+        relatedModel: "Election",
+      });
+      await activity.save();
+
+      res.send(election);
     } catch (error) {
       console.error("Error voting for candidate:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -768,7 +777,7 @@ electionRouter.post(
       const activity = new UserActivity({
         user: req.user._id,
         activityType: "Commented on an Election",
-        activityDetails: `You commented on the "${election.title}". Join the conversation and share your views `,
+        activityDetails: `You commented on the "${election.title}".`,
         relatedId: election._id,
         relatedModel: "Election",
       });
