@@ -155,7 +155,7 @@ function Details({ user, fetchData }: DetailsProps) {
         <div className="left a_flex">
           <div className="img_icon">
             <div className="img l_flex">
-              <img src={user ? user?.image : p3} alt="user image" />
+              <img src={user?.image ? user?.image : p3} alt="user image" />
             </div>
           </div>
           <div className="name_available_follow_status">

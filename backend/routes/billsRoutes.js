@@ -752,10 +752,19 @@ billsRouter.post(
     const userId = req.user._id;
 
     const bill = await Bills.findById(billId);
-    const user = await User.findById(userId); // Fetch the user to get their region
-    if (!user.gender || !user.age || !user.region) {
+    const user = await User.findById(userId); // Fetch the user to get their region, age, and ninNumber
+
+    // Check if user profile is complete and meets voting criteria
+    if (!user.gender || !user.age || !user.region || !user.ninNumber) {
       return res.status(400).send({
-        message: "Please update your profile before voting.",
+        message:
+          "Please update your profile (including NIN and region) before voting.",
+      });
+    }
+
+    if (user.age < 18) {
+      return res.status(400).send({
+        message: "You must be at least 18 years old to vote.",
       });
     }
 

@@ -93,16 +93,16 @@ const userSchema = new mongoose.Schema(
 );
 
 //Politician Request Approval Status update
-userSchema.pre("save", function (next) {
-  if (this.role === "politician" && this.isPoliticianRequest !== "approved") {
-    return next(
-      new Error(
-        "isPoliticianRequest must be 'approved' to set role as 'politician'"
-      )
-    );
-  }
-  next();
-});
+// userSchema.pre("save", function (next) {
+//   if (this.role === "politician" && this.isPoliticianRequest !== "approved") {
+//     return next(
+//       new Error(
+//         "isPoliticianRequest must be 'approved' to set role as 'politician'"
+//       )
+//     );
+//   }
+//   next();
+// });
 
 // Create the slug before saving the user
 userSchema.pre("save", async function (next) {

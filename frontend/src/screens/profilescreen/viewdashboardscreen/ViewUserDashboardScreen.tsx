@@ -96,7 +96,7 @@ function ViewUserDashboardScreen() {
               <Details user={user} fetchData={fetchData} />
               <div className="details_activity">
                 <About user={user} fetchData={fetchData} />
-                {isFollowing && (
+                {(user._id === userInfo?._id || isFollowing) && (
                   <Activities user={user} fetchData={fetchData} />
                 )}
               </div>
