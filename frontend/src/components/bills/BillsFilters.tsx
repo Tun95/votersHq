@@ -247,7 +247,7 @@ function BillsFilters({ getFilterUrl }: BillsProps) {
             value={selectedState}
             onChange={handleStateChange}
             classes="select region_drop_down"
-            defaultOptionLabel="Select a state"
+            defaultOptionLabel="All state"
           />
         </div>
       </div>
