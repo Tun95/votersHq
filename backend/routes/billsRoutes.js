@@ -651,7 +651,7 @@ billsRouter.get(
                           0,
                         ],
                       },
-                      then: "0",
+                      then: 0,
                       else: {
                         $multiply: [
                           {
@@ -682,9 +682,94 @@ billsRouter.get(
                       },
                     },
                   },
+                  yeaPercentage: {
+                    $cond: {
+                      if: {
+                        $eq: [
+                          {
+                            $add: [
+                              { $size: "$yeaVotes" },
+                              { $size: "$nayVotes" },
+                            ],
+                          },
+                          0,
+                        ],
+                      },
+                      then: 0,
+                      else: {
+                        $multiply: [
+                          {
+                            $divide: [
+                              {
+                                $size: {
+                                  $filter: {
+                                    input: "$yeaVotes",
+                                    as: "vote",
+                                    cond: {
+                                      $eq: ["$$vote.region", "$$region"],
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                $add: [
+                                  { $size: "$yeaVotes" },
+                                  { $size: "$nayVotes" },
+                                ],
+                              },
+                            ],
+                          },
+                          100,
+                        ],
+                      },
+                    },
+                  },
+                  nayPercentage: {
+                    $cond: {
+                      if: {
+                        $eq: [
+                          {
+                            $add: [
+                              { $size: "$yeaVotes" },
+                              { $size: "$nayVotes" },
+                            ],
+                          },
+                          0,
+                        ],
+                      },
+                      then: 0,
+                      else: {
+                        $multiply: [
+                          {
+                            $divide: [
+                              {
+                                $size: {
+                                  $filter: {
+                                    input: "$nayVotes",
+                                    as: "vote",
+                                    cond: {
+                                      $eq: ["$$vote.region", "$$region"],
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                $add: [
+                                  { $size: "$yeaVotes" },
+                                  { $size: "$nayVotes" },
+                                ],
+                              },
+                            ],
+                          },
+                          100,
+                        ],
+                      },
+                    },
+                  },
                 },
               },
             },
+
             comments: {
               $map: {
                 input: { $reverseArray: "$comments" }, // Sort comments by latest

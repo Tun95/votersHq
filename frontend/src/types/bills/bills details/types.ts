@@ -64,6 +64,8 @@ export type RegionalVote = {
   region: string;
   totalVotes: number;
   percentageVotes: number;
+  yeaPercentage: number;
+  nayPercentage: number;
 };
 
 export type BillsDetailsState = {
@@ -88,4 +90,3 @@ export interface BillsResponse {
   bill: Bill | null;
   fetchBill: (slug: string, triggerLoading?: boolean) => Promise<void>;
 }
-

@@ -8,6 +8,8 @@ function RegionalStat({ bill }: BillsResponse) {
       ? {
           totalVotes: regionalVote.totalVotes,
           percentageVotes: Number(regionalVote.percentageVotes), // Ensure percentageVotes is a number
+          yeaPercentage: Number(regionalVote.yeaPercentage), // Ensure yeaPercentage is a number
+          nayPercentage: Number(regionalVote.nayPercentage), // Ensure nayPercentage is a number
         }
       : { totalVotes: 0, percentageVotes: 0 };
   };
@@ -58,13 +60,36 @@ function RegionalStat({ bill }: BillsResponse) {
                 <p>
                   {formatVoteData("South South").percentageVotes?.toFixed(2)}%
                 </p>
-                <small>South South</small>
+
+                <div className="s_flex">
+                  <small>South South</small>
+                  {/* UPDATE */}
+                  <small>
+                    Yea:{" "}
+                    {formatVoteData("South South").yeaPercentage?.toFixed(2)}%
+                  </small>
+                  <small>
+                    Nay:{" "}
+                    {formatVoteData("South South").nayPercentage?.toFixed(2)}%
+                  </small>
+                </div>
               </div>
               <div className="right">
                 <p>
                   {formatVoteData("South West").percentageVotes?.toFixed(2)}%
                 </p>
-                <small>South West</small>
+                <div className="s_flex">
+                  <small>South West</small>
+                  {/* UPDATE */}
+                  <small>
+                    Yea:{" "}
+                    {formatVoteData("South West").yeaPercentage?.toFixed(2)}%
+                  </small>
+                  <small>
+                    Nay:{" "}
+                    {formatVoteData("South West").nayPercentage?.toFixed(2)}%
+                  </small>
+                </div>
               </div>
             </li>
           </ul>

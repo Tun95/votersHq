@@ -315,6 +315,8 @@
           &:nth-child(3) .left::before,
           &:nth-child(3) .right::before {
             color: var(--color-reddish-brown);
+            left: -22px;
+            top: -9px;
           }
         }
       }
